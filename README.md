@@ -117,6 +117,12 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 ./scripts/check-global-install.sh
 ```
 
+如果以后需要移除全局 super-stack，可使用：
+
+```bash
+./scripts/uninstall-global.sh
+```
+
 ### 全局安装后会发生什么
 
 #### Codex
@@ -151,6 +157,12 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 
 ```bash
 ./scripts/install.sh --host all --mode project --target /path/to/project
+```
+
+项目级安装完成后，可用下面的命令做一键检查：
+
+```bash
+./scripts/check-project-install.sh --target /path/to/project --host all
 ```
 
 项目级同步会：
@@ -206,6 +218,21 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 - `~/.codex/skills`
 - `~/.claude/skills`
 - 当前是否处于“global-first + project override”模式
+
+如果是项目级健康检查，可以运行：
+
+```bash
+./scripts/check-project-install.sh --target /path/to/project --host all
+```
+
+这个脚本会检查：
+
+- 项目根 `AGENTS.md` 托管块
+- `.super-stack/AGENTS.md`
+- `.agents/skills/`
+- `.codex/AGENTS.md`
+- `.claude/CLAUDE.md`
+- 关键技能镜像与 canonical 内容是否一致
 
 ### B. Codex 最小验证
 
@@ -312,7 +339,7 @@ codex exec --skip-git-repo-check "Do not read any repository-specific files. Bas
 
 如果继续往工程化方向走，最值得补的是：
 
-1. 增加一键验证脚本，例如 `scripts/check-project-install.sh`
-2. 增加全局安装健康检查脚本
-3. 补更多可复用阶段技能
-4. 继续收敛 Claude 与 Codex 的宿主差异
+1. 补更多可复用阶段技能
+2. 增加行为级 smoke tests
+3. 继续收敛 Claude 与 Codex 的宿主差异
+4. 增加更细粒度的全局/项目覆盖策略
