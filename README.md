@@ -117,6 +117,12 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 ./scripts/check-global-install.sh
 ```
 
+如果你想验证“全局 super-stack 不是只装上了，而是真的还能稳定做阶段路由”，可以运行：
+
+```bash
+./scripts/smoke-test-codex-global.sh
+```
+
 如果以后需要移除全局 super-stack，可使用：
 
 ```bash
@@ -218,6 +224,19 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 - `~/.codex/skills`
 - `~/.claude/skills`
 - 当前是否处于“global-first + project override”模式
+
+如果想做行为级验证，还可以运行：
+
+```bash
+./scripts/smoke-test-codex-global.sh
+```
+
+这个脚本会验证 Codex 在空目录下是否还能稳定命中：
+
+- `discuss`
+- `brainstorm`
+- `review`
+- `verify`
 
 如果是项目级健康检查，可以运行：
 

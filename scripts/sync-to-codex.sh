@@ -35,14 +35,17 @@ for agent_file in "${REPO_ROOT}"/.codex/agents/*.toml; do
   cp "$agent_file" "${AGENTS_DEST}/$(basename "$agent_file")"
 done
 
-append_managed_block \
-  "${CODEX_HOME}/AGENTS.md" \
-  "# BEGIN SUPER-STACK GLOBAL" \
-  "# END SUPER-STACK GLOBAL" \
-  "Use \`${STACK_DEST}/AGENTS.md\` as the global workflow source.
-Prefer project-local \`AGENTS.md\` and \`.codex/AGENTS.md\` when a repository provides them.
-Global super-stack skills are installed to \`${USER_SKILLS_DEST}\`.
-Legacy compatibility mirrors are also installed to \`${LEGACY_SKILLS_DEST}\`."
+cat > "${CODEX_HOME}/AGENTS.md" <<EOF
+# Super Stack Global Router
+
+Use \`${STACK_DEST}/AGENTS.md\` as the global workflow source.
+
+- This is the default global workflow router for Codex.
+- Prefer project-local \`AGENTS.md\` and \`.codex/AGENTS.md\` when a repository provides them.
+- Global super-stack skills are installed to \`${USER_SKILLS_DEST}\`.
+- Legacy compatibility mirrors are also installed to \`${LEGACY_SKILLS_DEST}\`.
+- Treat global super-stack as the default system, and project-level files only as thin overrides.
+EOF
 
 write_if_missing "${REPO_ROOT}/.codex/config.toml" "${CODEX_HOME}/config.toml"
 

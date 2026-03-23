@@ -19,13 +19,16 @@ for skill_dir in "${REPO_ROOT}"/.agents/skills/*/*; do
   copy_tree "$skill_dir" "${SKILLS_DEST}/$(basename "$skill_dir")"
 done
 
-append_managed_block \
-  "${CLAUDE_HOME}/CLAUDE.md" \
-  "<!-- BEGIN SUPER-STACK GLOBAL -->" \
-  "<!-- END SUPER-STACK GLOBAL -->" \
-  "Use \`${DEST}/AGENTS.md\` as the shared global workflow source.
-Prefer project-local \`AGENTS.md\`, \`.claude/CLAUDE.md\`, and project-local skills when a repository provides them.
-Global Claude-facing skills are mirrored into \`${SKILLS_DEST}\`."
+cat > "${CLAUDE_HOME}/CLAUDE.md" <<EOF
+# Super Stack Global Router
+
+Use \`${DEST}/AGENTS.md\` as the shared global workflow source.
+
+- This is the default global workflow router for Claude.
+- Prefer project-local \`AGENTS.md\`, \`.claude/CLAUDE.md\`, and project-local skills when a repository provides them.
+- Global Claude-facing skills are mirrored into \`${SKILLS_DEST}\`.
+- Treat global super-stack as the default system, and project-level files only as thin overrides.
+EOF
 
 log "Claude global assets copied to ${DEST}"
 log "Claude global skills mirrored to ${SKILLS_DEST}"

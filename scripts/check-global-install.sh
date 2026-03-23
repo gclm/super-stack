@@ -66,6 +66,26 @@ check_contains() {
   fi
 }
 
+check_exact_content() {
+  local path="$1"
+  local expected="$2"
+  local label="$3"
+
+  if [[ ! -f "$path" ]]; then
+    warn "${label}: file missing (${path})"
+    return
+  fi
+
+  local actual
+  actual="$(cat "$path")"
+
+  if [[ "$actual" == "$expected" ]]; then
+    ok "${label}"
+  else
+    warn "${label}: content does not match expected"
+  fi
+}
+
 count_skill_entries() {
   local path="$1"
   if [[ ! -d "$path" ]]; then
@@ -80,15 +100,38 @@ printf 'repo: %s\n' "${REPO_ROOT}"
 printf 'home: %s\n' "${HOME}"
 printf '\n'
 
+EXPECTED_CODEX_AGENTS=$(cat <<EOF
+# Super Stack Global Router
+
+Use \`${CODEX_HOME}/super-stack/AGENTS.md\` as the global workflow source.
+
+- This is the default global workflow router for Codex.
+- Prefer project-local \`AGENTS.md\` and \`.codex/AGENTS.md\` when a repository provides them.
+- Global super-stack skills are installed to \`${USER_SKILLS_DIR}\`.
+- Legacy compatibility mirrors are also installed to \`${CODEX_SKILLS_DIR}\`.
+- Treat global super-stack as the default system, and project-level files only as thin overrides.
+EOF
+)
+
+EXPECTED_CLAUDE_ROUTER=$(cat <<EOF
+# Super Stack Global Router
+
+Use \`${CLAUDE_HOME}/super-stack/AGENTS.md\` as the shared global workflow source.
+
+- This is the default global workflow router for Claude.
+- Prefer project-local \`AGENTS.md\`, \`.claude/CLAUDE.md\`, and project-local skills when a repository provides them.
+- Global Claude-facing skills are mirrored into \`${CLAUDE_SKILLS_DIR}\`.
+- Treat global super-stack as the default system, and project-level files only as thin overrides.
+EOF
+)
+
 printf '== Codex ==\n'
 check_file "$CODEX_STACK_AGENTS" "Codex shared stack AGENTS"
 check_file "$CODEX_AGENTS_FILE" "Codex global AGENTS"
 check_file "$CODEX_CONFIG_FILE" "Codex config"
 check_dir "$USER_SKILLS_DIR" "User skills directory"
 check_dir "$CODEX_SKILLS_DIR" "Codex legacy skills directory"
-check_contains "$CODEX_AGENTS_FILE" "# BEGIN SUPER-STACK GLOBAL" "Codex global managed block present"
-check_contains "$CODEX_AGENTS_FILE" "Use \`${CODEX_HOME}/super-stack/AGENTS.md\` as the global workflow source." "Codex global routing points to super-stack"
-check_contains "$CODEX_AGENTS_FILE" "Global super-stack skills are installed to \`${USER_SKILLS_DIR}\`." "Codex AGENTS mentions ~/.agents skills"
+check_exact_content "$CODEX_AGENTS_FILE" "$EXPECTED_CODEX_AGENTS" "Codex global router content matches expected"
 printf 'Codex user-visible skills: %s\n' "$(count_skill_entries "$USER_SKILLS_DIR")"
 printf 'Codex legacy mirrored skills: %s\n' "$(count_skill_entries "$CODEX_SKILLS_DIR")"
 printf '\n'
@@ -97,8 +140,7 @@ printf '== Claude ==\n'
 check_file "$CLAUDE_STACK_AGENTS" "Claude shared stack AGENTS"
 check_file "$CLAUDE_FILE" "Claude global CLAUDE.md"
 check_dir "$CLAUDE_SKILLS_DIR" "Claude global skills directory"
-check_contains "$CLAUDE_FILE" "<!-- BEGIN SUPER-STACK GLOBAL -->" "Claude global managed block present"
-check_contains "$CLAUDE_FILE" "Use \`${CLAUDE_HOME}/super-stack/AGENTS.md\` as the shared global workflow source." "Claude global routing points to super-stack"
+check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_ROUTER" "Claude global router content matches expected"
 printf 'Claude mirrored skills: %s\n' "$(count_skill_entries "$CLAUDE_SKILLS_DIR")"
 printf '\n'
 
