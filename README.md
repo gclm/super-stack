@@ -89,6 +89,7 @@
 - `incident-debug`
 - `security-review`
 - `performance-investigation`
+- `browse`
 
 ## Codex 适配思路
 

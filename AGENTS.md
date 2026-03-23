@@ -53,6 +53,7 @@ Supporting skills can be used within or between stages when appropriate:
 - `incident-debug` for production-style incident triage and mitigation
 - `security-review` for trust-boundary and abuse-path review
 - `performance-investigation` for evidence-based bottleneck diagnosis
+- `browse` for browser-side DOM, style, console, and network verification
 
 ## Default Execution Policy
 
@@ -133,6 +134,8 @@ Use supporting skills when the problem shape requires them:
   - the change crosses auth, secret, data exposure, or external attack-surface boundaries
 - `performance-investigation`
   - the problem is latency, throughput, memory, CPU, or rendering slowdown and the bottleneck is not yet confirmed
+- `browse`
+  - the task needs browser-side evidence such as DOM state, styles, console errors, network requests, or runtime UI behavior
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 

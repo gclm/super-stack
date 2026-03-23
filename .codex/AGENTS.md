@@ -48,6 +48,7 @@ Supporting skills are also available for cross-stage execution:
 - `incident-debug`
 - `security-review`
 - `performance-investigation`
+- `browse`
 
 ## Workflow Routing For Codex
 
@@ -131,6 +132,7 @@ Example routes:
 - "help me triage this live incident or outage" -> `incident-debug`
 - "review this change for security risks" -> `security-review`
 - "investigate why this path is slow or resource-heavy" -> `performance-investigation`
+- "inspect this in the browser and verify DOM, console, network, or UI behavior" -> `browse`
 
 ## Codex Backtracking Rules
 
