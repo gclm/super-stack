@@ -13,6 +13,7 @@ Use this skill when the task needs direct browser evidence rather than only stat
 - any local run or preview instructions
 - relevant acceptance criteria or bug symptoms
 - `.planning/STATE.md` if it exists
+- `references/browser-evidence-patterns.md` when you need a more concrete evidence checklist
 
 ## Goals
 
@@ -29,17 +30,7 @@ Use this skill when the task needs direct browser evidence rather than only stat
 - a browser interaction must be validated before calling work done
 - screenshots or runtime evidence are more trustworthy than static review
 
-## Browser Evidence Checklist
-
-When browser tooling is available, inspect the smallest useful set:
-
-- DOM state
-- computed styles or layout behavior
-- console warnings and errors
-- network requests and responses
-- visible interaction results
-
-Do not collect everything by default. Match the evidence to the bug or validation goal.
+For more concrete evidence selection patterns, read `references/browser-evidence-patterns.md`.
 
 ## Host Guidance
 

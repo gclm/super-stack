@@ -13,6 +13,7 @@ Use this skill when the problem is slow response time, poor throughput, memory g
 - profiles, traces, benchmarks, or logs if available
 - the hottest path or user-visible slow flow
 - `.planning/STATE.md` if it exists
+- `references/perf-evidence.md` when you need a sharper measurement workflow
 
 ## Goals
 
@@ -24,16 +25,13 @@ Use this skill when the problem is slow response time, poor throughput, memory g
 ## Steps
 
 1. Restate the performance symptom with numbers if possible.
-2. Identify the measured hot path:
-   - CPU
-   - memory
-   - I/O
-   - network
-   - rendering
+2. Identify the measured hot path.
 3. Compare likely bottlenecks against actual evidence.
 4. Test one optimization hypothesis at a time.
 5. Recommend the smallest fix that materially improves the dominant bottleneck.
 6. Define how improvement should be re-measured.
+
+Read `references/perf-evidence.md` when you need more detailed evidence patterns.
 
 ## Output
 

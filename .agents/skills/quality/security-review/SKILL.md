@@ -13,6 +13,7 @@ Use this skill when a change affects authentication, authorization, secrets, use
 - auth and permission model
 - data classification and trust boundaries
 - relevant config, env handling, and integration points
+- `references/security-checklist.md` when you need a deeper review checklist
 
 ## Goals
 
@@ -24,21 +25,12 @@ Use this skill when a change affects authentication, authorization, secrets, use
 ## Steps
 
 1. Identify assets and trust boundaries.
-2. Check entry points:
-   - API
-   - file upload
-   - webhook
-   - admin path
-   - background worker
-3. Review:
-   - authn/authz
-   - input validation
-   - secret handling
-   - data leakage
-   - SSRF/RCE/path traversal style risks
-4. Assess exploitability and likely impact.
-5. Recommend the highest-priority fixes first.
-6. Note any remaining residual risk or missing evidence.
+2. Review the most relevant entry points and abuse paths.
+3. Assess exploitability and likely impact.
+4. Recommend the highest-priority fixes first.
+5. Note any remaining residual risk or missing evidence.
+
+Read `references/security-checklist.md` when you need a more detailed pass.
 
 ## Output
 
