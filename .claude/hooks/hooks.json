@@ -1,0 +1,26 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f .planning/STATE.md ]; then echo '[super-stack] resuming from .planning/STATE.md'; head -20 .planning/STATE.md; fi"
+          }
+        ]
+      }
+    ],
+    "Stop": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "if [ -f .planning/STATE.md ]; then echo '[super-stack] remember to leave STATE.md current'; fi"
+          }
+        ]
+      }
+    ]
+  }
+}

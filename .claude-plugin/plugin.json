@@ -1,0 +1,9 @@
+{
+  "name": "super-stack",
+  "version": "0.1.0",
+  "description": "Shared workflow core for Claude Code and Codex with thin host adapters.",
+  "author": {
+    "name": "gclm"
+  },
+  "license": "MIT"
+}
