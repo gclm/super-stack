@@ -35,6 +35,9 @@ Supporting skills are also available for cross-stage execution:
 - `frontend-refactor`
 - `bugfix-verification`
 - `api-change-check`
+- `database-design`
+- `api-design`
+- `architecture-design`
 
 ## Workflow Routing For Codex
 
@@ -105,6 +108,9 @@ Example routes:
 - "refactor this frontend without breaking flows" -> `frontend-refactor`
 - "prove this bugfix really works" -> `bugfix-verification`
 - "check whether this API change is safe for callers" -> `api-change-check`
+- "design the schema or indexes for this feature" -> `database-design`
+- "design the API contract before implementation" -> `api-design`
+- "compare service or module structure options" -> `architecture-design`
 
 ## Codex Backtracking Rules
 

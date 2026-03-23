@@ -76,6 +76,9 @@
 - `frontend-refactor`
 - `bugfix-verification`
 - `api-change-check`
+- `database-design`
+- `api-design`
+- `architecture-design`
 
 ## Codex 适配思路
 

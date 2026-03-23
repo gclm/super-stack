@@ -40,6 +40,9 @@ Supporting skills can be used within or between stages when appropriate:
 - `frontend-refactor` for larger UI and interaction cleanup
 - `bugfix-verification` for proving a fix really closes the reported bug
 - `api-change-check` for contract drift and compatibility review
+- `database-design` for schema, constraint, and index design
+- `api-design` for contract and caller ergonomics
+- `architecture-design` for larger structural decisions
 
 ## Default Execution Policy
 
@@ -94,6 +97,12 @@ Use supporting skills when the problem shape requires them:
   - a bugfix exists and needs focused proof that the symptom is truly closed
 - `api-change-check`
   - the change may affect API contracts, callers, validation, or compatibility
+- `database-design`
+  - the task changes schema, indexes, query patterns, or persistence boundaries
+- `api-design`
+  - the task defines or changes an API contract before implementation hardens
+- `architecture-design`
+  - the task is really about system boundaries, module shape, or service structure
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 
