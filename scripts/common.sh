@@ -18,6 +18,30 @@ ensure_dir() {
   mkdir -p "$1"
 }
 
+resolve_codex_bin() {
+  if [[ -n "${CODEX_BIN:-}" ]]; then
+    printf '%s\n' "$CODEX_BIN"
+    return 0
+  fi
+
+  if command -v codex >/dev/null 2>&1; then
+    command -v codex
+    return 0
+  fi
+
+  if [[ -x "/usr/local/bin/codex" ]]; then
+    printf '/usr/local/bin/codex\n'
+    return 0
+  fi
+
+  if [[ -x "${HOME}/.local/bin/codex" ]]; then
+    printf '%s\n' "${HOME}/.local/bin/codex"
+    return 0
+  fi
+
+  return 1
+}
+
 copy_tree() {
   local src="$1"
   local dest="$2"

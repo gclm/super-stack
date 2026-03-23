@@ -43,6 +43,9 @@ Supporting skills can be used within or between stages when appropriate:
 - `database-design` for schema, constraint, and index design
 - `api-design` for contract and caller ergonomics
 - `architecture-design` for larger structural decisions
+- `migration-design` for phased schema and data rollout planning
+- `query-optimization` for evidence-based query and index tuning
+- `backend-refactor` for structural backend cleanup without behavior drift
 
 ## Default Execution Policy
 
@@ -103,6 +106,12 @@ Use supporting skills when the problem shape requires them:
   - the task defines or changes an API contract before implementation hardens
 - `architecture-design`
   - the task is really about system boundaries, module shape, or service structure
+- `migration-design`
+  - the task changes existing data shape and needs phased rollout, backfill, or rollback planning
+- `query-optimization`
+  - the problem is a slow query, poor index fit, or uncertain data access path
+- `backend-refactor`
+  - backend code needs structural cleanup across handlers, services, repositories, or side effects
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 

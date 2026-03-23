@@ -38,6 +38,9 @@ Supporting skills are also available for cross-stage execution:
 - `database-design`
 - `api-design`
 - `architecture-design`
+- `migration-design`
+- `query-optimization`
+- `backend-refactor`
 
 ## Workflow Routing For Codex
 
@@ -111,6 +114,9 @@ Example routes:
 - "design the schema or indexes for this feature" -> `database-design`
 - "design the API contract before implementation" -> `api-design`
 - "compare service or module structure options" -> `architecture-design`
+- "plan a safe schema or data migration rollout" -> `migration-design`
+- "optimize this slow query or index strategy" -> `query-optimization`
+- "untangle this backend module without breaking behavior" -> `backend-refactor`
 
 ## Codex Backtracking Rules
 

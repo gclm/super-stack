@@ -79,6 +79,9 @@
 - `database-design`
 - `api-design`
 - `architecture-design`
+- `migration-design`
+- `query-optimization`
+- `backend-refactor`
 
 ## Codex 适配思路
 
@@ -239,6 +242,8 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 ```bash
 ./scripts/smoke-test-codex-global.sh
 ```
+
+这些脚本会优先使用你当前 PATH 中的 `codex`，因此当你通过 brew 安装并统一使用 `/usr/local/bin/codex` 时，不需要再手工改脚本路径。
 
 这个脚本会验证 Codex 在空目录下是否还能稳定命中：
 
