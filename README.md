@@ -70,6 +70,9 @@
 - `verify`
 - `qa`
 - `ship`
+- `debug`
+- `tdd-execution`
+- `release-check`
 
 ## Codex 适配思路
 

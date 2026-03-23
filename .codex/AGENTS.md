@@ -27,6 +27,12 @@ Default behavior:
 
 In practice, this means Codex should behave as if `AGENTS.md` is the router and `.agents/skills/` is the manual.
 
+Supporting skills are also available for cross-stage execution:
+
+- `debug`
+- `tdd-execution`
+- `release-check`
+
 ## Workflow Routing For Codex
 
 Use these stages explicitly:
@@ -90,6 +96,9 @@ Example routes:
 - "make sure this is actually done" -> `verify`
 - "check the UI / test the flow" -> `qa`
 - "prepare to merge / release" -> `ship`
+- "find the root cause of this bug" -> `debug`
+- "drive this change with tests" -> `tdd-execution`
+- "is this release actually ready" -> `release-check`
 
 ## Codex Backtracking Rules
 

@@ -32,6 +32,12 @@ Treat this chain as the primary operating model across hosts.
 On hosts with strong native skill execution, the matching skill may be applied directly.
 On hosts where skill execution is weaker or inconsistent, follow the workflow from this file first and use `.agents/skills/` as detailed reference material.
 
+Supporting skills can be used within or between stages when appropriate:
+
+- `debug` for bug diagnosis before fixing
+- `tdd-execution` for RED -> GREEN -> REFACTOR execution
+- `release-check` for final release-readiness checks
+
 ## Default Execution Policy
 
 When a request arrives, decide the current stage before taking action.
@@ -70,6 +76,15 @@ Use these checks before entering a stage:
   - there is a user-facing flow, system interaction, or release candidate to validate
 - `ship`
   - implementation is done and the remaining work is handoff, merge prep, or release readiness
+
+Use supporting skills when the problem shape requires them:
+
+- `debug`
+  - a bug exists but the cause is not yet confirmed
+- `tdd-execution`
+  - a behavior change should be driven by automated tests
+- `release-check`
+  - readiness needs a stricter release gate than the normal `ship` summary
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 
@@ -149,6 +164,9 @@ Do not claim a later stage is complete while its exit criteria are still missing
 - Do not claim completion without fresh verification evidence.
 - For reviews, prioritize correctness, regressions, security, and missing tests.
 - For debugging, follow the debug protocol instead of guessing.
+- When the task is explicitly bug diagnosis, prefer the `debug` skill before broad implementation.
+- When a behavior is testable, prefer `tdd-execution` over ad hoc implementation.
+- When release confidence is the real question, use `release-check` before optimistic handoff.
 - If a later-stage request lacks prerequisites, state the missing prerequisite and route to the right earlier stage.
 - Keep workflow transitions explicit in user-facing updates.
 - When a task spans multiple stages in one turn, announce the transition briefly instead of blending them invisibly.
