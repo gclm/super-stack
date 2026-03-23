@@ -37,6 +37,9 @@ Supporting skills can be used within or between stages when appropriate:
 - `debug` for bug diagnosis before fixing
 - `tdd-execution` for RED -> GREEN -> REFACTOR execution
 - `release-check` for final release-readiness checks
+- `frontend-refactor` for larger UI and interaction cleanup
+- `bugfix-verification` for proving a fix really closes the reported bug
+- `api-change-check` for contract drift and compatibility review
 
 ## Default Execution Policy
 
@@ -85,6 +88,12 @@ Use supporting skills when the problem shape requires them:
   - a behavior change should be driven by automated tests
 - `release-check`
   - readiness needs a stricter release gate than the normal `ship` summary
+- `frontend-refactor`
+  - the work is a frontend cleanup or restructuring effort, not just a small UI tweak
+- `bugfix-verification`
+  - a bugfix exists and needs focused proof that the symptom is truly closed
+- `api-change-check`
+  - the change may affect API contracts, callers, validation, or compatibility
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 

@@ -32,6 +32,9 @@ Supporting skills are also available for cross-stage execution:
 - `debug`
 - `tdd-execution`
 - `release-check`
+- `frontend-refactor`
+- `bugfix-verification`
+- `api-change-check`
 
 ## Workflow Routing For Codex
 
@@ -99,6 +102,9 @@ Example routes:
 - "find the root cause of this bug" -> `debug`
 - "drive this change with tests" -> `tdd-execution`
 - "is this release actually ready" -> `release-check`
+- "refactor this frontend without breaking flows" -> `frontend-refactor`
+- "prove this bugfix really works" -> `bugfix-verification`
+- "check whether this API change is safe for callers" -> `api-change-check`
 
 ## Codex Backtracking Rules
 

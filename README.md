@@ -73,6 +73,9 @@
 - `debug`
 - `tdd-execution`
 - `release-check`
+- `frontend-refactor`
+- `bugfix-verification`
+- `api-change-check`
 
 ## Codex 适配思路
 
