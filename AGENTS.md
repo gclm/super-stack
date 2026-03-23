@@ -46,6 +46,9 @@ Supporting skills can be used within or between stages when appropriate:
 - `migration-design` for phased schema and data rollout planning
 - `query-optimization` for evidence-based query and index tuning
 - `backend-refactor` for structural backend cleanup without behavior drift
+- `integration-design` for service and vendor boundary design
+- `service-boundary-review` for responsibility and dependency boundary review
+- `scalability-check` for load, growth, and concurrency risk review
 
 ## Default Execution Policy
 
@@ -112,6 +115,12 @@ Use supporting skills when the problem shape requires them:
   - the problem is a slow query, poor index fit, or uncertain data access path
 - `backend-refactor`
   - backend code needs structural cleanup across handlers, services, repositories, or side effects
+- `integration-design`
+  - the task introduces or reshapes a service, queue, webhook, or vendor integration boundary
+- `service-boundary-review`
+  - the question is whether modules or services are split across the right ownership boundaries
+- `scalability-check`
+  - the design may face throughput, concurrency, or growth limits that should be reviewed before shipping
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 

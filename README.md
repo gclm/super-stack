@@ -82,6 +82,9 @@
 - `migration-design`
 - `query-optimization`
 - `backend-refactor`
+- `integration-design`
+- `service-boundary-review`
+- `scalability-check`
 
 ## Codex 适配思路
 

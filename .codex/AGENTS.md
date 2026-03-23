@@ -41,6 +41,9 @@ Supporting skills are also available for cross-stage execution:
 - `migration-design`
 - `query-optimization`
 - `backend-refactor`
+- `integration-design`
+- `service-boundary-review`
+- `scalability-check`
 
 ## Workflow Routing For Codex
 
@@ -117,6 +120,9 @@ Example routes:
 - "plan a safe schema or data migration rollout" -> `migration-design`
 - "optimize this slow query or index strategy" -> `query-optimization`
 - "untangle this backend module without breaking behavior" -> `backend-refactor`
+- "design this service or vendor integration boundary" -> `integration-design`
+- "review whether these modules or services are split correctly" -> `service-boundary-review`
+- "check whether this design will hold up under load or growth" -> `scalability-check`
 
 ## Codex Backtracking Rules
 
