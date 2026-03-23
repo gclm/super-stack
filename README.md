@@ -85,6 +85,10 @@
 - `integration-design`
 - `service-boundary-review`
 - `scalability-check`
+- `observability-design`
+- `incident-debug`
+- `security-review`
+- `performance-investigation`
 
 ## Codex 适配思路
 

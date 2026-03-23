@@ -49,6 +49,10 @@ Supporting skills can be used within or between stages when appropriate:
 - `integration-design` for service and vendor boundary design
 - `service-boundary-review` for responsibility and dependency boundary review
 - `scalability-check` for load, growth, and concurrency risk review
+- `observability-design` for logs, metrics, traces, and alerting design
+- `incident-debug` for production-style incident triage and mitigation
+- `security-review` for trust-boundary and abuse-path review
+- `performance-investigation` for evidence-based bottleneck diagnosis
 
 ## Default Execution Policy
 
@@ -121,6 +125,14 @@ Use supporting skills when the problem shape requires them:
   - the question is whether modules or services are split across the right ownership boundaries
 - `scalability-check`
   - the design may face throughput, concurrency, or growth limits that should be reviewed before shipping
+- `observability-design`
+  - the task needs better operational signals, dashboards, alerts, or debugging visibility
+- `incident-debug`
+  - the problem is an active production-like outage or degraded service that needs containment and diagnosis
+- `security-review`
+  - the change crosses auth, secret, data exposure, or external attack-surface boundaries
+- `performance-investigation`
+  - the problem is latency, throughput, memory, CPU, or rendering slowdown and the bottleneck is not yet confirmed
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 

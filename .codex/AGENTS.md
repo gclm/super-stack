@@ -44,6 +44,10 @@ Supporting skills are also available for cross-stage execution:
 - `integration-design`
 - `service-boundary-review`
 - `scalability-check`
+- `observability-design`
+- `incident-debug`
+- `security-review`
+- `performance-investigation`
 
 ## Workflow Routing For Codex
 
@@ -123,6 +127,10 @@ Example routes:
 - "design this service or vendor integration boundary" -> `integration-design`
 - "review whether these modules or services are split correctly" -> `service-boundary-review`
 - "check whether this design will hold up under load or growth" -> `scalability-check`
+- "design the logs, metrics, traces, or alerts for this system" -> `observability-design`
+- "help me triage this live incident or outage" -> `incident-debug`
+- "review this change for security risks" -> `security-review`
+- "investigate why this path is slow or resource-heavy" -> `performance-investigation`
 
 ## Codex Backtracking Rules
 
