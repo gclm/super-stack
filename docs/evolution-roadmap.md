@@ -61,7 +61,7 @@
 ### 当前阶段
 
 - 工程能力补齐
-- 浏览器能力接通
+- 浏览器主链路稳定化
 - hooks 风险治理升级
 - 文档体系沉淀
 
@@ -87,7 +87,7 @@
 - 安装、检查、回归、文档四者对齐
 - 关键能力都有明确入口
 
-## Phase 2：补齐浏览器与 QA 链路
+## Phase 2：稳定浏览器与 QA 链路
 
 目标：
 
@@ -95,14 +95,14 @@
 
 ### 重点任务
 
-1. 接入 Claude 侧真实 browser plugin 或 browser MCP
-2. 明确 Codex 侧浏览器能力路线
+1. 稳定 `super-stack-browser` 入口体验
+2. 继续减少重复授权与会话漂移
 3. 增加 browse 专项回归
 4. 在 `qa` / `browse` 中补充真实 DOM / console / network 证据模板
 
 ### 完成标志
 
-- 至少一个宿主具备真实浏览器排查能力
+- 默认主链路具备真实浏览器排查能力
 - `browse` 可以从“概念能力”升级为“已验证能力”
 
 ## Phase 3：hooks 从降噪升级为风险治理
@@ -148,7 +148,7 @@
 
 如果只按“下一步最值”排序，我建议是：
 
-1. 浏览器能力接通
+1. 浏览器主链路稳定化
 2. hooks 风险分级
 3. 文档索引与能力清单补齐
 4. 历史生态清理
@@ -160,9 +160,10 @@
 
 ### 5.1 浏览器能力
 
-- 给 Claude 配置可用的 browser plugin 或 browser MCP
+- 统一所有示例和脚本到 `super-stack-browser`
+- 增加一键重连稳定会话脚本
 - 增加 `browse` 真浏览器回归脚本
-- 在 `smoke-test-claude-global.sh` 中新增 browser active check 的通过标准
+- 在 `smoke-test-claude-global.sh` 中继续验证 browser active check
 
 ### 5.2 hooks 风险治理
 

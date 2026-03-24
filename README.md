@@ -25,6 +25,19 @@
 - 全局 `super-stack` 优先
 - 项目级配置作为薄覆盖层
 
+当前浏览器能力的默认策略也已经明确：
+
+- 主方案使用 `agent-browser`
+- 默认入口使用稳定包装命令 `super-stack-browser`
+- 不再把其他浏览器技术选项作为当前默认集成方案
+
+更具体一点：
+
+- 本地前端调试、DOM / console / network 验证，默认优先 `super-stack-browser`
+- `super-stack-browser` 会固定走 `agent-browser --auto-connect --session-name super-stack-browser`
+- 这样做的目标是减少重复授权、减少会话漂移、降低使用噪音
+- `agent-browser` 本体通过 `npm install -g agent-browser` 维护
+
 也就是说，平时优先把 `super-stack` 作为你的默认全局工作流底座，只有在某个仓库确实需要项目特化时，再加项目级覆盖。
 
 ## 快速开始
@@ -55,10 +68,34 @@
 ./scripts/check-global-install.sh
 ```
 
+说明：
+
+- `./scripts/install.sh` 现在会自动一并安装浏览器主链路
+- 也就是会自动准备 `super-stack-browser`
+
 如果你之后想移除全局安装：
 
 ```bash
 ./scripts/uninstall-global.sh
+```
+
+如果你只想单独重装浏览器能力：
+
+```bash
+./scripts/setup-browser.sh
+./scripts/check-browser-capability.sh
+```
+
+安装完成后，日常建议直接用：
+
+```bash
+~/.claude-stack/bin/super-stack-browser open https://example.com
+```
+
+如果你遇到会话卡住或授权状态异常，可以先重置稳定会话：
+
+```bash
+./scripts/reset-browser-session.sh
 ```
 
 ## 3 分钟上手示例
@@ -77,6 +114,7 @@ cd /Users/gclm/Codes/ai/claude-stack-plugin
 - `~/.codex/AGENTS.md` 中出现 `super-stack` 托管块
 - `~/.claude/CLAUDE.md` 中出现 `super-stack` 托管块
 - `~/.agents/skills/`、`~/.codex/skills/`、`~/.claude/skills/` 被同步
+- `~/.claude-stack/bin/super-stack-browser` 被自动准备
 
 ### 第 2 步：做一轮安装检查
 
@@ -110,7 +148,7 @@ cd /Users/gclm/Codes/ai/claude-stack-plugin
 
 - `Claude` 侧能识别全局托管内容
 - hooks 合并、技能入口和基础运行能力检查通过
-- 如果浏览器能力尚未接通，可能出现 browser 相关 warning，这属于当前已知待补齐项
+- 如果本地 browse binary、browser MCP、browser plugin 都还没接通，可能出现 browser 相关 warning，这属于当前已知待补齐项
 
 ### 第 5 步：单独验证 readonly Hook
 
@@ -170,6 +208,19 @@ cd /Users/gclm/Codes/ai/claude-stack-plugin
 - `Claude` hooks 合并与基础能力探测是否正常
 - readonly hook 是否真的在运行态放行只读命令
 
+如果你想单独复查浏览器主链路，可以再跑：
+
+```bash
+./scripts/setup-browser.sh
+./scripts/check-browser-capability.sh
+```
+
+当前默认结论：
+
+- `super-stack-browser` 是推荐日常入口，优先解决重复授权和会话不稳定
+- `agent-browser` 是底层主方案，由全局 npm 包提供
+- 当前仓库不再把其他浏览器技术选项作为默认保留方案
+
 ## 文档导航
 
 首页只保留“是什么、怎么装、怎么验”的核心信息，更细的设计和调研都放在 `docs/`：
@@ -178,6 +229,8 @@ cd /Users/gclm/Codes/ai/claude-stack-plugin
   - 解释 `super-stack` 是什么、为什么这样分层、哪些边界不能轻易打破
 - [参考项目调研与吸收映射](/Users/gclm/Codes/ai/claude-stack-plugin/docs/reference-projects.md)
   - 汇总 `GSD`、`Superpowers`、`gstack`、`ECC`、`bdarbaz/claude-stack-plugin` 等参考来源
+- [浏览器技术选型记录](/Users/gclm/Codes/ai/claude-stack-plugin/docs/browser-technology-options.md)
+  - 汇总浏览器方案测试记录、保留理由与当前正确入口
 - [只读命令 Hook 方案](/Users/gclm/Codes/ai/claude-stack-plugin/docs/readonly-command-hook.md)
   - 说明 readonly auto-allow 的设计、边界和后续演进方向
 - [演进路线图](/Users/gclm/Codes/ai/claude-stack-plugin/docs/evolution-roadmap.md)

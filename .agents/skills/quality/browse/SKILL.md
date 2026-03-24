@@ -34,8 +34,14 @@ For more concrete evidence selection patterns, read `references/browser-evidence
 
 ## Host Guidance
 
-- Claude Code: prefer configured browser tooling or project browser workflows
-- Codex: prefer configured MCP/browser tooling when available
+- Claude Code: prefer `super-stack-browser` when the host has super-stack browser capability configured
+- Codex: prefer `super-stack-browser` when the host has super-stack browser capability configured
+
+For super-stack environments, the intended default browser entry is:
+
+- `~/.claude-stack/bin/super-stack-browser`
+
+This wrapper exists to keep browser auto-connect and session reuse stable.
 
 If browser tooling is unavailable, say so clearly and fall back to:
 

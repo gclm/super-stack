@@ -41,7 +41,7 @@ Claude Code 和 Codex 虽然都能做 agent workflow，但差异很大：
 - skills 的发现方式不同
 - hooks 的接线方式不同
 - 全局配置入口不同
-- 浏览器能力、MCP、插件能力成熟度不同
+- 浏览器能力接线方式不同
 
 如果分别维护两套：
 
@@ -282,6 +282,25 @@ Codex 当前已接入的 hooks 包括：
 - `session_start`
 - `pre_tool_use`
 - `stop`
+
+### 5.3 浏览器接线
+
+当前浏览器能力已经收敛为单方案：
+
+- 底层方案：`agent-browser`
+- 稳定入口：`super-stack-browser`
+- 安装方式：全局 `npm install -g agent-browser`
+
+这里的设计目标不是“支持尽可能多的浏览器技术选项”，而是：
+
+- 保持一条稳定主链路
+- 降低重复授权
+- 降低会话漂移
+- 让 `browse` 技能有明确、可验证的默认入口
+
+浏览器技术调研与历史取舍不再放在本设计文档中展开，统一见：
+
+- [浏览器技术选型记录](/Users/gclm/Codes/ai/claude-stack-plugin/docs/browser-technology-options.md)
 
 ## 6. 全局优先策略
 

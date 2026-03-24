@@ -65,6 +65,8 @@ if [[ "$MODE" == "project" ]]; then
   exit 0
 fi
 
+bash "${SCRIPT_DIR}/setup-browser.sh"
+
 if [[ "$HOST" == "claude" || "$HOST" == "all" ]]; then
   bash "${SCRIPT_DIR}/sync-to-claude.sh"
 fi
