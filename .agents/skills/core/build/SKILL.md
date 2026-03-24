@@ -31,6 +31,8 @@ Use this skill when the project has a current task ready for execution.
 - update planning state when a task meaningfully advances
 - run a quick environment preflight before assuming required tools are missing
 - treat runtime entrypoints, default binaries, and dev commands as part of the implementation surface
+- when changing script paths, directory layout, or default entrypoints, update docs, tests, and CI references in the same change instead of leaving transitional paths behind
+- avoid solving workflow drift by adding one-off maintenance docs when the real fix belongs in skills, planning files, or stable architecture docs
 - if the work is a validation sample, keep the scope aligned to validation instead of silently drifting into product expansion
 - when writing user-reviewable docs or decision records, prefer Chinese unless the project overrides that rule
 - when a project uses super-stack default commit rules, use Angular commit structure with Chinese summaries
@@ -40,9 +42,10 @@ Use this skill when the project has a current task ready for execution.
 1. Identify the current task from state or roadmap.
 2. Run a quick preflight for the tools and entrypoints this task depends on.
 3. Inspect the relevant code paths.
-4. Implement the smallest sufficient change.
-5. Run relevant verification, including the nearest real runtime path when practical.
-6. Update `.planning/STATE.md` with progress, blockers, or environment findings.
+4. Identify downstream surfaces that must stay aligned, especially README, architecture docs, test entrypoints, CI paths, and planning state.
+5. Implement the smallest sufficient change.
+6. Run relevant verification, including the nearest real runtime path when practical.
+7. Update `.planning/STATE.md` with progress, blockers, or environment findings.
 
 ## Output
 

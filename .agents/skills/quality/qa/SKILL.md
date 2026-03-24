@@ -24,6 +24,7 @@ Use this skill when the user wants validation beyond code review, especially for
 - separate confirmed issues from suspicion
 - produce a clear report the user can act on
 - detect host, toolchain, and startup-path noise that could mislead later work
+- keep CI-capable checks separate from host-runtime-only checks so confidence is not overstated
 
 Choose the smallest tier that gives useful confidence.
 
@@ -42,6 +43,11 @@ If browser automation is not available, fall back to:
 - screenshots
 - local previews
 - static inspection with honest reporting about limitations
+
+If the task depends on real host tools such as `codex`, `claude`, browser login state, or local desktop integration:
+
+- do not treat hosted CI as equivalent evidence
+- report that the check requires local smoke or a prepared self-hosted runner
 
 ## Runtime Hygiene
 
@@ -63,6 +69,7 @@ Produce:
 - issues found
 - issues not reproduced
 - gaps or limits
+- evidence tier used for each major check when confidence depends on the environment
 
 For each issue include:
 

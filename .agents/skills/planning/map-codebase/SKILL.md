@@ -21,6 +21,7 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 - record evidence, not guesses
 - identify stack, architecture, boundaries, and risky areas
 - prepare material that later skills can use without re-exploring everything
+- surface mismatches between documented structure and actual repository structure
 
 ## Output Location
 
@@ -43,9 +44,10 @@ If `.planning/` does not exist, initialize it first from `templates/planning/`.
 2. Build and runtime config
 3. Source tree layout
 4. Test layout and commands
-5. External integrations
-6. Host-runtime footprint outside the repo when relevant
-7. Hotspots, risks, and unclear areas
+5. Compare docs, scripts, and CI entrypoints against the real repository layout
+6. External integrations
+7. Host-runtime footprint outside the repo when relevant
+8. Hotspots, risks, and unclear areas
 
 ## Evidence Rules
 
@@ -54,6 +56,7 @@ If `.planning/` does not exist, initialize it first from `templates/planning/`.
 - prefer short concrete notes over long prose
 - if something is unknown, say it is unknown
 - distinguish repository evidence from host-runtime evidence such as local config, logs, launch agents, or running processes
+- when docs or planning files disagree with the repository, record that drift explicitly instead of smoothing it over
 
 ## File Expectations
 
@@ -121,6 +124,7 @@ Capture:
 - risky dependencies
 - stale or confusing sections
 - missing docs or verification weak spots
+- documented-vs-actual mismatches in entrypoints, directory structure, or test commands
 
 ### `SUMMARY.md`
 

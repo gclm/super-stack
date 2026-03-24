@@ -169,7 +169,6 @@
 - [浏览器技术选型记录](/Users/gclm/Codes/ai/claude-stack-plugin/docs/browser-technology-options.md)
 - [只读命令 Hook 方案](/Users/gclm/Codes/ai/claude-stack-plugin/docs/readonly-command-hook.md)
 - [参考项目调研与吸收映射](/Users/gclm/Codes/ai/claude-stack-plugin/docs/reference-projects.md)
-- [文档维护规范](/Users/gclm/Codes/ai/claude-stack-plugin/docs/documentation-guidelines.md)
 - [演进路线图](/Users/gclm/Codes/ai/claude-stack-plugin/docs/evolution-roadmap.md)
 - [Codex 运行时检查](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-codex-runtime.sh)
 
