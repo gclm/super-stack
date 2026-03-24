@@ -4,4 +4,6 @@ __pycache__/
 
 .tmp/
 tmp/
-test/*.md
+test/
+/.idea/
+/.planning/

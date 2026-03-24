@@ -140,7 +140,7 @@ agent-browser --auto-connect --session-name super-stack-browser
 
 - 更像 server / integration 方向
 - 不如本地 CLI 轻便
-- 当前阶段并不是最优主链路
+- 对当前默认主链路来说性价比不高
 
 最终取舍：
 
@@ -156,7 +156,7 @@ agent-browser --auto-connect --session-name super-stack-browser
 真实表现：
 
 - 作为技术方向可以理解
-- 但当前阶段不适合作为 super-stack 的实际默认方案
+- 但不适合作为 super-stack 的实际默认方案
 
 最终取舍：
 
@@ -220,13 +220,13 @@ agent-browser --auto-connect --session-name super-stack-browser
 ### 5.1 安装
 
 ```bash
-./scripts/setup-browser.sh
+./scripts/install/setup-browser.sh
 ```
 
 ### 5.2 检查
 
 ```bash
-./scripts/check-browser-capability.sh
+./scripts/check/check-browser-capability.sh
 ```
 
 预期主 provider：
@@ -247,7 +247,7 @@ provider=local-binary:super-stack-browser:...
 如果稳定会话卡住、重复授权明显增多、或浏览器状态漂移，可以先执行：
 
 ```bash
-./scripts/reset-browser-session.sh
+./scripts/install/reset-browser-session.sh
 ```
 
 如果确实需要改 session name：

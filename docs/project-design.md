@@ -2,12 +2,11 @@
 
 这份文档用于说明 `super-stack` 的长期架构，而不是只描述当前仓库里有哪些文件。
 
-目标是回答 4 个问题：
+目标是回答 3 个问题：
 
 1. `super-stack` 到底是什么
 2. 它为什么要这么分层
-3. 当前已经落地到什么程度
-4. 后续演进时哪些边界不能轻易打破
+3. 后续演进时哪些边界不能轻易打破
 
 ## 1. 项目定义
 
@@ -264,7 +263,6 @@ Codex 当前真正依赖的是：
 
 - `~/.codex/AGENTS.md`
 - `~/.agents/skills/`
-- `~/.codex/skills/`
 - `~/.codex/config.toml`
 
 Codex 与 Claude 最大的不同在于：
@@ -276,6 +274,12 @@ Codex 与 Claude 最大的不同在于：
 - `AGENTS.md` 负责阶段路由
 - `skills` 作为详细手册
 - `config.toml` 负责 hooks
+
+说明：
+
+- 上游 Codex 目前仍会向后兼容扫描 `~/.codex/skills/`
+- 但当前正式的用户级 skills 路径已经是 `~/.agents/skills/`
+- 因此 `super-stack` 不再继续维护 `~/.codex/skills/` 的旧兼容副本
 
 Codex 当前已接入的 hooks 包括：
 
@@ -302,32 +306,22 @@ Codex 当前已接入的 hooks 包括：
 
 - [浏览器技术选型记录](/Users/gclm/Codes/ai/claude-stack-plugin/docs/browser-technology-options.md)
 
-## 6. 全局优先策略
+## 6. 全局安装主线
 
 目前 `super-stack` 的明确策略是：
 
-- 全局 super-stack 优先
-- 项目级 super-stack 作为薄覆盖层
+- super-stack 作为唯一维护的全局配置底座
+- 不再继续维护项目级安装分支与项目级覆盖安装链路
 
 这不是临时选择，而是当前架构中的核心策略。
 
-### 6.1 为什么选择全局优先
+### 6.1 为什么收敛为全局安装主线
 
 原因很现实：
 
 - 你的真实使用方式是“全局默认工作流”
 - 项目级复制会放大维护成本
 - 共享经验更适合沉淀在全局层
-
-### 6.2 项目级覆盖的定位
-
-项目级存在的价值不是再复制一套 super-stack，而是：
-
-- 增补项目特有规则
-- 覆盖少量项目专属行为
-- 提供团队协作可见性
-
-所以项目级应该尽量薄。
 
 ## 7. 工作流设计
 
@@ -409,116 +403,31 @@ Codex 当前已接入的 hooks 包括：
 2. 不把 hooks 一步做成重型规则引擎
 3. 优先跨宿主共用判定逻辑
 
-## 9. 安装与验证体系
-
-这是 `super-stack` 与很多参考项目最大的差异之一。
-
-当前系统不仅关心“文件装没装上”，更关心“功能是否真的生效”。
-
-### 9.1 安装层
-
-核心脚本：
-
-- [install.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install.sh)
-- [sync-to-claude.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/sync-to-claude.sh)
-- [sync-to-codex.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/sync-to-codex.sh)
-
-### 9.2 检查层
-
-核心脚本：
-
-- [check-global-install.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check-global-install.sh)
-
-当前检查内容包括：
-
-- 路由文件存在
-- 路由内容一致
-- skills 镜像匹配
-- hooks 已接入
-
-### 9.3 smoke test 层
-
-核心脚本：
-
-- [smoke-test-claude-global.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke-test-claude-global.sh)
-- [smoke-test-codex-global.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke-test-codex-global.sh)
-
-### 9.4 回归层
-
-核心脚本：
-
-- [smoke-test-codex-regression-suite.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke-test-codex-regression-suite.sh)
-- [smoke-test-readonly-hook.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke-test-readonly-hook.sh)
-
-## 10. 当前落地状态
-
-基于目前仓库与运行态验证，可以把当前状态归纳为：
-
-### 10.1 已经稳定的部分
-
-1. 共享路由架构
-2. skills 分层结构
-3. 全局优先安装策略
-4. Claude / Codex 双宿主全局接线
-5. 状态恢复 hooks
-6. readonly auto-allow hooks
-7. 安装检查与回归脚本
-8. 中文文档与中文 Angular commit 约定
-
-### 10.2 已经验证过但仍需增强的部分
-
-1. `browse` 路由
-2. 运行时体检与环境噪音识别
-3. 参考项目吸收与经验回写
-
-### 10.3 还没有完全补齐的部分
-
-1. 浏览器真实自动化能力
-2. hooks 风险分级
-3. 更体系化的经验回写机制
-4. 历史生态清理策略
-
-## 11. 架构边界
+## 9. 架构边界
 
 后续演进时，这些边界建议不要轻易破坏。
 
-### 11.1 不要把共享核心重新塞回宿主目录
+### 9.1 不要把共享核心重新塞回宿主目录
 
 原因：
 
 - 会重新造成分裂维护
 
-### 11.2 不要让项目级覆盖反客为主
+### 9.2 不要重新引入项目级安装分支
 
 原因：
 
 - 当前主策略是全局默认底座
 
-### 11.3 不要让 hooks 先于验证体系疯狂扩张
+### 9.3 不要让 hooks 先于验证体系疯狂扩张
 
 原因：
 
 - hooks 一旦变复杂，没有验证会非常难维护
 
-### 11.4 不要把参考项目直接当模板复制
+### 9.4 不要把参考项目直接当模板复制
 
 原因：
 
 - 参考项目提供的是思路
 - super-stack 需要形成自己的跨宿主主线
-
-## 12. 当前最重要的下一步
-
-如果只看架构层面，后续最值得优先补齐的是三件事：
-
-1. 浏览器真实能力接入
-2. hooks 从“降噪”升级到“风险分级”
-3. 经验回写与参考吸收流程结构化
-
-## 13. 文档索引
-
-当前建议配套阅读：
-
-- [reference-projects.md](/Users/gclm/Codes/ai/claude-stack-plugin/docs/reference-projects.md)
-- [readonly-command-hook.md](/Users/gclm/Codes/ai/claude-stack-plugin/docs/readonly-command-hook.md)
-- [evolution-roadmap.md](/Users/gclm/Codes/ai/claude-stack-plugin/docs/evolution-roadmap.md)

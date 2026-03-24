@@ -1,0 +1,35 @@
+name: Minimal Regression
+
+on:
+  push:
+    branches:
+      - main
+      - master
+  pull_request:
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: 检出仓库
+        uses: actions/checkout@v4
+
+      - name: 安装 Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: 说明 CI 范围
+        run: |
+          echo "当前 GitHub CI 只覆盖最小工程回归：语法检查、unit、integration。"
+          echo "它不验证真实 Codex / Claude Code / 浏览器登录态。"
+          echo "宿主级验证请在本机 smoke 或自托管 runner 中执行。"
+
+      - name: 检查 Bash 语法
+        run: bash -n scripts/install/*.sh scripts/check/*.sh scripts/smoke/*.sh scripts/test/*.sh scripts/lib/*.sh tests/shell/*.sh
+
+      - name: 执行单元测试
+        run: bash scripts/test/test.sh --layer unit
+
+      - name: 执行集成测试
+        run: bash scripts/test/test.sh --layer integration

@@ -93,6 +93,29 @@ WRAPPER_VALUE_OPTIONS = {
     "sudo": {"-g", "-h", "-p", "-r", "-t", "-u", "-C", "--group", "--host", "--prompt", "--role", "--type", "--user"},
 }
 
+DENY_COMMANDS = {
+    "dd",
+    "diskutil",
+    "mkfs",
+    "poweroff",
+    "reboot",
+    "rm",
+    "shutdown",
+    "truncate",
+}
+ASK_COMMANDS = {
+    "chmod",
+    "chown",
+    "cp",
+    "git",
+    "ln",
+    "mkdir",
+    "mv",
+    "sed",
+    "tee",
+    "touch",
+}
+
 COMMAND_SPLIT_RE = re.compile(r"\s*(?:&&|\|\||[;|])\s*")
 ASSIGNMENT_RE = re.compile(r"^[A-Za-z_][A-Za-z0-9_]*=.*$")
 WRITE_OPERATOR_RE = re.compile(r"(^|[^\d<])>>?|2>>?|&>|1>|2>|<<<")
@@ -102,6 +125,7 @@ SUBSHELL_RE = re.compile(r"`|\$\(")
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser()
     parser.add_argument("--host", choices=["claude", "codex"], required=True)
+    parser.add_argument("--classify", help="直接分类一个命令并输出 JSON，不读取 stdin payload")
     return parser.parse_args()
 
 
@@ -236,6 +260,84 @@ def segment_is_readonly(segment: str) -> bool:
     return False
 
 
+def segment_has_deny_risk(segment: str) -> bool:
+    try:
+        tokens = shlex.split(segment, posix=True)
+    except ValueError:
+        return False
+
+    tokens = skip_wrapper_tokens(tokens)
+    if not tokens:
+        return False
+
+    command = Path(tokens[0]).name.lower()
+    if command in {"rm", "truncate", "dd", "mkfs", "shutdown", "reboot", "poweroff"}:
+        return True
+    if command == "diskutil" and any(token == "eraseDisk" for token in tokens[1:]):
+        return True
+    if command == "git" and len(tokens) >= 3:
+        if tokens[1] == "reset" and "--hard" in tokens[2:]:
+            return True
+        if tokens[1] == "clean" and any(token in {"-fd", "-fdx", "-xdf"} for token in tokens[2:]):
+            return True
+    return False
+
+
+def segment_has_write_risk(segment: str) -> bool:
+    if WRITE_OPERATOR_RE.search(segment):
+        return True
+    if SUBSHELL_RE.search(segment):
+        return True
+    if " tee " in f" {segment} " or segment.endswith(" tee") or segment.startswith("tee "):
+        return True
+
+    try:
+        tokens = shlex.split(segment, posix=True)
+    except ValueError:
+        return True
+
+    tokens = skip_wrapper_tokens(tokens)
+    if not tokens:
+        return False
+
+    command = Path(tokens[0]).name.lower()
+    if command in {"chmod", "chown", "cp", "ln", "mkdir", "mv", "tee", "touch", "truncate"}:
+        return True
+    if command == "sed" and ("-i" in tokens or "--in-place" in tokens):
+        return True
+    if command == "git" and len(tokens) >= 2 and tokens[1] in {"add", "apply", "checkout", "cherry-pick", "commit", "merge", "rebase", "restore"}:
+        return True
+    return False
+
+
+def classify_command(command: str) -> dict:
+    normalized = command.strip()
+    if not normalized:
+        return {"verdict": "ask", "riskLevel": "medium", "reason": "super-stack: 空命令，回退默认确认流"}
+
+    segments = split_segments(normalized)
+    if any(segment_has_deny_risk(segment) for segment in segments):
+        return {"verdict": "deny", "riskLevel": "high", "reason": "super-stack: 检测到高风险命令，已拒绝执行"}
+
+    if command_is_readonly(normalized):
+        return {"verdict": "allow", "riskLevel": "low", "reason": "super-stack: 只读命令自动放行"}
+
+    if any(segment_has_write_risk(segment) for segment in segments):
+        return {"verdict": "ask", "riskLevel": "medium", "reason": "super-stack: 检测到写入或副作用迹象，保持默认确认流"}
+
+    try:
+        tokens = shlex.split(segments[0], posix=True)
+    except ValueError:
+        return {"verdict": "ask", "riskLevel": "medium", "reason": "super-stack: 命令解析失败，保持默认确认流"}
+
+    tokens = skip_wrapper_tokens(tokens)
+    command_name = Path(tokens[0]).name.lower() if tokens else ""
+    if command_name in ASK_COMMANDS or command_name in DENY_COMMANDS:
+        return {"verdict": "ask", "riskLevel": "medium", "reason": "super-stack: 非只读命令，保持默认确认流"}
+
+    return {"verdict": "ask", "riskLevel": "medium", "reason": "super-stack: 未命中只读规则，保持默认确认流"}
+
+
 def command_is_readonly(command: str) -> bool:
     normalized = command.strip()
     if not normalized:
@@ -247,27 +349,27 @@ def command_is_readonly(command: str) -> bool:
     return all(segment_is_readonly(segment) for segment in split_segments(normalized))
 
 
-def build_allow_response(command: str, host: str) -> dict:
-    reason = "super-stack: 只读命令自动放行"
+def build_decision_response(command: str, host: str, verdict: str, reason: str, risk_level: str) -> dict:
     system_message = f"{reason} -> {command}"
 
     response = {
-        "permissionDecision": "allow",
+        "permissionDecision": verdict,
         "reason": reason,
         "systemMessage": system_message,
         "hookSpecificOutput": {
-            "permissionDecision": "allow",
+            "permissionDecision": verdict,
             "permissionDecisionReason": reason,
+            "riskLevel": risk_level,
         },
     }
 
     if host == "codex":
-        response["decision"] = "allow"
+        response["decision"] = verdict
 
     return response
 
 
-def append_log(payload: dict, verdict: str, command: str) -> None:
+def append_log(payload: dict, verdict: str, risk_level: str, command: str) -> None:
     cwd = payload.get("cwd") or os.getcwd()
     planning_dir = Path(cwd) / ".planning"
     if not planning_dir.exists():
@@ -275,11 +377,15 @@ def append_log(payload: dict, verdict: str, command: str) -> None:
 
     log_path = planning_dir / ".super-stack-readonly-hook.log"
     with log_path.open("a", encoding="utf-8") as handle:
-        handle.write(f"{verdict}\t{command}\n")
+        handle.write(f"{verdict}\t{risk_level}\t{command}\n")
 
 
 def main() -> int:
     args = parse_args()
+    if args.classify is not None:
+        print(json.dumps(classify_command(args.classify), ensure_ascii=False))
+        return 0
+
     payload = load_payload()
 
     if not is_shell_tool(payload):
@@ -291,12 +397,22 @@ def main() -> int:
         print("{}")
         return 0
 
-    if command_is_readonly(command):
-        append_log(payload, "allow", command)
-        print(json.dumps(build_allow_response(command, args.host), ensure_ascii=False))
+    decision = classify_command(command)
+    verdict = decision["verdict"]
+    reason = decision["reason"]
+    risk_level = decision["riskLevel"]
+
+    if verdict == "allow":
+        append_log(payload, verdict, risk_level, command)
+        print(json.dumps(build_decision_response(command, args.host, verdict, reason, risk_level), ensure_ascii=False))
         return 0
 
-    append_log(payload, "pass", command)
+    if verdict == "deny":
+        append_log(payload, verdict, risk_level, command)
+        print(json.dumps(build_decision_response(command, args.host, verdict, reason, risk_level), ensure_ascii=False))
+        return 0
+
+    append_log(payload, verdict, risk_level, command)
     print("{}")
     return 0
 
