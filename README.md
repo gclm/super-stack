@@ -213,6 +213,7 @@ cd /Users/gclm/Codes/ai/claude-stack-plugin
 ```bash
 ./scripts/setup-browser.sh
 ./scripts/check-browser-capability.sh
+./scripts/smoke-test-browser-extraction.sh --url "https://example.com/page" --output test/browser-smoke.md
 ```
 
 当前默认结论：
