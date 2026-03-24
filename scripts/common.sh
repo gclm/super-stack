@@ -42,6 +42,30 @@ resolve_codex_bin() {
   return 1
 }
 
+resolve_claude_bin() {
+  if [[ -n "${CLAUDE_BIN:-}" ]]; then
+    printf '%s\n' "$CLAUDE_BIN"
+    return 0
+  fi
+
+  if command -v claude >/dev/null 2>&1; then
+    command -v claude
+    return 0
+  fi
+
+  if [[ -x "${HOME}/.local/bin/claude" ]]; then
+    printf '%s\n' "${HOME}/.local/bin/claude"
+    return 0
+  fi
+
+  if [[ -x "/usr/local/bin/claude" ]]; then
+    printf '/usr/local/bin/claude\n'
+    return 0
+  fi
+
+  return 1
+}
+
 copy_tree() {
   local src="$1"
   local dest="$2"

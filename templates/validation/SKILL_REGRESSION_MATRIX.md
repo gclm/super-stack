@@ -32,6 +32,8 @@
 | R8 | 启动链与工具链噪音检查 | `qa` | | | |
 | R9 | 验证样本 vs 产品实现 | `brainstorm` / `verify` | | | |
 | R10 | 参考结构复用 vs 直接复用实现 | `brainstorm` / `frontend-refactor` | | | |
+| R11 | 浏览器侧故障排查路由 | `browse` | | | |
+| R12 | 浏览器自动化能力是否已启用 | browse capability check | | | |
 
 ## 需要重点记录的真实证据
 

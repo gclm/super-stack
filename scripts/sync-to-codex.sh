@@ -21,6 +21,7 @@ ensure_dir "$USER_SKILLS_DEST"
 copy_tree "${REPO_ROOT}/.agents" "${STACK_DEST}/.agents"
 copy_tree "${REPO_ROOT}/protocols" "${STACK_DEST}/protocols"
 copy_tree "${REPO_ROOT}/templates" "${STACK_DEST}/templates"
+copy_tree "${REPO_ROOT}/scripts" "${STACK_DEST}/scripts"
 copy_tree "${REPO_ROOT}/.codex" "${STACK_DEST}/.codex"
 cp "${REPO_ROOT}/AGENTS.md" "${STACK_DEST}/AGENTS.md"
 cp "${REPO_ROOT}/README.md" "${STACK_DEST}/README.md"
@@ -48,10 +49,12 @@ Use \`${STACK_DEST}/AGENTS.md\` as the global workflow source.
 EOF
 
 write_if_missing "${REPO_ROOT}/.codex/config.toml" "${CODEX_HOME}/config.toml"
+bash "${SCRIPT_DIR}/merge-codex-hooks.sh"
 
 log "Codex global assets copied into ${CODEX_HOME}"
 log "Skills installed to ${USER_SKILLS_DEST}"
 log "Legacy compatibility mirrors installed to ${LEGACY_SKILLS_DEST}"
 log "Global AGENTS routing updated in ${CODEX_HOME}/AGENTS.md"
+log "Codex hooks merged into ${CODEX_HOME}/config.toml"
 log "Global-first strategy active for Codex; use project-level files only as thin overrides."
 log "If you already use a custom ~/.codex/config.toml, review it before manually merging super-stack settings."

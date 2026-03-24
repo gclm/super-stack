@@ -30,7 +30,10 @@ Use \`${DEST}/AGENTS.md\` as the shared global workflow source.
 - Treat global super-stack as the default system, and project-level files only as thin overrides.
 EOF
 
+bash "${SCRIPT_DIR}/merge-claude-hooks.sh"
+
 log "Claude global assets copied to ${DEST}"
 log "Claude global skills mirrored to ${SKILLS_DEST}"
 log "Global CLAUDE routing updated in ${CLAUDE_HOME}/CLAUDE.md"
+log "Claude hooks merged into ${CLAUDE_HOME}/settings.json"
 log "Global-first strategy active for Claude; use project-level files only as thin overrides."
