@@ -12,6 +12,7 @@ Use this skill when the task is not just frontend cleanup, but choosing or execu
 - `.planning/ROADMAP.md` and `.planning/STATE.md` if they exist
 - `.planning/CONVENTIONS.md` if it exists
 - the closest UI files, design notes, screenshots, or reference examples
+- `references/frontend-task-shaping.md` when the task could drift between marketing, product-flow, redesign, or prototype work
 - `references/reference-reuse-boundary.md` when the task involves borrowing from another product
 
 ## Goals
@@ -21,6 +22,7 @@ Use this skill when the task is not just frontend cleanup, but choosing or execu
 - make visual trade-offs explicit instead of hiding behind vague “modern UI” language
 - preserve usability while increasing distinctiveness and coherence
 - leave behind UI that can be verified with browser evidence, not only by reading code
+- keep design exploration aligned to the actual product surface instead of drifting into the wrong artifact type
 
 ## Design Rules
 
@@ -36,26 +38,31 @@ Use this skill when the task is not just frontend cleanup, but choosing or execu
 
 ## Process
 
-1. Restate the UI problem in terms of user perception, not only component structure.
-2. Surface any hidden assumptions about the audience, brand tone, or device context.
-3. If the request is under-specified, define 2-3 plausible visual directions and recommend one.
-4. Identify what must stay stable: flows, content hierarchy, design system boundaries, or accessibility constraints.
-5. Choose the visual direction and express it in concrete terms:
+1. Restate the UI problem in terms of user perception and product surface, not only component structure.
+2. Use `references/frontend-task-shaping.md` to identify the artifact type, real page coverage, and any fork/upstream boundary that should shape the work.
+3. Surface any hidden assumptions about the audience, brand tone, device context, and whether the user is asking for brand exploration or product-flow exploration.
+4. If the request is under-specified, define 2-3 plausible directions and recommend one, making clear how each direction changes the artifact type or user flow.
+5. Identify what must stay stable: flows, content hierarchy, design system boundaries, accessibility constraints, or upstream-merge boundaries.
+6. Choose the visual direction and express it in concrete terms:
    - typography
    - color
    - layout
    - motion
    - background treatment
-6. Implement or guide implementation in a way that keeps the visual language consistent across the touched surface.
-7. Verify the result in the browser when possible, especially for spacing, hierarchy, responsive behavior, and interaction polish.
+7. State the deliverable type explicitly before implementation or handoff: visual mockup, clickable prototype, or implementation-ready spec.
+8. Implement or guide implementation in a way that keeps the visual language consistent across the touched surface.
+9. Verify the result in the browser when possible, especially for spacing, hierarchy, responsive behavior, and interaction polish.
 
 ## Output
 
 Report:
 
 - UI problem being solved
+- artifact type chosen
 - visual direction chosen
 - key aesthetic decisions
+- real pages or user flows the design is covering
 - stability constraints preserved
+- whether upstream-merge boundaries or reference-reuse boundaries influenced the design
 - browser-visible evidence or verification path
 - remaining risks, especially where the UI may still feel generic

@@ -7,6 +7,12 @@ description: Run a structured quality pass using the strongest available evidenc
 
 Use this skill when the user wants validation beyond code review, especially for user-facing flows, regressions, staging checks, or pre-ship confidence.
 
+Prefer this skill when confidence depends on runtime interaction, smoke paths, browser checks, staging behavior, or other user-visible flows.
+Do not use this skill as the default path for diff audit or narrow completion proof:
+
+- use `review` when the user mainly wants findings on an existing change
+- use `verify` when the main question is whether a requested result is complete and a narrower proof path exists
+
 ## Read First
 
 - `.planning/REQUIREMENTS.md` if it exists
@@ -25,6 +31,14 @@ Use this skill when the user wants validation beyond code review, especially for
 - produce a clear report the user can act on
 - detect host, toolchain, and startup-path noise that could mislead later work
 - keep CI-capable checks separate from host-runtime-only checks so confidence is not overstated
+
+## Rules
+
+- choose the smallest QA tier that gives meaningful confidence
+- prefer runtime evidence over static speculation when the question is user-visible behavior
+- keep environment/setup issues separate from confirmed product issues
+- if the task can be fully answered by narrow completion evidence, route back to `verify`
+- if the task is really about code/diff risk rather than runtime validation, route back to `review`
 
 Choose the smallest tier that gives useful confidence.
 
@@ -58,6 +72,7 @@ Include lightweight runtime hygiene checks when they are relevant to the task:
 - default run entrypoints
 - desktop or service startup noise
 - config or asset issues that break local development before product logic is exercised
+- distinguish missing binaries from shells that failed to load version managers such as `fnm`, `nvm`, `asdf`, or `mise`
 
 ## Report Format
 
@@ -70,6 +85,7 @@ Produce:
 - issues not reproduced
 - gaps or limits
 - evidence tier used for each major check when confidence depends on the environment
+- environment-boundary notes when CI, local smoke, or real host-runtime evidence cannot be treated as equivalent
 
 For each issue include:
 
@@ -80,7 +96,7 @@ For each issue include:
 
 ## State Updates
 
-If `.planning/STATE.md` exists, update current focus or add a decision note when QA changes release confidence.
+If `.planning/STATE.md` exists, update current focus or add a decision note when QA changes release confidence, reveals a new blocker, or proves that a supposed product issue is actually a runtime/setup issue.
 
 ## Output
 

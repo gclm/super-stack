@@ -15,6 +15,7 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 - `.planning/CONVENTIONS.md` if it exists
 - relevant project docs or user-provided reference material
 - `references/scope-modes.md` when the project may be a validation sample, staged hybrid, or direct product path
+- `references/request-shaping.md` when hidden assumptions, design intent, or artifact type could change the outcome
 
 ## Goals
 
@@ -31,12 +32,13 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 
 1. Read existing `.planning/` files if they exist.
 2. Identify whether the user is asking for product delivery, a validation sample, or an exploratory comparison.
-3. If the problem is likely shaped by hidden assumptions, list the main assumptions, missing information, and the most common mistake before asking for more input.
-4. Ask only the minimum clarifying questions needed to avoid risky assumptions.
-5. Summarize the request as concrete requirements, scope boundaries, and non-goals.
-6. Capture project conventions that will affect follow-up stages, such as documentation language, commit rules, or review expectations.
-7. Persist the updated understanding into planning files.
-8. Set `STATE.md` focus to planning.
+3. Use `references/request-shaping.md` when hidden assumptions, design intent, or artifact type could change the path.
+4. If the problem is likely shaped by hidden assumptions, list the main assumptions, missing information, and the most common mistake before asking for more input.
+5. Ask only the minimum clarifying questions needed to avoid risky assumptions.
+6. Summarize the request as concrete requirements, scope boundaries, and non-goals.
+7. Capture project conventions that will affect follow-up stages, such as documentation language, commit rules, or review expectations.
+8. Persist the updated understanding into planning files.
+9. Set `STATE.md` focus to planning.
 
 ## Output
 
@@ -44,6 +46,7 @@ Tell the user:
 
 - what problem is being solved
 - what assumptions or unknowns materially affect the answer when relevant
+- what artifact type or exploration mode was identified when relevant
 - what was captured
 - what remains uncertain
 - what scope mode or conventions were fixed early

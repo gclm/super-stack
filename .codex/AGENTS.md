@@ -4,14 +4,15 @@ This file supplements the root `AGENTS.md` for Codex-specific behavior.
 
 ## Source of Truth
 
-Prefer the shared core:
+Shared workflow truth lives in:
 
 - root `AGENTS.md`
 - `.planning/`
 - `protocols/`
 - `.agents/skills/`
 
-Use this file to make Codex behavior explicit when automatic skill execution is weak or host-dependent.
+Use this file only for Codex-specific execution details.
+Do not duplicate shared routing, stage definitions, language defaults, or quality boundaries here unless Codex needs an explicit host-side override.
 
 ## Codex Operating Model
 
@@ -27,44 +28,8 @@ Default behavior:
 
 In practice, this means Codex should behave as if `AGENTS.md` is the router and `.agents/skills/` is the manual.
 
-Supporting skills are also available for cross-stage execution:
-
-- `debug`
-- `tdd-execution`
-- `release-check`
-- `frontend-refactor`
-- `bugfix-verification`
-- `api-change-check`
-- `database-design`
-- `api-design`
-- `architecture-design`
-- `migration-design`
-- `query-optimization`
-- `backend-refactor`
-- `integration-design`
-- `service-boundary-review`
-- `scalability-check`
-- `observability-design`
-- `incident-debug`
-- `security-review`
-- `performance-investigation`
-- `browse`
-
-## Workflow Routing For Codex
-
-Use these stages explicitly:
-
-- `discuss` for fuzzy requests and scope clarification
-- `brainstorm` for solution comparison
-- `map-codebase` for brownfield onboarding
-- `plan` for phased task planning
-- `build` for implementation
-- `review` for findings-first code review
-- `verify` for evidence collection
-- `qa` for user-flow validation
-- `ship` for release-readiness and handoff
-
-When the user names one of these stages or when the task obviously matches one, read the corresponding file under `.agents/skills/` if you need detailed steps.
+When shared workflow rules change, update root `AGENTS.md` first.
+Only update this adapter when the change is truly Codex-specific.
 
 ## Codex Stage Procedure
 
@@ -78,78 +43,14 @@ For every non-trivial request:
 
 Treat this as a fixed procedure, not a suggestion.
 
-## Codex Stage Checks
-
-Before acting in a stage, perform the corresponding check:
-
-- `discuss`
-  - ask: do I understand outcome, scope, constraints, and success signal?
-- `brainstorm`
-  - ask: is there a real decision with trade-offs, not just missing implementation?
-- `map-codebase`
-  - ask: would implementation be risky without understanding current structure?
-- `plan`
-  - ask: do I have enough clarity to break work into bounded tasks?
-- `build`
-  - ask: do I know what to change, where to change it, and how to verify it?
-- `review`
-  - ask: is there a concrete diff or implemented behavior to inspect?
-- `verify`
-  - ask: can I produce current evidence for the requested outcome?
-- `qa`
-  - ask: is there a flow or user-visible surface worth validating?
-- `ship`
-  - ask: is the remaining work about readiness, not implementation?
-
-If the answer is no, route to the earlier stage that fixes the gap.
-
-Example routes:
-
-- vague feature request -> `discuss`, then `plan`
-- "which approach is better?" -> `brainstorm`, then `plan`
-- unfamiliar codebase + requested change -> `map-codebase`, then `plan` or `build`
-- "please implement task X" with enough context -> `build`
-- "review this branch" -> `review`
-- "make sure this is actually done" -> `verify`
-- "check the UI / test the flow" -> `qa`
-- "prepare to merge / release" -> `ship`
-- "find the root cause of this bug" -> `debug`
-- "drive this change with tests" -> `tdd-execution`
-- "is this release actually ready" -> `release-check`
-- "refactor this frontend without breaking flows" -> `frontend-refactor`
-- "prove this bugfix really works" -> `bugfix-verification`
-- "check whether this API change is safe for callers" -> `api-change-check`
-- "design the schema or indexes for this feature" -> `database-design`
-- "design the API contract before implementation" -> `api-design`
-- "compare service or module structure options" -> `architecture-design`
-- "plan a safe schema or data migration rollout" -> `migration-design`
-- "optimize this slow query or index strategy" -> `query-optimization`
-- "untangle this backend module without breaking behavior" -> `backend-refactor`
-- "design this service or vendor integration boundary" -> `integration-design`
-- "review whether these modules or services are split correctly" -> `service-boundary-review`
-- "check whether this design will hold up under load or growth" -> `scalability-check`
-- "design the logs, metrics, traces, or alerts for this system" -> `observability-design`
-- "help me triage this live incident or outage" -> `incident-debug`
-- "review this change for security risks" -> `security-review`
-- "investigate why this path is slow or resource-heavy" -> `performance-investigation`
-- "inspect this in the browser and verify DOM, console, network, or UI behavior" -> `browse`
-
 ## Codex Backtracking Rules
 
-Codex should backtrack explicitly when:
-
-- `build` reveals missing acceptance criteria -> go to `discuss`
-- `build` reveals task breakdown ambiguity -> go to `plan`
-- `review` finds defects -> go to `build`
-- `verify` fails to confirm outcome -> go to `build`
-- `qa` confirms defects -> go to `build`
-- `ship` lacks evidence -> go to `verify` or `qa`
-
+Use the backtracking rules from root `AGENTS.md`.
 State the backtrack in plain language so the user can follow the workflow change.
 
 ## Codex Role Escalation
 
-Use role files in `.codex/agents/` to support a stage, not replace the stage router:
+Use role files in `.codex/agents/` to support a stage, not replace the stage router from root `AGENTS.md`:
 
 - `super_stack_explorer` for read-only repository or evidence investigation
 - `super_stack_planner` for decomposition and sequencing
@@ -161,6 +62,29 @@ Recommended triggers:
 - stage blocked by planning ambiguity -> `super_stack_planner`
 - stage near merge or risky change set -> `super_stack_reviewer`
 
+Important:
+
+- `.codex/config.toml` enabling `multi_agent = true` means the host can support multi-agent orchestration, not that Codex must auto-delegate on every suitable task.
+- role escalation is still conditional on host policy, current session permissions, and an explicit decision that delegation will help more than local execution.
+- if a conversation never explicitly authorizes delegation in a host that requires that signal, multi-agent may remain unused even when config and role files are correct.
+- prefer staying local when the next critical-path step is blocked on the exact result you would delegate.
+- when the host/session allows it, Codex may auto-escalate to multi-agent based on task shape, but only after checking the conditions below instead of delegating by default.
+
+Use sub-agents only when:
+
+- the work can run in parallel without overlapping writes
+- the subtask is concrete and bounded
+- the main thread can keep making progress while the helper runs
+- the coordination cost is lower than the expected speed or quality gain
+
+Auto-escalation heuristic:
+
+- if the host/session allows delegation and the task naturally splits into independent sidecar work, Codex should prefer using the matching helper instead of staying fully local
+- if the very next critical-path action depends on the delegated result, stay local unless a helper can finish in parallel without blocking the main thread
+- if write ownership is unclear or likely to overlap, stay local or delegate read-only exploration only
+
+Read `.codex/references/multi-agent-escalation-examples.md` when a concrete example will help decide whether to delegate.
+
 ## Codex File Discipline
 
 For Codex, prefer these durable artifacts:
@@ -171,20 +95,6 @@ For Codex, prefer these durable artifacts:
 - use `.agents/skills/*/SKILL.md` as optional stage manuals
 
 Do not let important stage state live only in transient conversation if a file is available for it.
-
-## Codex Reliability Rules
-
-- Do not claim a skill was fully applied unless you actually read its `SKILL.md` or the host clearly confirms automatic execution.
-- If you are following a stage from `AGENTS.md` without opening the matching skill file, say you are following the stage router and not relying on automatic skill injection.
-- When asked why you chose a workflow, reference the stage routing in root `AGENTS.md`.
-- If a request is simple and you do not need the manual, it is fine to execute directly from the router.
-- If a request is complex and you need richer procedure, read the matching `SKILL.md` explicitly before continuing.
-
-## Default Roles
-
-- `super_stack_explorer` for read-only evidence gathering
-- `super_stack_reviewer` for correctness and risk review
-- `super_stack_planner` for structured breakdown and sequencing
 
 ## What Counts As Success
 

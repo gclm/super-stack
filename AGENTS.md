@@ -36,6 +36,7 @@ Supporting skills can be used within or between stages when appropriate:
 
 - `debug` for bug diagnosis before fixing
 - `tdd-execution` for RED -> GREEN -> REFACTOR execution
+- `skill-maintenance` for creating, refactoring, or tightening repository skills and their references
 - `release-check` for final release-readiness checks
 - `frontend-refactor` for larger UI and interaction cleanup
 - `frontend-design` for new UI direction, visual language, and anti-generic frontend execution
@@ -61,14 +62,16 @@ Supporting skills can be used within or between stages when appropriate:
 When a request arrives, decide the current stage before taking action.
 
 1. If the request is ambiguous or the desired outcome is underspecified, start at `discuss`.
-2. If the user is comparing approaches or asking "what is the best way", start at `brainstorm`.
-3. If the repository is unfamiliar or the task depends on understanding existing structure, start at `map-codebase`.
-4. If scope is already clear but task breakdown is missing, start at `plan`.
-5. If there is a current task with enough context to implement safely, go to `build`.
-6. If the user asks for audit, PR review, bug/risk identification, or pre-merge confidence, go to `review`.
-7. If implementation is done and the question is "is this actually finished", go to `verify`.
-8. If the task is user-facing validation or release-readiness validation, go to `qa`.
-9. If the work is complete and needs handoff, merge prep, or release summary, go to `ship`.
+2. If the request is a bug, failing test, flaky behavior, incorrect output, or unexplained runtime issue and the cause is not yet confirmed, start at `debug`.
+3. If the request is a behavior change or bugfix with a practical automated test path, prefer `tdd-execution` before broad `build`.
+4. If the user is comparing approaches or asking "what is the best way", start at `brainstorm`.
+5. If the repository is unfamiliar or the task depends on understanding existing structure, start at `map-codebase`.
+6. If scope is already clear but task breakdown is missing, start at `plan`.
+7. If there is a current task with enough context to implement safely, go to `build`.
+8. If the user asks for audit, PR review, merge readiness, bug/risk scan, regression review, or "帮我看看哪里有问题", go to `review`.
+9. If implementation already exists and the remaining question is whether the requested outcome was actually achieved, go to `verify`.
+10. If the task is user-facing validation, end-to-end confidence, staging checks, smoke validation, or release-candidate validation, go to `qa`.
+11. If the work is complete and needs handoff, merge prep, or release summary, go to `ship`.
 
 Do not skip backward silently. If work reveals missing context, explicitly step back to the earlier stage that is needed.
 
@@ -90,8 +93,10 @@ Use these checks before entering a stage:
   - there is already a concrete diff, branch, or implemented behavior to audit
 - `verify`
   - there is an outcome that can be checked with fresh evidence
+  - the main question is completion confidence, not broad risk discovery
 - `qa`
   - there is a user-facing flow, system interaction, or release candidate to validate
+  - the task needs runtime or flow-level confidence beyond static review
 - `ship`
   - implementation is done and the remaining work is handoff, merge prep, or release readiness
 
@@ -103,10 +108,18 @@ Use supporting skills when the problem shape requires them:
   - a behavior change should be driven by automated tests
 - `release-check`
   - readiness needs a stricter release gate than the normal `ship` summary
+- `review`
+  - the user primarily wants risks, regressions, missing tests, or merge blockers called out
+- `verify`
+  - implementation exists and the main need is evidence that the requested result is truly done
+- `qa`
+  - the user wants confidence in a real flow, staging candidate, smoke path, or user-visible behavior rather than a diff audit
 - `frontend-refactor`
   - the work is a frontend cleanup or restructuring effort, not just a small UI tweak
 - `frontend-design`
   - the task is creating or reshaping a frontend visual direction and the main risk is bland, generic, or inconsistent UI
+  - before designing, identify whether the target is a marketing surface, product workbench, redesign slice, or clickable prototype
+  - when redesigning an existing product, inspect real pages and user flows before choosing a layout direction
 - `bugfix-verification`
   - a bugfix exists and needs focused proof that the symptom is truly closed
 - `api-change-check`
@@ -153,6 +166,8 @@ Project memory lives under `.planning/` in the target project:
 - `CONVENTIONS.md` - language, commit, and project-specific engineering conventions
 
 If the project does not yet have `.planning/`, initialize it from `templates/planning/`.
+Version these planning files by default so workflow state survives across turns, hosts, and collaborators.
+Only ignore host-generated or machine-local `.planning` artifacts such as hook logs.
 
 ## Stage State Rules
 
@@ -186,39 +201,17 @@ Each stage should update or consume state predictably:
   - read: `STATE.md`, `ROADMAP.md`, diff, verification evidence
   - write: final readiness or release notes into `STATE.md` when useful
 
+When workflow defaults such as state continuity, commit conventions, language defaults, or shared operating guards matter, use `protocols/workflow-governance.md`.
+
 ## Documentation And Commit Conventions
 
-Use these defaults unless the target project explicitly overrides them:
-
-- user-facing communication should default to Chinese, including assistant replies, plan summaries, verification notes, and script prompt text
-- user-reviewable docs should default to Chinese
-- docs that need user confirmation should be written in Chinese first
-- user-facing script output, warnings, prompts, and validation summaries should default to Chinese unless an external tool requires English
-- code, config keys, commands, paths, and protocol identifiers should remain in English
-- if a repository needs bilingual docs, prefer Chinese body text with preserved English technical terms
-
-When making commits for a project that adopts super-stack defaults, use Angular commit structure with Chinese summaries:
-
-- format: `type(scope): 中文摘要`
-- examples:
-  - `feat(runtime): 增加本地运行态探测`
-  - `docs(plan): 补充阶段决策记录`
-  - `refactor(frontend): 拆分运行时页面结构`
+See `protocols/workflow-governance.md` for documentation language defaults, state continuity defaults, and commit conventions.
 
 If the project already has explicit commit rules, follow the project rule instead of this default.
 
 ## Reference Reuse Boundary
 
-When a user asks to "use" or "reference" an existing project frontend, do not assume that means copying the implementation verbatim.
-
-Default interpretation:
-
-- reuse information architecture
-- reuse interaction structure
-- reuse page hierarchy and module boundaries
-- avoid copying low-quality single-file or tightly coupled implementations directly
-
-Only inherit implementation details directly when the user clearly asks for code-level reuse or when the reference code quality is already compatible with the current project goals.
+See `protocols/workflow-governance.md` for the default interpretation of reference reuse.
 
 ## Stage Exit Criteria
 
@@ -251,10 +244,14 @@ Do not claim a later stage is complete while its exit criteria are still missing
 - Prefer evidence over memory when behavior can be verified quickly.
 - Keep edits targeted and reversible.
 - Do not claim completion without fresh verification evidence.
+- Use `protocols/workflow-governance.md` when shared operating guards matter, especially for scope backtracking, environment interpretation, design artifact typing, and fork-aware redesign work.
 - For reviews, prioritize correctness, regressions, security, and missing tests.
+- Route to `review` when the user wants findings, not implementation.
 - For debugging, follow the debug protocol instead of guessing.
-- When the task is explicitly bug diagnosis, prefer the `debug` skill before broad implementation.
-- When a behavior is testable, prefer `tdd-execution` over ad hoc implementation.
+- When the task is explicitly bug diagnosis, or when a failure exists but the root cause is not yet confirmed, route to `debug` before broad implementation.
+- Route to `verify` when implementation already exists and the real question is whether the requested outcome is actually satisfied by fresh evidence.
+- Route to `qa` when confidence depends on user-facing flow validation, runtime interaction, smoke checks, or release-candidate behavior.
+- When a behavior change or bugfix has a practical automated test path, route to `tdd-execution` before ad hoc implementation unless you can clearly justify why RED is impractical.
 - When release confidence is the real question, use `release-check` before optimistic handoff.
 - If a later-stage request lacks prerequisites, state the missing prerequisite and route to the right earlier stage.
 - Keep workflow transitions explicit in user-facing updates.
@@ -264,6 +261,14 @@ Do not claim a later stage is complete while its exit criteria are still missing
 ## Multi-Agent Guidance
 
 Use parallel agents when tasks are independent and write scopes do not overlap.
+
+Do not assume multi-agent work starts automatically just because a host has agent support enabled.
+Treat multi-agent as an explicit escalation path that requires all of the following:
+
+- the host/session actually allows sub-agent orchestration
+- the task has independent sidecar work, not one tightly coupled critical path
+- file ownership can stay disjoint or read-only
+- the expected gain is real enough to justify coordination overhead
 
 Recommended roles:
 
@@ -284,6 +289,7 @@ Bring in supporting roles when a stage needs deeper evidence:
 - use `reviewer` when changes are risky, broad, or about to be merged
 
 Do not delegate the primary user-facing workflow itself unless the host supports reliable multi-agent orchestration for that task.
+If multi-agent support exists in configuration but does not activate in practice, check host policy, current session permissions, and whether the request ever crossed the explicit escalation threshold above.
 
 ## Fallback And Backtracking Rules
 
@@ -291,10 +297,21 @@ Use these explicit backtracks:
 
 - from `build` back to `plan`
   - when the task is larger than expected or file scope is unclear
+  - when product entry shape, current-phase scope, architecture direction, database strategy, or reference-reuse boundary changed after coding began
+- from `build` back to `debug`
+  - when a bug, failing test, flaky behavior, or incorrect output is being discussed but the root cause is still unconfirmed
+- from `build` back to `tdd-execution`
+  - when the requested work is a behavior change or bugfix and a practical automated test path exists
 - from `build` back to `discuss`
   - when the request itself is ambiguous or acceptance criteria are missing
 - from `review` back to `build`
   - when findings require implementation changes
+- from `build` back to `review`
+  - when the user request is really an audit, risk scan, or merge-readiness check rather than implementation
+- from `build` back to `verify`
+  - when code already exists and the unresolved question is completion evidence
+- from `build` back to `qa`
+  - when the main work is validating a user flow, smoke path, staging candidate, or real runtime behavior
 - from `verify` back to `build`
   - when evidence shows the requested outcome is not met
 - from `qa` back to `build`
