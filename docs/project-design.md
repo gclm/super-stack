@@ -192,6 +192,7 @@ Claude Code 和 Codex 虽然都能做 agent workflow，但差异很大：
 #### 4.2.3 工程专项
 
 - `frontend-refactor`
+- `frontend-design`
 - `backend-refactor`
 - `api-design`
 - `database-design`

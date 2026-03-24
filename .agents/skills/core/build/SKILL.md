@@ -35,6 +35,7 @@ Use this skill when the project has a current task ready for execution.
 - avoid solving workflow drift by adding one-off maintenance docs when the real fix belongs in skills, planning files, or stable architecture docs
 - if the work is a validation sample, keep the scope aligned to validation instead of silently drifting into product expansion
 - when writing user-reviewable docs or decision records, prefer Chinese unless the project overrides that rule
+- when adding or editing user-facing script messages, prompts, or validation summaries, default them to Chinese unless an external interface requires English
 - when a project uses super-stack default commit rules, use Angular commit structure with Chinese summaries
 
 ## Steps

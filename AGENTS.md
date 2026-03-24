@@ -38,6 +38,7 @@ Supporting skills can be used within or between stages when appropriate:
 - `tdd-execution` for RED -> GREEN -> REFACTOR execution
 - `release-check` for final release-readiness checks
 - `frontend-refactor` for larger UI and interaction cleanup
+- `frontend-design` for new UI direction, visual language, and anti-generic frontend execution
 - `bugfix-verification` for proving a fix really closes the reported bug
 - `api-change-check` for contract drift and compatibility review
 - `database-design` for schema, constraint, and index design
@@ -104,6 +105,8 @@ Use supporting skills when the problem shape requires them:
   - readiness needs a stricter release gate than the normal `ship` summary
 - `frontend-refactor`
   - the work is a frontend cleanup or restructuring effort, not just a small UI tweak
+- `frontend-design`
+  - the task is creating or reshaping a frontend visual direction and the main risk is bland, generic, or inconsistent UI
 - `bugfix-verification`
   - a bugfix exists and needs focused proof that the symptom is truly closed
 - `api-change-check`
@@ -187,8 +190,10 @@ Each stage should update or consume state predictably:
 
 Use these defaults unless the target project explicitly overrides them:
 
+- user-facing communication should default to Chinese, including assistant replies, plan summaries, verification notes, and script prompt text
 - user-reviewable docs should default to Chinese
 - docs that need user confirmation should be written in Chinese first
+- user-facing script output, warnings, prompts, and validation summaries should default to Chinese unless an external tool requires English
 - code, config keys, commands, paths, and protocol identifiers should remain in English
 - if a repository needs bilingual docs, prefer Chinese body text with preserved English technical terms
 

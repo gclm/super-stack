@@ -23,6 +23,7 @@ Use this skill when the user has a feature idea, architecture question, workflow
 - explain trade-offs in plain language
 - recommend the strongest option
 - persist the decision context for later planning
+- expose hidden assumptions and missing facts when they materially change which option is best
 
 ## When To Use
 
@@ -40,6 +41,12 @@ Good triggers:
 Do not use this skill when the work is already obvious and low risk.
 
 ## Approach Rules
+
+Before comparing options, if the problem statement is likely carrying hidden assumptions, briefly surface:
+
+- the main hidden assumptions
+- the missing information that would change the recommendation
+- the most common mistake people make on this kind of decision
 
 For each option, include:
 
@@ -63,11 +70,12 @@ When a reference project is involved, explicitly say whether each option reuses:
 Use this structure:
 
 1. Problem framing
-2. Option A
-3. Option B
-4. Option C if a third option adds real value
-5. Recommendation
-6. Open questions, if any
+2. Assumptions and missing information when relevant
+3. Option A
+4. Option B
+5. Option C if a third option adds real value
+6. Recommendation
+7. Open questions, if any
 
 ## Persistence
 

@@ -41,3 +41,5 @@ Report:
 - partially verified
 - not verified
 - any evidence-boundary warning, especially when CI passes but real host validation was not run
+
+Use Chinese for user-facing verification summaries by default, while keeping commands, paths, and protocol identifiers in English.

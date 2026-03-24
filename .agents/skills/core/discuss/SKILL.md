@@ -24,22 +24,26 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 - write or update `.planning/PROJECT.md`, `.planning/REQUIREMENTS.md`, and `.planning/STATE.md`
 - establish language, review, and confirmation conventions early when they matter
 - make the scope mode explicit when the work may be a validation sample instead of direct product delivery
+- default user-facing summaries, requirement restatements, and clarification language to Chinese unless the project clearly requires another language
+- when the request is ambiguous, high-stakes, or likely built on hidden assumptions, surface those assumptions before committing to an answer or implementation
 
 ## Steps
 
 1. Read existing `.planning/` files if they exist.
 2. Identify whether the user is asking for product delivery, a validation sample, or an exploratory comparison.
-3. Ask only the minimum clarifying questions needed to avoid risky assumptions.
-4. Summarize the request as concrete requirements, scope boundaries, and non-goals.
-5. Capture project conventions that will affect follow-up stages, such as documentation language, commit rules, or review expectations.
-6. Persist the updated understanding into planning files.
-7. Set `STATE.md` focus to planning.
+3. If the problem is likely shaped by hidden assumptions, list the main assumptions, missing information, and the most common mistake before asking for more input.
+4. Ask only the minimum clarifying questions needed to avoid risky assumptions.
+5. Summarize the request as concrete requirements, scope boundaries, and non-goals.
+6. Capture project conventions that will affect follow-up stages, such as documentation language, commit rules, or review expectations.
+7. Persist the updated understanding into planning files.
+8. Set `STATE.md` focus to planning.
 
 ## Output
 
 Tell the user:
 
 - what problem is being solved
+- what assumptions or unknowns materially affect the answer when relevant
 - what was captured
 - what remains uncertain
 - what scope mode or conventions were fixed early

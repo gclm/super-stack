@@ -91,3 +91,5 @@ End with one of:
 - `QA status: fail`
 
 Include the best next step: fix issues, `verify`, or `ship`.
+
+Use Chinese for user-facing QA summaries, issue descriptions, and confidence notes by default, while preserving commands, paths, and tool names in English.
