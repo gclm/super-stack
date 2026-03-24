@@ -12,7 +12,9 @@ Use this skill when the user has a feature idea, architecture question, workflow
 - `.planning/PROJECT.md` if it exists
 - `.planning/REQUIREMENTS.md` if it exists
 - `.planning/STATE.md` if it exists
+- `.planning/CONVENTIONS.md` if it exists
 - relevant local code and docs when the request targets an existing codebase
+- `references/reference-reuse-boundary.md` when the decision involves reusing another project's structure or implementation
 
 ## Goals
 
@@ -31,6 +33,8 @@ Good triggers:
 - data model or API shape decision
 - background job or workflow choice
 - frontend interaction pattern choice
+- validation sample vs product implementation path
+- reference structure reuse vs direct implementation reuse
 - "what's the best way to do this?"
 
 Do not use this skill when the work is already obvious and low risk.
@@ -47,6 +51,12 @@ For each option, include:
 - when this option is best
 
 Keep options credible. Avoid fake alternatives that only exist to make one recommendation look easy.
+
+When a reference project is involved, explicitly say whether each option reuses:
+
+- information architecture
+- interaction structure
+- implementation details
 
 ## Decision Format
 
@@ -68,6 +78,7 @@ If `.planning/PROJECT.md` or `.planning/REQUIREMENTS.md` exist, add a concise no
 - chosen approach
 - important rejected alternative
 - why the chosen option won
+- the scope mode, such as validation-first or implementation-first
 
 If planning files do not exist yet, provide the recommendation in chat and note that `discuss` or `plan` should capture it next.
 

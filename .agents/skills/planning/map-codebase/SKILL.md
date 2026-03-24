@@ -11,7 +11,9 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 
 - root `AGENTS.md`
 - nearby docs such as `README*`, `docs/`, architecture notes, and config files
+- `.planning/CONVENTIONS.md` if it exists
 - `templates/planning/codebase/` for output structure
+- `references/runtime-footprint.md` when important evidence may live outside the repository
 
 ## Goals
 
@@ -42,7 +44,8 @@ If `.planning/` does not exist, initialize it first from `templates/planning/`.
 3. Source tree layout
 4. Test layout and commands
 5. External integrations
-6. Hotspots, risks, and unclear areas
+6. Host-runtime footprint outside the repo when relevant
+7. Hotspots, risks, and unclear areas
 
 ## Evidence Rules
 
@@ -50,6 +53,7 @@ If `.planning/` does not exist, initialize it first from `templates/planning/`.
 - distinguish confirmed facts from inference
 - prefer short concrete notes over long prose
 - if something is unknown, say it is unknown
+- distinguish repository evidence from host-runtime evidence such as local config, logs, launch agents, or running processes
 
 ## File Expectations
 
@@ -89,6 +93,7 @@ Capture:
 - file organization patterns
 - code style habits
 - branching or release conventions if visible
+- documentation language and commit conventions if visible
 
 ### `INTEGRATIONS.md`
 

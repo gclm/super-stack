@@ -11,6 +11,7 @@ Use this skill when the problem is a bug, failing test, flaky behavior, incorrec
 
 - `protocols/debug.md`
 - `.planning/STATE.md` if it exists
+- `.planning/CONVENTIONS.md` if it exists
 - the closest failing test, log, stack trace, or reproduction steps
 
 ## Goals
@@ -19,6 +20,7 @@ Use this skill when the problem is a bug, failing test, flaky behavior, incorrec
 - identify the confirmed root cause before editing
 - avoid guess-and-patch behavior
 - capture what was verified and what is still uncertain
+- separate code bugs from environment, startup, or toolchain noise when both are possible
 
 ## Steps
 
@@ -30,6 +32,7 @@ Use this skill when the problem is a bug, failing test, flaky behavior, incorrec
    - stack traces
    - screenshots
    - request/response traces
+   - environment and startup evidence when the symptom may come from shell, runtime, or packaging issues
 4. Form one concrete hypothesis at a time.
 5. Test the hypothesis before making a broader fix.
 6. Apply the smallest confirmed fix.
@@ -44,6 +47,7 @@ Report:
 - symptom
 - reproduction
 - root cause
+- whether the cause was code, environment, or mixed
 - fix
 - verification
 - remaining risk

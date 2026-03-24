@@ -53,6 +53,47 @@
 - `scripts/`
   - 安装与同步脚本
 
+## 默认工程约定
+
+如果目标项目没有单独声明规则，`super-stack` 当前默认采用以下约定：
+
+- 需要用户阅读、确认、评审的文档默认使用中文
+- 代码、命令、配置键、路径、协议名保持英文
+- Git commit 默认采用 Angular 结构，但摘要使用中文
+
+默认提交格式：
+
+```text
+type(scope): 中文摘要
+```
+
+例如：
+
+```text
+feat(runtime): 增加本地运行态探测
+docs(validation): 补充真实项目验证记录
+refactor(frontend): 拆分运行时页面结构
+```
+
+如果某个项目已经有明确约定，以项目约定优先。
+
+## 参考项目复用边界
+
+当用户说“参考某个项目的前端”时，`super-stack` 默认理解为：
+
+- 复用信息架构
+- 复用交互结构
+- 复用模块边界和页面层次
+
+而不是默认把参考项目的前端实现原样拷贝过来。
+
+这样做的原因是：
+
+- 很多参考项目适合复用产品结构，但不适合直接继承实现质量
+- 对技能验证样本来说，可维护的最小骨架通常比复制历史实现更有验证价值
+
+只有在用户明确要求“直接复用实现”或参考项目前端质量已经足够好时，才应进入代码级继承路径。
+
 ## 核心工作流
 
 默认阶段链路是：
@@ -271,6 +312,8 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 如果你想把 super-stack 用到真实仓库里做回归验证，可以基于这个模板记录验证过程：
 
 - [templates/validation/REAL_PROJECT_VALIDATION.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/REAL_PROJECT_VALIDATION.md)
+- [templates/validation/SKILL_REGRESSION_MATRIX.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/SKILL_REGRESSION_MATRIX.md)
+- [templates/validation/WORKFLOW_EXPERIENCE_VALIDATION.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/WORKFLOW_EXPERIENCE_VALIDATION.md)
 
 建议至少记录：
 
@@ -279,6 +322,20 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 - 期望命中的 stage 或 skill
 - 实际证据
 - 是否需要回调技能定义
+
+如果你想做一轮覆盖面更完整的全局回归，可以运行：
+
+```bash
+./scripts/smoke-test-codex-regression-suite.sh
+```
+
+这个脚本会额外覆盖：
+
+- 验证样本 vs 产品实现边界
+- 参考结构复用 vs 直接复用实现
+- 环境预检
+- 默认运行入口回归
+- 启动链与工具链噪音
 
 这个脚本会验证 Codex 在空目录下是否还能稳定命中：
 

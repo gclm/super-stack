@@ -147,6 +147,7 @@ Project memory lives under `.planning/` in the target project:
 - `REQUIREMENTS.md` - numbered requirements and acceptance notes
 - `ROADMAP.md` - phases, tasks, dependencies
 - `STATE.md` - current status, active phase, blockers, decisions
+- `CONVENTIONS.md` - language, commit, and project-specific engineering conventions
 
 If the project does not yet have `.planning/`, initialize it from `templates/planning/`.
 
@@ -181,6 +182,38 @@ Each stage should update or consume state predictably:
 - `ship`
   - read: `STATE.md`, `ROADMAP.md`, diff, verification evidence
   - write: final readiness or release notes into `STATE.md` when useful
+
+## Documentation And Commit Conventions
+
+Use these defaults unless the target project explicitly overrides them:
+
+- user-reviewable docs should default to Chinese
+- docs that need user confirmation should be written in Chinese first
+- code, config keys, commands, paths, and protocol identifiers should remain in English
+- if a repository needs bilingual docs, prefer Chinese body text with preserved English technical terms
+
+When making commits for a project that adopts super-stack defaults, use Angular commit structure with Chinese summaries:
+
+- format: `type(scope): 中文摘要`
+- examples:
+  - `feat(runtime): 增加本地运行态探测`
+  - `docs(plan): 补充阶段决策记录`
+  - `refactor(frontend): 拆分运行时页面结构`
+
+If the project already has explicit commit rules, follow the project rule instead of this default.
+
+## Reference Reuse Boundary
+
+When a user asks to "use" or "reference" an existing project frontend, do not assume that means copying the implementation verbatim.
+
+Default interpretation:
+
+- reuse information architecture
+- reuse interaction structure
+- reuse page hierarchy and module boundaries
+- avoid copying low-quality single-file or tightly coupled implementations directly
+
+Only inherit implementation details directly when the user clearly asks for code-level reuse or when the reference code quality is already compatible with the current project goals.
 
 ## Stage Exit Criteria
 

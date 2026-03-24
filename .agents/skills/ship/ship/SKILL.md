@@ -11,21 +11,25 @@ Use this skill when implementation is complete enough to prepare a handoff, PR, 
 
 - `.planning/STATE.md`
 - `.planning/ROADMAP.md`
+- `.planning/CONVENTIONS.md` if it exists
 - `protocols/verify.md`
 - project release conventions
+- `references/handoff-checks.md` when the handoff needs a sharper completion checklist
 
 ## Goals
 
 - confirm the work is ready to hand off
 - identify remaining release blockers
 - summarize the change cleanly
+- ensure the reported readiness matches the intended scope rather than an accidentally expanded one
 
 ## Steps
 
 1. Confirm the active work is verified.
 2. Inspect diff and project status.
-3. Note release blockers, docs drift, or rollback concerns.
-4. Produce a concise release summary.
+3. Check whether the delivered work still matches the originally intended scope.
+4. Note release blockers, docs drift, commit-readiness, or rollback concerns.
+5. Produce a concise release summary.
 
 ## Output
 
@@ -33,4 +37,5 @@ Include:
 
 - readiness status
 - outstanding blockers, if any
+- scope alignment
 - recommended next action such as commit, PR, deploy, or follow-up fix

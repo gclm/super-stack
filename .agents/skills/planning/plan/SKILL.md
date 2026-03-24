@@ -12,7 +12,9 @@ Use this skill after requirements are clear enough to define delivery phases.
 - `.planning/PROJECT.md`
 - `.planning/REQUIREMENTS.md`
 - `.planning/STATE.md`
+- `.planning/CONVENTIONS.md` if it exists
 - `protocols/tdd.md`
+- `references/planning-modes.md` when phase boundaries depend on validation-first or staged delivery
 
 ## Goals
 
@@ -20,14 +22,17 @@ Use this skill after requirements are clear enough to define delivery phases.
 - break work into phases and tasks
 - make tasks testable and bounded
 - update roadmap and state files
+- preserve the chosen scope mode, such as validation-first or implementation-first
+- reflect project conventions in planning outputs, especially language and commit expectations
 
 ## Steps
 
 1. Identify the simplest viable architecture.
-2. Group work into phases with visible value.
-3. Define tasks with files, verification, and dependencies.
-4. Update `.planning/ROADMAP.md`.
-5. Update `.planning/STATE.md` with active phase and current focus.
+2. Confirm the planning mode: validation-first, implementation-first, or staged hybrid.
+3. Group work into phases with visible value.
+4. Define tasks with files, verification, dependencies, and environment assumptions when relevant.
+5. Update `.planning/ROADMAP.md`.
+6. Update `.planning/STATE.md` with active phase and current focus.
 
 ## Task Format
 
@@ -37,12 +42,14 @@ For each task include:
 - likely files
 - how it will be verified
 - dependencies or blockers
+- environment or runtime assumptions when they could block the task
 
 ## Output
 
 Tell the user:
 
 - chosen approach
+- planning mode and major boundary being preserved
 - number of phases
 - active phase
 - recommended next step: `build`
