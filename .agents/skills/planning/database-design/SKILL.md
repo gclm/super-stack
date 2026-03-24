@@ -13,6 +13,7 @@ Use this skill when a task changes persistence structure, query shape, indexing,
 - query patterns and access paths
 - data integrity or retention constraints
 - `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
+- `references/schema-checklist.md` when you need a stronger schema checklist
 
 ## Goals
 
@@ -26,9 +27,11 @@ Use this skill when a task changes persistence structure, query shape, indexing,
 1. Restate the entities, relationships, and lifecycle rules.
 2. Identify the dominant read and write paths.
 3. Design the schema and constraints around those paths.
-4. Check indexing, uniqueness, foreign key, and soft-delete implications.
+4. Consider indexing, integrity, and data-lifecycle implications.
 5. Consider migration and backfill cost if the data already exists.
 6. Report trade-offs rather than pretending there is only one valid shape.
+
+Read `references/schema-checklist.md` when you need a more detailed schema pass.
 
 ## Output
 

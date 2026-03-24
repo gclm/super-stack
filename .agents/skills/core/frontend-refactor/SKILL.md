@@ -12,6 +12,7 @@ Use this skill when a frontend change is larger than a simple bugfix and the rea
 - `.planning/ROADMAP.md` and `.planning/STATE.md` if they exist
 - the closest layout, state, and routing files involved
 - any existing design or product notes that constrain the refactor
+- `references/refactor-slices.md` when the work needs safer slicing
 
 ## Goals
 
@@ -22,18 +23,14 @@ Use this skill when a frontend change is larger than a simple bugfix and the rea
 
 ## Steps
 
-1. Define the refactor target:
-   - layout
-   - component structure
-   - state flow
-   - routing
-   - styling system
-   - interaction consistency
+1. Define the refactor target.
 2. Identify what must stay behaviorally stable.
 3. Split the work into safe slices instead of rewriting everything at once.
 4. Refactor shared patterns first when multiple screens repeat them.
 5. Keep visual polish subordinate to clarity, reuse, and predictable behavior.
 6. Verify both UI structure and the most important user flows after each slice.
+
+Read `references/refactor-slices.md` when you need a more explicit slicing strategy.
 
 ## Output
 

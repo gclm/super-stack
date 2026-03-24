@@ -12,6 +12,7 @@ Use this skill when the user asks for a review or before merging meaningful chan
 - `protocols/review.md`
 - diff against the target base
 - impacted tests and relevant project docs
+- `references/review-checklist.md` when the change is broad or risky
 
 ## Goals
 

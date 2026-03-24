@@ -13,6 +13,7 @@ Use this skill when the user wants validation beyond code review, especially for
 - `.planning/STATE.md` if it exists
 - `protocols/verify.md`
 - project docs for local run, test, and preview commands
+- `references/qa-tiers.md` when you need a clearer depth choice
 
 ## Goals
 
@@ -21,35 +22,9 @@ Use this skill when the user wants validation beyond code review, especially for
 - separate confirmed issues from suspicion
 - produce a clear report the user can act on
 
-## QA Tiers
-
 Choose the smallest tier that gives useful confidence.
 
-### Quick
-
-Use when the change is narrow.
-
-- run targeted tests
-- inspect relevant logs or screenshots
-- check the changed flow only
-
-### Standard
-
-Use for most feature work.
-
-- run targeted tests
-- run the nearest broader verification command
-- validate the primary user path
-- inspect one or two important edge cases
-
-### Exhaustive
-
-Use before a risky ship or after bug-heavy work.
-
-- run broad verification
-- test primary and secondary flows
-- validate edge cases and failure paths
-- inspect logs, browser behavior, and regression surfaces
+Read `references/qa-tiers.md` when you need a more explicit quick/standard/exhaustive split.
 
 ## Browser Guidance
 

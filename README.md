@@ -266,6 +266,20 @@ Codex 在这套方案里不是“纯 skills-first”，而是：
 - `incident-debug`
 - `performance-investigation`
 
+## 下一阶段建议
+
+如果你想把 super-stack 用到真实仓库里做回归验证，可以基于这个模板记录验证过程：
+
+- [templates/validation/REAL_PROJECT_VALIDATION.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/REAL_PROJECT_VALIDATION.md)
+
+建议至少记录：
+
+- 测试仓库路径
+- 触发 prompt
+- 期望命中的 stage 或 skill
+- 实际证据
+- 是否需要回调技能定义
+
 这个脚本会验证 Codex 在空目录下是否还能稳定命中：
 
 - `discuss`
