@@ -22,6 +22,7 @@
 - last architecture change:
   - 本轮继续对 `AGENTS.md`、`build`、`discuss`、`plan` 做瘦身，把共性细则下沉到 `protocols/workflow-governance.md` 和各自 reference，保持主文件更偏入口与路由；同时补齐质量链路的路由边界，明确 `review / verify / qa` 的分工，并补充“多 agent 已配置不等于应自动触发”的宿主约束说明、Codex 侧自动升级启发式，以及一份独立的多 agent 场景示例 reference。
   - 本轮进一步收敛 `AGENTS.md` 与 `.codex/AGENTS.md` 的职责：根文件保留共享真源，Codex adapter 只保留宿主特有执行细节。
+  - 本轮新增 `codex-record-retrospective` 技能，用于按项目路径复盘 Codex 本地记录，并把通用经验反哺到 super-stack。
 
 - verification status:
   - 已完成本轮文本级自检：根路由、`build` 与 `debug / tdd-execution / review / verify / qa` 的边界无明显冲突。
@@ -30,6 +31,7 @@
   - Codex adapter 已增加独立 multi-agent 场景 reference，当前主文件不再需要继续堆示例说明。
   - `.planning/` 已从忽略规则中移除，后续 roadmap、state 与 codebase map 可以作为仓库资产纳入版本管理。
   - `.planning/` 下的 hook 日志已改为单独忽略，避免共享状态文件重新被临时产物污染。
+  - `codex-record-retrospective` 已补充“当前 live session 可能尚未入库”“不能只靠宽泛历史汇总”“证据不足时不能半截停住”的约束，并新增仓库托管的项目路径扫描脚本替代旧的本地历史脚本。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
@@ -37,6 +39,7 @@
 - next actions:
   - 后续结合真实项目继续观察 `review / verify / qa` 的命中率，必要时再补触发示例或更细的边界说明。
   - 在后续真实项目中继续观察 multi-agent 的实际命中率，确认问题主要来自宿主策略、显式授权要求，还是我们自己的升级阈值仍然过高。
+  - 用真实项目路径验证 `codex-record-retrospective` 是否能稳定定位到相关 session，并正确区分项目噪音与 workflow 问题。
   - 继续补 `scripts/smoke/browser-extraction.sh` 的通用场景验证与样例。
   - 继续增强 `scripts/smoke/claude-global.sh` 与 `scripts/smoke/codex-regression-suite.sh` 的证据型回归。
   - 维持 `.planning/codebase/*`、README 与实际目录结构同步，不再让说明文件滞后。

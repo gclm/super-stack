@@ -45,6 +45,7 @@ Supporting skills can be used within or between stages when appropriate:
 - `database-design` for schema, constraint, and index design
 - `api-design` for contract and caller ergonomics
 - `architecture-design` for larger structural decisions
+- `codex-record-retrospective` for reviewing Codex local records tied to a project path and feeding reusable lessons back into super-stack
 - `migration-design` for phased schema and data rollout planning
 - `query-optimization` for evidence-based query and index tuning
 - `backend-refactor` for structural backend cleanup without behavior drift
