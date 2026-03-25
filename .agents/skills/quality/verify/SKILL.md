@@ -29,12 +29,19 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 - confirm the work still aligns with the intended scope, especially for validation samples or staged delivery
 - distinguish local/unit/integration proof from true host-runtime proof instead of collapsing them into one confidence statement
 - catch cases where implementation drifted from the latest approved plan or where evidence is blocked by environment setup rather than product logic
+- classify evidence strength consistently so completion claims do not outrun the real proof level
 
 ## Rules
 
 - treat verification as evidence mapping, not broad bug hunting
 - prefer the narrowest fresh proof that actually answers the user request
 - classify evidence boundaries explicitly instead of collapsing CI, local smoke, and real host-runtime into one confidence claim
+- name the strongest evidence level reached:
+  - `compile`
+  - `test`
+  - `scripted-flow`
+  - `real-integration`
+- do not imply `real-integration` confidence when only `compile`, `test`, or `scripted-flow` evidence exists
 - if verification reveals likely defects or regressions that need findings-first treatment, route back to `review` or `build`
 - if verification reveals the missing confidence is really about user-flow or runtime behavior, route to `qa`
 
@@ -43,16 +50,22 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 1. Identify the relevant requirement or user request.
 2. Confirm the intended scope boundary before checking evidence.
 3. Choose the closest proof commands or checks.
-4. Explicitly classify each proof source: static, unit, integration, local smoke, hosted CI, or real host-runtime.
-5. When a check fails, distinguish missing tools from shell-init or runtime-environment issues before concluding the feature is unverified.
-6. Run them.
-7. Summarize what is verified and what is still partial.
+4. Explicitly classify each proof source by evidence level:
+   - `compile`: syntax, typecheck, build, lint, generated-client sync
+   - `test`: unit, integration, contract, or focused automated tests
+   - `scripted-flow`: shell script, smoke command, seeded scenario, or local end-to-end path
+   - `real-integration`: real host, real login, real callback, real storage, or real external dependency path
+5. State the strongest evidence level reached and the missing next level, if any.
+6. When a check fails, distinguish missing tools from shell-init or runtime-environment issues before concluding the feature is unverified.
+7. Run them.
+8. Summarize what is verified and what is still partial.
 
 ## Output
 
 Report:
 
 - scope alignment
+- strongest evidence level reached
 - verified
 - partially verified
 - not verified

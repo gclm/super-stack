@@ -21,14 +21,23 @@ Use this skill when a change affects authentication, authorization, secrets, use
 - focus on real trust boundaries and abuse paths
 - separate critical findings from lower-risk hygiene issues
 - avoid vague “be secure” advice without concrete impact
+- make auth, admin, tenant, and file-handling checks explicit instead of assuming they were covered elsewhere
 
 ## Steps
 
 1. Identify assets and trust boundaries.
 2. Review the most relevant entry points and abuse paths.
-3. Assess exploitability and likely impact.
-4. Recommend the highest-priority fixes first.
-5. Note any remaining residual risk or missing evidence.
+3. For auth, admin, tenant, workspace, upload, download, webhook, or callback paths, explicitly check:
+   - authentication enforcement
+   - authorization and role boundary
+   - tenant or workspace isolation
+   - object ownership checks
+   - response-data minimization
+   - file type, path, or storage permission controls
+   - callback authenticity and replay or spoof risk
+4. Assess exploitability and likely impact.
+5. Recommend the highest-priority fixes first.
+6. Note any remaining residual risk or missing evidence.
 
 Read `references/security-checklist.md` when you need a more detailed pass.
 
@@ -37,6 +46,7 @@ Read `references/security-checklist.md` when you need a more detailed pass.
 Report:
 
 - trust boundaries reviewed
+- auth and ownership boundary review status
 - findings ordered by severity
 - likely impact
 - recommended fixes

@@ -34,6 +34,7 @@
   - `codex-record-retrospective` 已补充“当前 live session 可能尚未入库”“不能只靠宽泛历史汇总”“证据不足时不能半截停住”的约束，并新增仓库托管的项目路径扫描脚本替代旧的本地历史脚本。
   - `codex-record-retrospective` 已新增 session 时间线提炼脚本，减少手工二次阅读 JSONL 原始记录的成本。
   - `map-codebase` 已补充“基础层 -> 设计层 -> 目标层”的陌生项目分层进入策略，避免不是目标驱动的全仓库深挖。
+  - 本轮已把两次复盘结论正式写回 `build / verify / api-change-check / security-review / ship`：新增 incidental issue 分类、验证证据四级口径、API/鉴权/租户/上传下载边界检查，以及最终交付必须显式说明“已完成 / 已验证 / 当前约束 / 未纳入”。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
@@ -42,6 +43,7 @@
   - 后续结合真实项目继续观察 `review / verify / qa` 的命中率，必要时再补触发示例或更细的边界说明。
   - 在后续真实项目中继续观察 multi-agent 的实际命中率，确认问题主要来自宿主策略、显式授权要求，还是我们自己的升级阈值仍然过高。
   - 用真实项目路径验证 `codex-record-retrospective` 是否能稳定定位到相关 session，并正确区分项目噪音与 workflow 问题。
+  - 用下一个真实 API / 鉴权 / 多租户项目任务，检验新增边界矩阵和证据分级是否能减少中途改方案与“验证过度乐观”的情况。
   - 继续补 `scripts/smoke/browser-extraction.sh` 的通用场景验证与样例。
   - 继续增强 `scripts/smoke/claude-global.sh` 与 `scripts/smoke/codex-regression-suite.sh` 的证据型回归。
   - 维持 `.planning/codebase/*`、README 与实际目录结构同步，不再让说明文件滞后。

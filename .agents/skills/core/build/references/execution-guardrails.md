@@ -74,3 +74,33 @@ When adding a placeholder asset, stub provider, temporary config, or scaffold un
 - `approved final choice`
 
 Do not let unblock work silently become product truth.
+
+## 4. Incidental Issue Classification
+
+When coding reveals adjacent problems, classify them before expanding the patch:
+
+- `current must-fix`
+  - the task would be incorrect, unsafe, or unverifiable without this fix
+- `same-batch can-include`
+  - tightly coupled to the touched code and low-risk to include now
+- `follow-up`
+  - real issue, but not required to deliver the approved task safely
+
+Use this quick check:
+
+- does leaving it unfixed break the requested outcome
+- does it change architecture or product scope
+- does it require broader validation than the current batch can support
+
+If the answer suggests broader scope, push it to `follow-up` or backtrack to `plan`.
+
+## 5. Boundary Matrix For High-Risk Backend Work
+
+Before broad edits on API, auth, tenant, admin, upload, download, callback, or webhook tasks, write down:
+
+- caller identity and allowed roles
+- tenant, workspace, or resource ownership boundary
+- allowed create, update, delete fields
+- response fields that must be masked, omitted, or sanitized
+- side effects, callbacks, or external systems touched
+- strongest available verification path: `compile`, `test`, `scripted-flow`, or `real-integration`
