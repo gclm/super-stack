@@ -23,6 +23,7 @@ If the project path is missing, ask the user for it in one short sentence:
 - `.planning/STATE.md` if it exists
 - `references/record-sources.md`
 - `scripts/find_codex_project_records.py`
+- `scripts/extract_codex_session_timeline.py`
 
 ## Goals
 
@@ -49,31 +50,32 @@ If the project path is missing, ask the user for it in one short sentence:
 
 1. Confirm the target project path.
 2. Run `scripts/find_codex_project_records.py --project-path <path>` first to get a path-correlated evidence scan.
-3. Use `references/record-sources.md` to locate any extra sources still needed.
-4. Start with path-correlated sources such as `session_index`, `sessions`, or `archived_sessions` before broad history summaries.
-5. Filter records by project path, cwd, session metadata, or nearby timestamps.
-6. If the most recent live session is missing from indexed records, say so explicitly and continue with the next best sources instead of pretending the evidence is complete.
-7. Reconstruct the sequence:
+3. For the strongest candidate sessions, run `scripts/extract_codex_session_timeline.py --session-id <id>` to get a readable timeline before doing manual deep reads.
+4. Use `references/record-sources.md` to locate any extra sources still needed.
+5. Start with path-correlated sources such as `session_index`, `sessions`, or `archived_sessions` before broad history summaries.
+6. Filter records by project path, cwd, session metadata, or nearby timestamps.
+7. If the most recent live session is missing from indexed records, say so explicitly and continue with the next best sources instead of pretending the evidence is complete.
+8. Reconstruct the sequence:
    - user intent
    - chosen workflow path
    - major pivots or backtracks
    - verification path
    - unresolved friction
-8. Classify issues into:
+9. Classify issues into:
    - routing problem
    - planning problem
    - implementation discipline problem
    - verification problem
    - host/runtime limitation
    - project-specific noise
-9. Extract only the lessons that generalize beyond that one project.
-10. Recommend where each lesson belongs:
+10. Extract only the lessons that generalize beyond that one project.
+11. Recommend where each lesson belongs:
    - `AGENTS.md`
    - `protocols/`
    - an existing skill
    - a new reference
    - no repository change, just project-specific caution
-11. Update `.planning/STATE.md` when the retrospective changes repository workflow direction or maintenance priorities.
+12. Update `.planning/STATE.md` when the retrospective changes repository workflow direction or maintenance priorities.
 
 ## Output
 

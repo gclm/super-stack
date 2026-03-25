@@ -13,6 +13,7 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 - nearby docs such as `README*`, `docs/`, architecture notes, and config files
 - `.planning/CONVENTIONS.md` if it exists
 - `templates/planning/codebase/` for output structure
+- `references/layered-entry.md`
 - `references/runtime-footprint.md` when important evidence may live outside the repository
 
 ## Goals
@@ -40,6 +41,14 @@ If `.planning/` does not exist, initialize it first from `templates/planning/`.
 
 ## Investigation Order
 
+Use a layered entry strategy:
+
+1. Baseline layer
+2. Design layer
+3. Target layer
+
+Within those layers, investigate in this order:
+
 1. Entry docs and top-level manifests
 2. Build and runtime config
 3. Source tree layout
@@ -47,7 +56,11 @@ If `.planning/` does not exist, initialize it first from `templates/planning/`.
 5. Compare docs, scripts, and CI entrypoints against the real repository layout
 6. External integrations
 7. Host-runtime footprint outside the repo when relevant
-8. Hotspots, risks, and unclear areas
+8. User-targeted deepening only after the baseline and nearby design are stable
+9. Hotspots, risks, and unclear areas
+
+When the user already points to a module or objective, do not treat that as permission to skip the baseline layer.
+When the baseline is already clear, do not keep broadening the scan beyond the target layer.
 
 ## Evidence Rules
 

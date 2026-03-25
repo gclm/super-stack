@@ -32,6 +32,8 @@
   - `.planning/` 已从忽略规则中移除，后续 roadmap、state 与 codebase map 可以作为仓库资产纳入版本管理。
   - `.planning/` 下的 hook 日志已改为单独忽略，避免共享状态文件重新被临时产物污染。
   - `codex-record-retrospective` 已补充“当前 live session 可能尚未入库”“不能只靠宽泛历史汇总”“证据不足时不能半截停住”的约束，并新增仓库托管的项目路径扫描脚本替代旧的本地历史脚本。
+  - `codex-record-retrospective` 已新增 session 时间线提炼脚本，减少手工二次阅读 JSONL 原始记录的成本。
+  - `map-codebase` 已补充“基础层 -> 设计层 -> 目标层”的陌生项目分层进入策略，避免不是目标驱动的全仓库深挖。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。

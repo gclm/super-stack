@@ -8,6 +8,8 @@ Check the strongest available sources first:
 
 - `scripts/find_codex_project_records.py`
   - repository-managed path scan for project-specific retrospective work
+- `scripts/extract_codex_session_timeline.py`
+  - repository-managed session timeline extractor for turning raw JSONL traces into readable user / assistant / tool chronology
 - `~/.codex/history.jsonl`
   - broad message-level history
 - `~/.codex/session_index.jsonl`
@@ -40,6 +42,10 @@ Be explicit about what each source can and cannot prove:
   - best default entry for a concrete project path
   - tries to correlate `session_index`、`sessions`、`archived_sessions`、`history.jsonl`
   - reports evidence gaps when exact path correlation is missing
+- `scripts/extract_codex_session_timeline.py`
+  - best second step after candidate session ids are known
+  - extracts user messages, assistant messages, tool calls, tool outputs, and key events into a readable timeline
+  - reduces manual second-pass reading, but still does not replace human judgment about route quality or semantic drift
 - `history.jsonl`
   - good for prompts, replies, and repeated problem wording
   - weaker for exact file mutations

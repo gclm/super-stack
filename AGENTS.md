@@ -67,6 +67,7 @@ When a request arrives, decide the current stage before taking action.
 3. If the request is a behavior change or bugfix with a practical automated test path, prefer `tdd-execution` before broad `build`.
 4. If the user is comparing approaches or asking "what is the best way", start at `brainstorm`.
 5. If the repository is unfamiliar or the task depends on understanding existing structure, start at `map-codebase`.
+   When doing so, use a layered entry strategy: establish project baseline first, then nearby design, then the user-targeted module or flow.
 6. If scope is already clear but task breakdown is missing, start at `plan`.
 7. If there is a current task with enough context to implement safely, go to `build`.
 8. If the user asks for audit, PR review, merge readiness, bug/risk scan, regression review, or "帮我看看哪里有问题", go to `review`.
