@@ -40,7 +40,7 @@ log "备份目录：${BACKUP_ROOT}"
 TEMP_STATE_ROOT=""
 if [[ -d "$(state_root)" ]]; then
   TEMP_STATE_ROOT="$(mktemp -d)"
-  cp -R "$(state_root)" "${TEMP_STATE_ROOT}/global-install"
+  cp -R "$(state_root)" "${TEMP_STATE_ROOT}/state"
 fi
 
 backup_if_exists "${RUNTIME_ROOT}" "runtime_super-stack"
@@ -66,8 +66,8 @@ for agent_file in \
 done
 
 if [[ -n "${TEMP_STATE_ROOT}" ]]; then
-  SUPER_STACK_STATE_ROOT="${TEMP_STATE_ROOT}/global-install"
-  SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/manifest.tsv"
+  SUPER_STACK_STATE_ROOT="${TEMP_STATE_ROOT}/state"
+  SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/install-manifest.tsv"
 fi
 
 restore_recorded_targets

@@ -15,6 +15,7 @@
 - 只维护全局配置底座
 - 不再维护项目级安装分支
 - 浏览器默认主链路是 `agent-browser` + `super-stack-browser`
+- `~/.super-stack/runtime` 是纯运行仓库，不是重新安装用的完整 source repo 副本
 
 ## 快速开始
 
@@ -23,6 +24,11 @@
 ```bash
 ./scripts/install/install.sh --host all
 ```
+
+安装约束：
+
+- 安装、重装、卸载都应从当前 source repo 执行
+- `~/.super-stack/runtime` 只承载运行所需最小资产，不承载完整安装源材料
 
 只安装 `Codex`：
 
@@ -177,6 +183,11 @@ SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stac
 - [`scripts/hooks/`](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/hooks): 运行态 hook
 - [`scripts/browser/`](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser): 浏览器提取器与渲染器
 - `artifacts/`: browser smoke 报告等运行产物目录
+
+其中：
+
+- source repo 负责安装输入、宿主适配源文件、文档与测试
+- `~/.super-stack/runtime` 只负责宿主运行时直接引用的最小资产
 
 不再保留根目录旧 shell 入口作为第二套官方方式。
 

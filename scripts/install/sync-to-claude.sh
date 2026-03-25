@@ -17,7 +17,7 @@ ensure_dir "$SKILLS_DEST"
 record_target_state "${CLAUDE_HOME}/CLAUDE.md" "claude_CLAUDE.md"
 record_target_state "${CLAUDE_HOME}/settings.json" "claude_settings.json"
 record_target_state "$RUNTIME_ROOT" "runtime_super-stack"
-copy_tree "${REPO_ROOT}" "$RUNTIME_ROOT"
+copy_runtime_tree "$RUNTIME_ROOT"
 
 for skill_dir in "${REPO_ROOT}"/.agents/skills/*/*; do
   [[ -d "$skill_dir" ]] || continue
@@ -37,7 +37,7 @@ EOF
 
 bash "${SCRIPT_DIR}/merge-claude-hooks.sh"
 
-log "已将共享运行仓库复制到 ${RUNTIME_ROOT}"
+log "已将纯运行仓库资产复制到 ${RUNTIME_ROOT}"
 log "已将 Claude 全局 skills 镜像到 ${SKILLS_DEST}"
 log "已更新 ${CLAUDE_HOME}/CLAUDE.md 中的全局路由"
 log "已将 Claude hooks 合并到 ${CLAUDE_HOME}/settings.json"

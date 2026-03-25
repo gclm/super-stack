@@ -23,8 +23,9 @@ TMP_HOME="$(mktemp -d)"
 trap 'rm -rf "${TMP_HOME}"' EXIT
 export HOME="${TMP_HOME}"
 
-SUPER_STACK_STATE_ROOT="${HOME}/.super-stack/state/global-install"
-SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/manifest.tsv"
+SUPER_STACK_STATE_ROOT="${HOME}/.super-stack/state"
+SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/install-manifest.tsv"
+SUPER_STACK_RESTORE_BACKUP_ROOT="${HOME}/.super-stack/backup/install-state"
 
 target_dir="${HOME}/sandbox"
 mkdir -p "${target_dir}"
@@ -47,5 +48,6 @@ assert_contains "${existing_file}" "original"
 [[ ! -e "${new_file}" ]] || fail "new target 应被移除：${new_file}"
 assert_contains "$(state_manifest)" $'restore\t'
 assert_contains "$(state_manifest)" $'remove\t'
+[[ -d "${HOME}/.super-stack/backup/install-state" ]] || fail "install-state 恢复快照目录缺失"
 
 printf '[测试通过] install state roundtrip\n'

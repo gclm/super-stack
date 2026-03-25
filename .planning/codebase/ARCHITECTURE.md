@@ -5,6 +5,7 @@
   - 执行细节下沉到 `.agents/skills/`。
   - 宿主差异由 `.codex/` 与 `.claude/` 吸收。
   - `scripts/` 负责把这些内容同步到本机宿主目录，并通过 `install/`, `check/`, `smoke/`, `test/`, `lib/` 分层提供安装、检查、回归与测试入口。
+  - `~/.super-stack/runtime` 被视为纯运行仓库，只承载宿主运行时直接引用的最小资产。
 - 数据流不是业务数据流，而是配置资产流：
   - 仓库内容 -> `scripts/install/sync-to-*` 脚本 -> 用户目录中的宿主配置/skills/hooks -> `scripts/check/*` 与 `scripts/smoke/*` 回归验证。
 - 浏览器能力是单独子链路：

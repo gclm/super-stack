@@ -78,6 +78,30 @@ copy_tree() {
   cp -R "$src" "$dest"
 }
 
+copy_path_into_dir() {
+  local src="$1"
+  local dest_root="$2"
+  local relative_path="$3"
+
+  mkdir -p "${dest_root}/$(dirname "$relative_path")"
+  cp -R "$src" "${dest_root}/${relative_path}"
+}
+
+copy_runtime_tree() {
+  local dest_root="$1"
+
+  rm -rf "$dest_root"
+  mkdir -p "$dest_root"
+
+  copy_path_into_dir "${REPO_ROOT}/AGENTS.md" "$dest_root" "AGENTS.md"
+  copy_path_into_dir "${REPO_ROOT}/README.md" "$dest_root" "README.md"
+  copy_path_into_dir "${REPO_ROOT}/bin" "$dest_root" "bin"
+  copy_path_into_dir "${REPO_ROOT}/protocols" "$dest_root" "protocols"
+  copy_path_into_dir "${REPO_ROOT}/scripts" "$dest_root" "scripts"
+  copy_path_into_dir "${REPO_ROOT}/templates" "$dest_root" "templates"
+  copy_path_into_dir "${REPO_ROOT}/.codex/hooks" "$dest_root" ".codex/hooks"
+}
+
 remove_managed_block() {
   local file="$1"
   local begin="$2"

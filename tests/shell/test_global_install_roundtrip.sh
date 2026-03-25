@@ -31,6 +31,11 @@ assert_contains() {
   rg -q --fixed-strings "$text" "$path" || fail "未在 ${path} 中找到：${text}"
 }
 
+assert_not_dir() {
+  local path="$1"
+  [[ ! -d "$path" ]] || fail "预期目录不应存在：${path}"
+}
+
 TMP_HOME="$(mktemp -d)"
 trap 'rm -rf "${TMP_HOME}"' EXIT
 
@@ -54,9 +59,22 @@ assert_file "${HOME}/.claude/CLAUDE.md"
 assert_file "${HOME}/.codex/config.toml"
 assert_file "${HOME}/.claude/settings.json"
 assert_dir "${HOME}/.super-stack/runtime"
-assert_dir "${HOME}/.super-stack/state/global-install"
+assert_dir "${HOME}/.super-stack/state"
+assert_file "${HOME}/.super-stack/state/install-manifest.tsv"
 assert_dir "${HOME}/.super-stack/backup"
+assert_dir "${HOME}/.super-stack/backup/install-state"
 assert_dir "${HOME}/.agents/skills"
+
+assert_file "${HOME}/.super-stack/runtime/.codex/hooks/super_stack_state.py"
+assert_not_dir "${HOME}/.super-stack/runtime/.git"
+assert_not_dir "${HOME}/.super-stack/runtime/.github"
+assert_not_dir "${HOME}/.super-stack/runtime/.idea"
+assert_not_dir "${HOME}/.super-stack/runtime/.planning"
+assert_not_dir "${HOME}/.super-stack/runtime/docs"
+assert_not_dir "${HOME}/.super-stack/runtime/tests"
+assert_not_dir "${HOME}/.super-stack/runtime/.agents"
+assert_not_dir "${HOME}/.super-stack/runtime/.claude"
+assert_not_dir "${HOME}/.super-stack/runtime/.codex/agents"
 
 assert_contains "${HOME}/.codex/AGENTS.md" "single global workflow source managed by super-stack"
 assert_contains "${HOME}/.claude/CLAUDE.md" "single global workflow source managed by super-stack"

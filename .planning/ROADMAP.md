@@ -5,6 +5,7 @@
 - product scope: `super-stack` 只维护 `Claude Code` 与 `Codex` 的全局 workflow runtime，不再维护项目级安装分支。
 - current architecture focus: 共享核心、薄宿主适配、本地可验证安装链路。
 - current cleanup status: 结构收敛已经完成，当前重点从“清结构”切换为“稳运行、补回归、控复杂度”。
+- runtime policy: `~/.super-stack/runtime` 视为纯运行仓库，安装动作始终从 source repo 发起。
 
 ## 当前已定版结构
 

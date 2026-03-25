@@ -21,7 +21,7 @@ record_target_state "${CODEX_HOME}/AGENTS.md" "codex_AGENTS.md"
 record_target_state "${CODEX_HOME}/config.toml" "codex_config.toml"
 record_target_state "$RUNTIME_ROOT" "runtime_super-stack"
 
-copy_tree "${REPO_ROOT}" "${RUNTIME_ROOT}"
+copy_runtime_tree "${RUNTIME_ROOT}"
 
 for skill_dir in "${REPO_ROOT}"/.agents/skills/*/*; do
   [[ -d "$skill_dir" ]] || continue
@@ -46,7 +46,7 @@ EOF
 write_if_missing "${REPO_ROOT}/.codex/config.toml" "${CODEX_HOME}/config.toml"
 bash "${SCRIPT_DIR}/merge-codex-hooks.sh"
 
-log "已将共享运行仓库复制到 ${RUNTIME_ROOT}"
+log "已将纯运行仓库资产复制到 ${RUNTIME_ROOT}"
 log "已将 Codex 全局资产复制到 ${CODEX_HOME}"
 log "已将 skills 安装到 ${USER_SKILLS_DEST}"
 log "已更新 ${CODEX_HOME}/AGENTS.md 中的全局路由"

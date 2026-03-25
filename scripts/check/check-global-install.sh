@@ -12,7 +12,8 @@ CODEX_HOME="${HOME}/.codex"
 CLAUDE_HOME="${HOME}/.claude"
 RUNTIME_ROOT="${SUPER_STACK_RUNTIME_ROOT}"
 USER_AGENTS_HOME="${HOME}/.agents"
-STATE_ROOT="${SUPER_STACK_STATE_BASE}/global-install"
+STATE_ROOT="${SUPER_STACK_STATE_BASE}"
+STATE_MANIFEST="${STATE_ROOT}/install-manifest.tsv"
 BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}"
 
 RUNTIME_AGENTS="${RUNTIME_ROOT}/AGENTS.md"
@@ -141,7 +142,18 @@ printf '== Runtime ==\n'
 check_file "$RUNTIME_AGENTS" "共享运行仓库 AGENTS"
 check_same_content "$RUNTIME_AGENTS" "$REPO_AGENTS_FILE" "共享运行仓库 AGENTS 与仓库一致"
 check_dir "$STATE_ROOT" "安装状态目录"
+check_file "$STATE_MANIFEST" "安装状态清单"
 check_dir "$BACKUP_ROOT" "统一备份根目录"
+check_file "${RUNTIME_ROOT}/.codex/hooks/super_stack_state.py" "运行仓库 Codex hook 脚本"
+check_not_exists "${RUNTIME_ROOT}/.git" "运行仓库不包含 Git 元数据"
+check_not_exists "${RUNTIME_ROOT}/.github" "运行仓库不包含 GitHub 配置"
+check_not_exists "${RUNTIME_ROOT}/.idea" "运行仓库不包含 IDE 配置"
+check_not_exists "${RUNTIME_ROOT}/.planning" "运行仓库不包含 planning 状态"
+check_not_exists "${RUNTIME_ROOT}/docs" "运行仓库不包含 source docs"
+check_not_exists "${RUNTIME_ROOT}/tests" "运行仓库不包含 source tests"
+check_not_exists "${RUNTIME_ROOT}/.agents" "运行仓库不包含 source skills 真源"
+check_not_exists "${RUNTIME_ROOT}/.claude" "运行仓库不包含 Claude source adapter"
+check_not_exists "${RUNTIME_ROOT}/.codex/agents" "运行仓库不包含 Codex source agents"
 printf '\n'
 
 printf '== Codex ==\n'

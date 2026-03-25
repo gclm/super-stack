@@ -25,7 +25,8 @@
   - 本轮进一步收敛 `AGENTS.md` 与 `.codex/AGENTS.md` 的职责：根文件保留共享真源，Codex adapter 只保留宿主特有执行细节。
   - 本轮新增 `codex-record-retrospective` 技能，用于按项目路径复盘 Codex 本地记录，并把通用经验反哺到 super-stack。
   - 本轮将路径设计最终收敛为三段式：当前仓库是 `source repo`，`~/.super-stack/runtime` 是 `runtime repo`，`~/.super-stack/state` 存安装状态，`~/.super-stack/backup` 存备份；Claude / Codex 宿主入口已统一指向 `~/.super-stack/runtime`，浏览器稳定入口也统一到 `~/.super-stack/runtime/bin`。
-  - 安装状态保留在 `~/.super-stack/state/global-install`，避免卸载 runtime 时误删恢复数据，同时保持所有 super-stack 运行资产仍集中在 `~/.super-stack` 之下。
+  - 安装状态已扁平化到 `~/.super-stack/state/install-manifest.tsv`，恢复快照统一迁到 `~/.super-stack/backup/install-state`，避免在 `state` 目录下重复维护一套备份语义。
+  - runtime 已进一步定义为纯运行仓库：安装和重装必须从 source repo 发起，runtime 不再承担完整安装源材料角色。
 
 - verification status:
   - 已完成本轮文本级自检：根路由、`build` 与 `debug / tdd-execution / review / verify / qa` 的边界无明显冲突。
@@ -40,6 +41,7 @@
   - 本轮已把两次复盘结论正式写回 `build / verify / api-change-check / security-review / ship`：新增 incidental issue 分类、验证证据四级口径、API/鉴权/租户/上传下载边界检查，以及最终交付必须显式说明“已完成 / 已验证 / 当前约束 / 未纳入”。
   - 本轮已完成全仓路径与口径审计，技能、宿主配置、安装脚本、检查脚本、测试与文档当前均已适配 `runtime/state/backup` 与 `artifacts/` 结构。
   - 本轮已完成 fresh verification：`bash -n` 覆盖主要 shell 入口，`bash scripts/test/test.sh` 全量通过，且全仓未再检出 `.claude-stack`、`.super-stack/bin`、`.super-stack/scripts`、`.super-stack-state` 等旧路径残留。
+  - runtime 复制策略已从整库复制收敛为最小运行集，不再同步 `.git`、`.github`、`.idea`、`.planning`、`docs`、`tests`、`.agents`、`.claude` 等只属于 source repo 的目录。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。

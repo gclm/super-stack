@@ -39,6 +39,10 @@ usage() {
 用法：
   scripts/install/install.sh --host claude|codex|all
 
+说明：
+  该脚本必须从 source repo 执行。
+  ~/.super-stack/runtime 是纯运行仓库，不保证包含重新安装所需的完整源材料。
+
 示例：
   scripts/install/install.sh --host codex
   scripts/install/install.sh --host claude
@@ -84,3 +88,4 @@ fi
 
 log "安装完成"
 log "super-stack 已启用仅全局模式"
+log "当前 runtime 采用纯运行仓库模型；后续安装或重装请始终从 source repo 发起。"

@@ -24,9 +24,26 @@
 
 `~/.super-stack/runtime` 负责：
 
-- 整库复制后的真实运行资产
+- 运行所需的最小资产集合
 - 宿主入口实际引用的 `AGENTS.md`、hooks、脚本
 - 浏览器稳定入口 `~/.super-stack/runtime/bin/*`
+
+这里要明确一点：
+
+- `runtime` 是纯运行仓库
+- 它不是重新安装用的完整 source repo 副本
+- 安装、重装、结构调整都应从当前 source repo 发起
+
+它不再同步明显只属于 source repo 的开发目录，例如：
+
+- `.git`
+- `.github`
+- `.idea`
+- `.planning`
+- `docs`
+- `tests`
+- `.agents`
+- `.claude`
 
 ### 1.3 state
 
@@ -34,7 +51,7 @@
 
 - 安装前记录
 - 恢复清单
-- `global-install/manifest.tsv`
+- `install-manifest.tsv`
 
 这样卸载 `runtime` 时不会误删恢复数据。
 
@@ -44,6 +61,7 @@
 
 - hooks 合并前备份
 - 卸载前备份
+- 安装前恢复快照
 - 其他需要保留的安装快照
 
 ## 2. 宿主接线原则
@@ -56,6 +74,12 @@
 - `~/.claude/settings.json`
 
 都只应该引用 `~/.super-stack/runtime` 下的运行资产，而不是直接引用 source repo，也不再各自维护一套 `super-stack` 副本。
+
+这也意味着：
+
+- 宿主运行时依赖 `runtime`
+- 安装流程依赖 `source repo`
+- 不再把 `runtime` 当成自举安装源
 
 ## 3. 包装脚本怎么维护
 

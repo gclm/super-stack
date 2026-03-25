@@ -303,6 +303,7 @@ Codex 当前已接入的 hooks 包括：
 
 - source repo 负责源码、文档、测试、脚本与安装输入
 - runtime repo 负责宿主真实运行时使用的资产
+- runtime repo 采用纯运行仓库模型，不承担完整安装源材料角色
 - 宿主入口应该只引用 runtime repo
 - 不再让 `~/.claude/super-stack` 与 `~/.codex/super-stack` 分别承担独立运行仓库角色
 
@@ -313,6 +314,7 @@ Codex 当前已接入的 hooks 包括：
 - skills 仍按宿主发现机制镜像到 `~/.agents/skills` 与 `~/.claude/skills`
 
 所以后续要做的不是再发明概念，而是围绕这套 source/runtime + state/backup 结构保持安装、检查、卸载与文档同步。
+其中安装动作始终从 source repo 发起，runtime 只保留运行所需最小资产。
 
 完整说明见 [source/runtime 边界设计](/Users/gclm/Codes/ai/claude-stack-plugin/docs/source-runtime-boundary.md)。
 

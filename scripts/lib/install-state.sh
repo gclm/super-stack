@@ -6,8 +6,9 @@ INSTALL_STATE_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 # shellcheck source=common.sh
 source "${INSTALL_STATE_LIB_DIR}/common.sh"
 
-SUPER_STACK_STATE_ROOT="${SUPER_STACK_STATE_BASE}/global-install"
-SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/manifest.tsv"
+SUPER_STACK_STATE_ROOT="${SUPER_STACK_STATE_BASE}"
+SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/install-manifest.tsv"
+SUPER_STACK_RESTORE_BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}/install-state"
 
 state_root() {
   printf '%s\n' "$SUPER_STACK_STATE_ROOT"
@@ -19,7 +20,9 @@ state_manifest() {
 
 reset_install_state() {
   rm -rf "$SUPER_STACK_STATE_ROOT"
-  mkdir -p "$SUPER_STACK_STATE_ROOT/backups"
+  mkdir -p "$SUPER_STACK_STATE_ROOT"
+  rm -rf "$SUPER_STACK_RESTORE_BACKUP_ROOT"
+  mkdir -p "$SUPER_STACK_RESTORE_BACKUP_ROOT"
   : > "$SUPER_STACK_MANIFEST"
 }
 
@@ -32,7 +35,8 @@ record_target_state() {
   local target="$1"
   local label="$2"
 
-  mkdir -p "$SUPER_STACK_STATE_ROOT/backups"
+  mkdir -p "$SUPER_STACK_STATE_ROOT"
+  mkdir -p "$SUPER_STACK_RESTORE_BACKUP_ROOT"
   touch "$SUPER_STACK_MANIFEST"
 
   if manifest_has_target "$target"; then
@@ -40,7 +44,7 @@ record_target_state() {
   fi
 
   local safe_label="${label//\//_}"
-  local backup_path="${SUPER_STACK_STATE_ROOT}/backups/${safe_label}"
+  local backup_path="${SUPER_STACK_RESTORE_BACKUP_ROOT}/${safe_label}"
 
   if [[ -e "$target" ]]; then
     rm -rf "$backup_path"

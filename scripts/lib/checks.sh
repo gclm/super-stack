@@ -31,6 +31,16 @@ check_dir() {
   fi
 }
 
+check_not_exists() {
+  local path="$1"
+  local label="$2"
+  if [[ -e "$path" ]]; then
+    warn "${label}: 不应存在（${path}）"
+  else
+    ok "${label}"
+  fi
+}
+
 check_contains() {
   local path="$1"
   local pattern="$2"
