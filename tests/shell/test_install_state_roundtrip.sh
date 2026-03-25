@@ -49,4 +49,3 @@ assert_contains "$(state_manifest)" $'restore\t'
 assert_contains "$(state_manifest)" $'remove\t'
 
 printf '[测试通过] install state roundtrip\n'
-

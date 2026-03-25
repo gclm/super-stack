@@ -288,7 +288,35 @@ Codex 当前已接入的 hooks 包括：
 - `pre_tool_use`
 - `stop`
 
-### 5.3 浏览器接线
+### 5.3 source repo / runtime repo 边界
+
+后续维护采用更清晰的 source/runtime 模型：
+
+1. 当前仓库是 `source repo`
+2. `~/.super-stack/runtime` 是 `runtime repo`
+3. `~/.super-stack/state` 存安装状态
+4. `~/.super-stack/backup` 存安装与卸载备份
+
+这里不再继续细分更多抽象层。最重要的是把“开发仓库”和“运行仓库”这两个对象彻底区分开。
+
+约束是：
+
+- source repo 负责源码、文档、测试、脚本与安装输入
+- runtime repo 负责宿主真实运行时使用的资产
+- 宿主入口应该只引用 runtime repo
+- 不再让 `~/.claude/super-stack` 与 `~/.codex/super-stack` 分别承担独立运行仓库角色
+
+当前一个关键现实是：
+
+- `~/.super-stack/runtime` 已经作为统一运行仓库承载共享运行时资产
+- 宿主入口已经统一接到 `~/.super-stack/runtime`
+- skills 仍按宿主发现机制镜像到 `~/.agents/skills` 与 `~/.claude/skills`
+
+所以后续要做的不是再发明概念，而是围绕这套 source/runtime + state/backup 结构保持安装、检查、卸载与文档同步。
+
+完整说明见 [source/runtime 边界设计](/Users/gclm/Codes/ai/claude-stack-plugin/docs/source-runtime-boundary.md)。
+
+### 5.4 浏览器接线
 
 当前浏览器能力已经收敛为单方案：
 

@@ -51,20 +51,39 @@
 如需单独重装浏览器链路：
 
 ```bash
-./scripts/install/setup-browser.sh
+./scripts/install/install.sh --host all
 ./scripts/check/check-browser-capability.sh
+~/.super-stack/runtime/bin/super-stack-browser-health
 ```
 
 稳定浏览器入口：
 
 ```bash
-~/.claude-stack/bin/super-stack-browser open https://example.com
+~/.super-stack/runtime/bin/super-stack-browser open https://example.com
 ```
 
 如果会话卡住或授权状态异常：
 
 ```bash
-./scripts/install/reset-browser-session.sh
+~/.super-stack/runtime/bin/super-stack-browser-reset
+```
+
+如果你怀疑浏览器残留、headless 进程变多，或 Chrome 内存持续上涨：
+
+```bash
+~/.super-stack/runtime/bin/super-stack-browser-health
+```
+
+默认情况下，`super-stack-browser` 会给 `agent-browser` 注入 15 分钟空闲超时，避免 daemon 和 headless Chrome 长时间残留。如需覆盖：
+
+```bash
+SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stack-browser open https://example.com
+```
+
+如果你想验证浏览器技能的 preflight/postflight/recovery 链路，可以执行：
+
+```bash
+./scripts/smoke/browser-lifecycle.sh
 ```
 
 ## 推荐验证链路
@@ -106,7 +125,7 @@
 如果你只想复查浏览器抽取链路，可以再跑：
 
 ```bash
-./scripts/smoke/browser-extraction.sh --url "https://example.com/page" --adapter generic-page --output test/browser-smoke.md
+./scripts/smoke/browser-extraction.sh --url "https://example.com/page" --adapter generic-page --output artifacts/browser-smoke.md
 ```
 
 ## 工程测试入口
@@ -137,6 +156,7 @@
 - `unit`: Python hooks 与 browser renderer 的纯逻辑回归
 - `integration`: install / check / uninstall roundtrip、hook merge、安装状态恢复
 - `smoke`: 真实 Claude / Codex / 浏览器环境验证
+- `artifacts`: browser smoke 报告等运行产物输出目录，不承载自动化测试代码
 
 详细说明见 [验证策略](/Users/gclm/Codes/ai/claude-stack-plugin/docs/validation-strategy.md)。
 
@@ -156,6 +176,7 @@
 - [`scripts/lib/`](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/lib): shell 公共库
 - [`scripts/hooks/`](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/hooks): 运行态 hook
 - [`scripts/browser/`](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser): 浏览器提取器与渲染器
+- `artifacts/`: browser smoke 报告等运行产物目录
 
 不再保留根目录旧 shell 入口作为第二套官方方式。
 
@@ -164,6 +185,7 @@
 首页只保留“是什么、怎么装、怎么验”。更细的设计与规则统一看这些文档：
 
 - [项目架构设计](/Users/gclm/Codes/ai/claude-stack-plugin/docs/project-design.md)
+- [source / runtime 边界设计](/Users/gclm/Codes/ai/claude-stack-plugin/docs/source-runtime-boundary.md)
 - [脚本架构](/Users/gclm/Codes/ai/claude-stack-plugin/docs/script-architecture.md)
 - [验证策略](/Users/gclm/Codes/ai/claude-stack-plugin/docs/validation-strategy.md)
 - [浏览器技术选型记录](/Users/gclm/Codes/ai/claude-stack-plugin/docs/browser-technology-options.md)

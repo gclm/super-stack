@@ -9,6 +9,7 @@
 - 不再保留“根目录旧入口 + 子目录新入口”两套并行方式
 - 让脚本目录和 README / CI / 测试 / `.planning` 里的叙述保持一致
 - 把安装、检查、smoke、测试和公共库彻底拆开
+- 把运行产物目录单独命名，避免和测试目录混淆
 
 ## 1. 当前目录分层
 
@@ -22,7 +23,6 @@
 - [sync-to-codex.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/sync-to-codex.sh)
 - [merge-claude-hooks.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/merge-claude-hooks.sh)
 - [merge-codex-hooks.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/merge-codex-hooks.sh)
-- [setup-browser.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/setup-browser.sh)
 - [reset-browser-session.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/reset-browser-session.sh)
 - [reset-install-state.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/reset-install-state.sh)
 
@@ -38,6 +38,7 @@
 
 - [check-global-install.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-global-install.sh)
 - [check-browser-capability.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-browser-capability.sh)
+- [check-browser-health.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-browser-health.sh)
 - [check-codex-runtime.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-codex-runtime.sh)
 
 适合放：
@@ -56,6 +57,7 @@
 - [codex-scenarios.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/codex-scenarios.sh)
 - [readonly-hook.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/readonly-hook.sh)
 - [browser-extraction.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/browser-extraction.sh)
+- [browser-lifecycle.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/browser-lifecycle.sh)
 
 适合放：
 
@@ -94,7 +96,20 @@
 
 - [readonly_command_guard.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/hooks/readonly_command_guard.py)
 
-### 1.7 `scripts/browser/`
+### 1.7 `bin/`
+
+稳定入口脚本：
+
+- [super-stack-browser](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser)
+- [super-stack-browser-health](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser-health)
+- [super-stack-browser-reset](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser-reset)
+
+原则：
+
+- `bin/` 只放对外稳定入口，不放安装编排逻辑
+- 安装脚本负责把这些实体脚本复制到宿主可执行位置
+
+### 1.8 `scripts/browser/`
 
 浏览器抽取与渲染：
 
@@ -105,6 +120,19 @@
   - [decode_browser_eval.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser/renderers/decode_browser_eval.py)
   - [render_browser_report.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser/renderers/render_browser_report.py)
 
+### 1.9 `artifacts/`
+
+运行产物输出目录：
+
+- 浏览器抽取报告
+- smoke 过程中需要人工查看的样例结果
+
+原则：
+
+- `artifacts/` 只放运行产物，不放自动化测试代码
+- 默认输出应优先落到 `artifacts/`
+- 如果脚本需要用户传入 `--output`，README 和帮助信息也应优先示范 `artifacts/...`
+
 ## 2. 单一入口约定
 
 当前仓库只认可下面这套入口风格：
@@ -113,6 +141,7 @@
 - 检查类：`scripts/check/*`
 - 冒烟类：`scripts/smoke/*`
 - 测试类：`scripts/test/*`
+- 运行产物目录：`artifacts/*`
 
 不再保留根目录 shell 入口作为官方路径。
 
@@ -121,6 +150,7 @@
 - 避免 README、测试、CI、文档各自引用不同入口
 - 避免“同一个动作到底执行哪个脚本”这类协作噪音
 - 让目录本身就能表达职责边界
+- 避免把运行产物再次误放进 `tests/` 或一个名字模糊的目录里
 
 ## 3. 典型调用关系
 
@@ -129,7 +159,7 @@
 ```text
 scripts/install/install.sh
   -> scripts/install/reset-install-state.sh
-  -> scripts/install/setup-browser.sh
+  -> repo bin/super-stack-browser*
   -> scripts/install/sync-to-claude.sh / scripts/install/sync-to-codex.sh
        -> scripts/lib/install-state.sh
        -> scripts/install/merge-claude-hooks.sh / scripts/install/merge-codex-hooks.sh
@@ -164,6 +194,7 @@ scripts/smoke/browser-extraction.sh
 - 如果脚本是共享函数库，放 `scripts/lib/`
 - 如果脚本是运行态 hook，放 `scripts/hooks/`
 - 如果脚本是浏览器适配器或渲染器，放 `scripts/browser/`
+- 如果文件是运行出来供人工查看的报告或样例，放 `artifacts/`
 
 ## 5. 当前结论
 

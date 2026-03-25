@@ -4,7 +4,7 @@ __pycache__/
 
 .tmp/
 tmp/
-test/
+/artifacts/
 /.idea/
 /.planning/.super-stack-readonly-hook.log
 /.planning/.super-stack-codex-hooks.log

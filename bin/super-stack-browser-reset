@@ -1,0 +1,17 @@
+#!/usr/bin/env bash
+
+set -euo pipefail
+
+BROWSER_BIN="${HOME}/.super-stack/runtime/bin/super-stack-browser"
+SESSION_NAME="${SUPER_STACK_BROWSER_SESSION:-super-stack-browser}"
+
+if [[ ! -x "${BROWSER_BIN}" ]]; then
+  printf "[super-stack] 错误：未找到稳定浏览器入口：%s。请先运行 scripts/install/install.sh --host all\n" "${BROWSER_BIN}" >&2
+  exit 1
+fi
+
+printf "[super-stack] 正在重置稳定浏览器会话：%s\n" "${SESSION_NAME}"
+"${BROWSER_BIN}" close >/dev/null 2>&1 || true
+sleep 1
+"${BROWSER_BIN}" session >/dev/null 2>&1 || true
+printf "[super-stack] 稳定浏览器会话已重置完成\n"

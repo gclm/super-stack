@@ -17,7 +17,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "python3 \"$HOME/.claude/super-stack/scripts/hooks/readonly_command_guard.py\" --host claude"
+            "command": "python3 \"$HOME/.super-stack/runtime/scripts/hooks/readonly_command_guard.py\" --host claude"
           }
         ]
       }

@@ -18,7 +18,7 @@ if os.environ.get("SUPER_STACK_BROWSE_BIN"):
     candidate_bins.append(("override", Path(os.environ["SUPER_STACK_BROWSE_BIN"]).expanduser()))
 
 default_candidates = [
-    ("super-stack-browser", home / ".claude-stack" / "bin" / "super-stack-browser"),
+    ("super-stack-browser", home / ".super-stack" / "runtime" / "bin" / "super-stack-browser"),
 ]
 
 candidate_bins.extend(default_candidates)

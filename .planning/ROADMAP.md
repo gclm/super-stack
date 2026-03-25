@@ -19,6 +19,7 @@
 - `scripts/lib/`: shell 公共函数、检查辅助、安装状态记录与恢复
 - `scripts/hooks/`: 运行态 hook 逻辑
 - `scripts/browser/`: 浏览器抽取适配器与渲染器
+- `artifacts/`: 浏览器抽取报告等运行产物输出目录
 
 不再保留根目录旧入口作为第二套官方方式。
 
@@ -36,6 +37,9 @@
 - CI:
   - `.github/workflows/ci.yml`
   - 当前覆盖 Bash 语法检查、Python unit test、shell integration test
+- 运行产物:
+  - `artifacts/`
+  - 用于承载 browser smoke 报告等人工查看结果，不承载自动化测试代码
 
 ### 当前文档结构
 
@@ -67,6 +71,7 @@
 1. 继续保持单一脚本入口，不再新增根目录平铺 shell 脚本。
 2. 新增脚本必须先判断应进入 `install/check/smoke/test/lib/hooks/browser` 哪一层。
 3. 任何 README、文档、CI、测试更新都必须同步使用新路径，避免再次出现“文档一套、仓库一套”。
+4. 浏览器 smoke、样例报告和人工检查结果统一落到 `artifacts/`，不要再引入新的输出目录名。
 
 ### P1：补强真实环境验证
 

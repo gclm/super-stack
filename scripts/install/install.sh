@@ -6,6 +6,34 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=../lib/common.sh
 source "${SCRIPT_DIR}/../lib/common.sh"
 
+RUNTIME_ROOT="${SUPER_STACK_RUNTIME_ROOT}"
+BIN_DIR="${RUNTIME_ROOT}/bin"
+MANAGED_BIN_DIR="${REPO_ROOT}/bin"
+
+ensure_browser_wrappers() {
+  local stable_wrapper="${BIN_DIR}/super-stack-browser"
+  local health_wrapper="${BIN_DIR}/super-stack-browser-health"
+  local reset_wrapper="${BIN_DIR}/super-stack-browser-reset"
+
+  ensure_dir "${BIN_DIR}"
+
+  if ! command -v agent-browser >/dev/null 2>&1; then
+    log "正在通过 npm 全局安装 agent-browser"
+    npm install -g agent-browser
+  else
+    log "agent-browser 已存在于 PATH 中"
+  fi
+
+  cp "${MANAGED_BIN_DIR}/super-stack-browser" "${stable_wrapper}"
+  cp "${MANAGED_BIN_DIR}/super-stack-browser-health" "${health_wrapper}"
+  cp "${MANAGED_BIN_DIR}/super-stack-browser-reset" "${reset_wrapper}"
+  chmod +x "${stable_wrapper}" "${health_wrapper}" "${reset_wrapper}"
+
+  log "稳定浏览器入口已就绪：${stable_wrapper}"
+  log "浏览器健康检查入口已就绪：${health_wrapper}"
+  log "浏览器会话重置入口已就绪：${reset_wrapper}"
+}
+
 usage() {
   cat <<'EOF'
 用法：
@@ -44,7 +72,7 @@ case "$HOST" in
 esac
 
 bash "${SCRIPT_DIR}/reset-install-state.sh"
-bash "${SCRIPT_DIR}/setup-browser.sh"
+ensure_browser_wrappers
 
 if [[ "$HOST" == "claude" || "$HOST" == "all" ]]; then
   bash "${SCRIPT_DIR}/sync-to-claude.sh"

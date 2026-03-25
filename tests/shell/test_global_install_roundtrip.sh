@@ -53,8 +53,9 @@ assert_file "${HOME}/.codex/AGENTS.md"
 assert_file "${HOME}/.claude/CLAUDE.md"
 assert_file "${HOME}/.codex/config.toml"
 assert_file "${HOME}/.claude/settings.json"
-assert_dir "${HOME}/.codex/super-stack"
-assert_dir "${HOME}/.claude/super-stack"
+assert_dir "${HOME}/.super-stack/runtime"
+assert_dir "${HOME}/.super-stack/state/global-install"
+assert_dir "${HOME}/.super-stack/backup"
 assert_dir "${HOME}/.agents/skills"
 
 assert_contains "${HOME}/.codex/AGENTS.md" "single global workflow source managed by super-stack"
@@ -73,8 +74,7 @@ assert_contains "${HOME}/.codex/config.toml" "# user config"
 assert_contains "${HOME}/.claude/CLAUDE.md" "ORIGINAL CLAUDE ROUTER"
 assert_contains "${HOME}/.claude/settings.json" '{"foo":1}'
 
-assert_not_exists "${HOME}/.codex/super-stack"
-assert_not_exists "${HOME}/.claude/super-stack"
+assert_not_exists "${HOME}/.super-stack/runtime"
 assert_not_exists "${HOME}/.agents/skills/${first_skill_name}"
 assert_not_exists "${HOME}/.claude/skills/${first_skill_name}"
 

@@ -4,6 +4,10 @@ set -euo pipefail
 
 COMMON_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${COMMON_LIB_DIR}/../.." && pwd)"
+SUPER_STACK_HOME="${HOME}/.super-stack"
+SUPER_STACK_RUNTIME_ROOT="${SUPER_STACK_HOME}/runtime"
+SUPER_STACK_STATE_BASE="${SUPER_STACK_HOME}/state"
+SUPER_STACK_BACKUP_ROOT="${SUPER_STACK_HOME}/backup"
 
 log() {
   printf '[super-stack] %s\n' "$*"

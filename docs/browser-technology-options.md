@@ -56,7 +56,7 @@
 - 本地 browser CLI / binary
 - 适合直接被 Claude / Codex 调用
 - 更接近 `gstack` 那种“本地浏览器命令 + 本地运行时”的路线
-- 当前通过全局 `npm install -g agent-browser` 维护
+- 当前通过 `install.sh` 触发 `npm install -g agent-browser` 维护
 
 真实表现：
 
@@ -220,7 +220,7 @@ agent-browser --auto-connect --session-name super-stack-browser
 ### 5.1 安装
 
 ```bash
-./scripts/install/setup-browser.sh
+./scripts/install/install.sh --host all
 ```
 
 ### 5.2 检查
@@ -241,19 +241,31 @@ provider=local-binary:super-stack-browser:...
 推荐统一用：
 
 ```bash
-~/.claude-stack/bin/super-stack-browser open https://example.com
+~/.super-stack/runtime/bin/super-stack-browser open https://example.com
+```
+
+默认会注入 15 分钟空闲超时，减少 daemon 和 headless Chrome 长时间残留：
+
+```bash
+SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=900000 ~/.super-stack/runtime/bin/super-stack-browser open https://example.com
 ```
 
 如果稳定会话卡住、重复授权明显增多、或浏览器状态漂移，可以先执行：
 
 ```bash
-./scripts/install/reset-browser-session.sh
+~/.super-stack/runtime/bin/super-stack-browser-reset
+```
+
+如果怀疑残留会话、headless Chrome 变多、或 Chrome 总内存异常上涨，可以先做健康检查：
+
+```bash
+~/.super-stack/runtime/bin/super-stack-browser-health
 ```
 
 如果确实需要改 session name：
 
 ```bash
-SUPER_STACK_BROWSER_SESSION=my-browser ~/.claude-stack/bin/super-stack-browser open https://example.com
+SUPER_STACK_BROWSER_SESSION=my-browser ~/.super-stack/runtime/bin/super-stack-browser open https://example.com
 ```
 
 ## 6. 后续只需要继续优化什么
@@ -264,6 +276,7 @@ SUPER_STACK_BROWSER_SESSION=my-browser ~/.claude-stack/bin/super-stack-browser o
 - 减少重复授权
 - 增加 `browse` 专项回归
 - 增加真实页面结构化提取脚本
+- 用 idle timeout + 健康检查 + reset 收口浏览器生命周期
 
 后续不再优先做的事：
 

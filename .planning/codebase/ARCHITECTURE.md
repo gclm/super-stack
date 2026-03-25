@@ -8,8 +8,8 @@
 - 数据流不是业务数据流，而是配置资产流：
   - 仓库内容 -> `scripts/install/sync-to-*` 脚本 -> 用户目录中的宿主配置/skills/hooks -> `scripts/check/*` 与 `scripts/smoke/*` 回归验证。
 - 浏览器能力是单独子链路：
-  - `scripts/install/setup-browser.sh` 安装 `agent-browser` 并生成 `super-stack-browser` 稳定包装入口。
-  - `scripts/smoke/browser-extraction.sh` 基于 DOM 提取元数据、评论和图片，输出 Markdown 报告。
+  - `scripts/install/install.sh` 安装 `agent-browser` 并部署 `super-stack-browser` 稳定包装入口。
+  - `scripts/smoke/browser-extraction.sh` 基于 DOM 提取元数据、评论和图片，输出 Markdown 报告到 `artifacts/` 或显式指定路径。
 - 风险守卫目前仍较轻：
   - `scripts/hooks/readonly_command_guard.py` 主要做只读命令自动放行。
   - 文档与路线图明确提到后续才进入风险分级与 deny/ask 策略。

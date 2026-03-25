@@ -14,4 +14,4 @@
 - `tests/python/`, `tests/shell/`: 自动化测试主体。
 - `docs/`: 设计说明、选型记录、路线图、参考项目吸收记录。
 - `templates/`: `.planning/` 与验证文档模板。
-- `test/`: 浏览器抽取 smoke 的人工样例输出目录，不承载自动化测试代码。
+- `artifacts/`: 浏览器抽取 smoke 等运行产物输出目录，不承载自动化测试代码。

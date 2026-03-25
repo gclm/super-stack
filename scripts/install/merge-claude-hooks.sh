@@ -10,7 +10,7 @@ CLAUDE_HOME="${HOME}/.claude"
 SETTINGS_FILE="${CLAUDE_HOME}/settings.json"
 HOOKS_SOURCE="${REPO_ROOT}/.claude/hooks/hooks.json"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
-BACKUP_DIR="${CLAUDE_HOME}/backups"
+BACKUP_DIR="${SUPER_STACK_BACKUP_ROOT}/claude-hooks"
 BACKUP_FILE="${BACKUP_DIR}/settings.super-stack-hooks.${TIMESTAMP}.json"
 
 ensure_dir "$CLAUDE_HOME"

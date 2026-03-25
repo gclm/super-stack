@@ -10,13 +10,18 @@ source "${SCRIPT_DIR}/../lib/checks.sh"
 
 CODEX_HOME="${HOME}/.codex"
 CLAUDE_HOME="${HOME}/.claude"
+RUNTIME_ROOT="${SUPER_STACK_RUNTIME_ROOT}"
 USER_AGENTS_HOME="${HOME}/.agents"
+STATE_ROOT="${SUPER_STACK_STATE_BASE}/global-install"
+BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}"
 
-CODEX_STACK_AGENTS="${CODEX_HOME}/super-stack/AGENTS.md"
+RUNTIME_AGENTS="${RUNTIME_ROOT}/AGENTS.md"
 CODEX_AGENTS_FILE="${CODEX_HOME}/AGENTS.md"
 CODEX_CONFIG_FILE="${CODEX_HOME}/config.toml"
 USER_SKILLS_DIR="${USER_AGENTS_HOME}/skills"
-CLAUDE_STACK_AGENTS="${CLAUDE_HOME}/super-stack/AGENTS.md"
+GLOBAL_BROWSER_BIN="${RUNTIME_ROOT}/bin/super-stack-browser"
+GLOBAL_BROWSER_HEALTH_BIN="${RUNTIME_ROOT}/bin/super-stack-browser-health"
+GLOBAL_BROWSER_RESET_BIN="${RUNTIME_ROOT}/bin/super-stack-browser-reset"
 CLAUDE_FILE="${CLAUDE_HOME}/CLAUDE.md"
 CLAUDE_SKILLS_DIR="${CLAUDE_HOME}/skills"
 CLAUDE_SETTINGS_FILE="${CLAUDE_HOME}/settings.json"
@@ -111,7 +116,7 @@ EXPECTED_SKILL_COUNT="$(count_expected_skill_names)"
 EXPECTED_CODEX_AGENTS=$(cat <<EOF
 # Super Stack Global Router
 
-Use \`${CODEX_HOME}/super-stack/AGENTS.md\` as the global workflow source.
+Use \`${RUNTIME_ROOT}/AGENTS.md\` as the global workflow source.
 
 - This is the default global workflow router for Codex.
 - This repository is the single global workflow source managed by super-stack.
@@ -123,7 +128,7 @@ EOF
 EXPECTED_CLAUDE_ROUTER=$(cat <<EOF
 # Super Stack Global Router
 
-Use \`${CLAUDE_HOME}/super-stack/AGENTS.md\` as the shared global workflow source.
+Use \`${RUNTIME_ROOT}/AGENTS.md\` as the shared global workflow source.
 
 - This is the default global workflow router for Claude.
 - This repository is the single global workflow source managed by super-stack.
@@ -132,12 +137,17 @@ Use \`${CLAUDE_HOME}/super-stack/AGENTS.md\` as the shared global workflow sourc
 EOF
 )
 
+printf '== Runtime ==\n'
+check_file "$RUNTIME_AGENTS" "共享运行仓库 AGENTS"
+check_same_content "$RUNTIME_AGENTS" "$REPO_AGENTS_FILE" "共享运行仓库 AGENTS 与仓库一致"
+check_dir "$STATE_ROOT" "安装状态目录"
+check_dir "$BACKUP_ROOT" "统一备份根目录"
+printf '\n'
+
 printf '== Codex ==\n'
-check_file "$CODEX_STACK_AGENTS" "Codex 共享栈 AGENTS"
 check_file "$CODEX_AGENTS_FILE" "Codex 全局 AGENTS"
 check_file "$CODEX_CONFIG_FILE" "Codex 配置文件"
 check_dir "$USER_SKILLS_DIR" "用户 skills 目录"
-check_same_content "$CODEX_STACK_AGENTS" "$REPO_AGENTS_FILE" "Codex 共享栈 AGENTS 与仓库一致"
 check_exact_content "$CODEX_AGENTS_FILE" "$EXPECTED_CODEX_AGENTS" "Codex 全局路由内容符合预期"
 check_contains "$CODEX_CONFIG_FILE" "super_stack_state.py" "Codex hooks 已合并"
 check_contains "$CODEX_CONFIG_FILE" "readonly_command_guard.py" "Codex 只读自动放行 hook 已合并"
@@ -146,17 +156,21 @@ printf 'Codex 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$U
 printf '\n'
 
 printf '== Claude ==\n'
-check_file "$CLAUDE_STACK_AGENTS" "Claude 共享栈 AGENTS"
 check_file "$CLAUDE_FILE" "Claude 全局 CLAUDE.md"
 check_dir "$CLAUDE_SKILLS_DIR" "Claude 全局 skills 目录"
 check_file "$CLAUDE_SETTINGS_FILE" "Claude settings"
-check_same_content "$CLAUDE_STACK_AGENTS" "$REPO_AGENTS_FILE" "Claude 共享栈 AGENTS 与仓库一致"
 check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_ROUTER" "Claude 全局路由内容符合预期"
 check_contains "$CLAUDE_SETTINGS_FILE" "[super-stack] resuming from .planning/STATE.md" "Claude SessionStart hook 已合并"
 check_contains "$CLAUDE_SETTINGS_FILE" "readonly_command_guard.py" "Claude 只读自动放行 hook 已合并"
 check_contains "$CLAUDE_SETTINGS_FILE" "[super-stack] remember to leave STATE.md current" "Claude Stop hook 已合并"
 printf 'Claude 镜像 skills 总数: %s\n' "$(count_skill_entries "$CLAUDE_SKILLS_DIR")"
 printf 'Claude 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$CLAUDE_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
+printf '\n'
+
+printf '== Browser ==\n'
+check_file "$GLOBAL_BROWSER_BIN" "稳定浏览器入口"
+check_file "$GLOBAL_BROWSER_HEALTH_BIN" "浏览器健康检查入口"
+check_file "$GLOBAL_BROWSER_RESET_BIN" "浏览器会话重置入口"
 printf '\n'
 
 printf '== 策略 ==\n'

@@ -2,7 +2,11 @@
 
 set -euo pipefail
 
-SUPER_STACK_STATE_ROOT="${HOME}/.super-stack/state/global-install"
+INSTALL_STATE_LIB_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+# shellcheck source=common.sh
+source "${INSTALL_STATE_LIB_DIR}/common.sh"
+
+SUPER_STACK_STATE_ROOT="${SUPER_STACK_STATE_BASE}/global-install"
 SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/manifest.tsv"
 
 state_root() {

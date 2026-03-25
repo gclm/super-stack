@@ -10,7 +10,7 @@ URL=""
 OUTPUT=""
 ADAPTER="auto"
 SESSION_NAME="${SUPER_STACK_BROWSER_SESSION:-super-stack-browser}"
-BROWSER_BIN="${HOME}/.claude-stack/bin/super-stack-browser"
+BROWSER_BIN="${HOME}/.super-stack/runtime/bin/super-stack-browser"
 BROWSER_DIR="${SCRIPT_DIR}/../browser"
 
 usage() {
@@ -21,7 +21,7 @@ usage() {
 示例：
   scripts/smoke/browser-extraction.sh \
     --url "https://www.xiaohongshu.com/explore/..." \
-    --output test/xiaohongshu-note.md
+    --output artifacts/xiaohongshu-note.md
 EOF
 }
 
@@ -53,8 +53,8 @@ done
 [[ -x "${BROWSER_BIN}" ]] || die "未找到稳定浏览器入口：${BROWSER_BIN}。请先运行 ./scripts/install/install.sh --host all"
 
 if [[ -z "${OUTPUT}" ]]; then
-  ensure_dir "${REPO_ROOT}/test"
-  OUTPUT="${REPO_ROOT}/test/browser-extraction-$(date +%Y%m%d-%H%M%S).md"
+  ensure_dir "${REPO_ROOT}/artifacts"
+  OUTPUT="${REPO_ROOT}/artifacts/browser-extraction-$(date +%Y%m%d-%H%M%S).md"
 else
   case "${OUTPUT}" in
     /*) ;;

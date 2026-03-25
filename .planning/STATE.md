@@ -9,6 +9,7 @@
   - `super-stack` 已明确只维护全局 workflow runtime，不再维护项目级安装分支。
   - 脚本入口已统一到 `scripts/install/`、`scripts/check/`、`scripts/smoke/`、`scripts/test/`、`scripts/lib/`。
   - README、docs、CI、tests、`.planning/codebase/*` 已切换到同一套目录口径。
+  - 当前目录结构已明确收敛为：`~/.super-stack/runtime` 运行仓库、`~/.super-stack/state` 安装状态、`~/.super-stack/backup` 备份目录、`artifacts/` 运行产物目录。
   - 最小自动化闭环已存在：Bash 语法检查、Python unit test、shell integration test。
 
 - current risks:
@@ -23,6 +24,8 @@
   - 本轮继续对 `AGENTS.md`、`build`、`discuss`、`plan` 做瘦身，把共性细则下沉到 `protocols/workflow-governance.md` 和各自 reference，保持主文件更偏入口与路由；同时补齐质量链路的路由边界，明确 `review / verify / qa` 的分工，并补充“多 agent 已配置不等于应自动触发”的宿主约束说明、Codex 侧自动升级启发式，以及一份独立的多 agent 场景示例 reference。
   - 本轮进一步收敛 `AGENTS.md` 与 `.codex/AGENTS.md` 的职责：根文件保留共享真源，Codex adapter 只保留宿主特有执行细节。
   - 本轮新增 `codex-record-retrospective` 技能，用于按项目路径复盘 Codex 本地记录，并把通用经验反哺到 super-stack。
+  - 本轮将路径设计最终收敛为三段式：当前仓库是 `source repo`，`~/.super-stack/runtime` 是 `runtime repo`，`~/.super-stack/state` 存安装状态，`~/.super-stack/backup` 存备份；Claude / Codex 宿主入口已统一指向 `~/.super-stack/runtime`，浏览器稳定入口也统一到 `~/.super-stack/runtime/bin`。
+  - 安装状态保留在 `~/.super-stack/state/global-install`，避免卸载 runtime 时误删恢复数据，同时保持所有 super-stack 运行资产仍集中在 `~/.super-stack` 之下。
 
 - verification status:
   - 已完成本轮文本级自检：根路由、`build` 与 `debug / tdd-execution / review / verify / qa` 的边界无明显冲突。
@@ -35,11 +38,17 @@
   - `codex-record-retrospective` 已新增 session 时间线提炼脚本，减少手工二次阅读 JSONL 原始记录的成本。
   - `map-codebase` 已补充“基础层 -> 设计层 -> 目标层”的陌生项目分层进入策略，避免不是目标驱动的全仓库深挖。
   - 本轮已把两次复盘结论正式写回 `build / verify / api-change-check / security-review / ship`：新增 incidental issue 分类、验证证据四级口径、API/鉴权/租户/上传下载边界检查，以及最终交付必须显式说明“已完成 / 已验证 / 当前约束 / 未纳入”。
+  - 本轮已完成全仓路径与口径审计，技能、宿主配置、安装脚本、检查脚本、测试与文档当前均已适配 `runtime/state/backup` 与 `artifacts/` 结构。
+  - 本轮已完成 fresh verification：`bash -n` 覆盖主要 shell 入口，`bash scripts/test/test.sh` 全量通过，且全仓未再检出 `.claude-stack`、`.super-stack/bin`、`.super-stack/scripts`、`.super-stack-state` 等旧路径残留。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
 
 - next actions:
+  - 继续观察宿主入口、skills 镜像和 hooks 在真实环境中的稳定性，确认不再回退到宿主各自复制副本的旧路径。
+  - 如后续需要进一步精简，可评估是否把 `sync-to-claude.sh` / `sync-to-codex.sh` 再往更薄的接线脚本方向收缩。
+  - 继续维持安装、检查、卸载脚本围绕“source repo -> ~/.super-stack/runtime”工作，并保持状态/备份固定在同一根目录下。
+  - 保持 `scripts/test/` 作为测试入口、`tests/` 作为测试用例目录，并把运行产物统一收敛到 `artifacts/`，避免第三套“像测试又不是测试”的目录口径。
   - 后续结合真实项目继续观察 `review / verify / qa` 的命中率，必要时再补触发示例或更细的边界说明。
   - 在后续真实项目中继续观察 multi-agent 的实际命中率，确认问题主要来自宿主策略、显式授权要求，还是我们自己的升级阈值仍然过高。
   - 用真实项目路径验证 `codex-record-retrospective` 是否能稳定定位到相关 session，并正确区分项目噪音与 workflow 问题。
@@ -51,4 +60,5 @@
 - decision:
   - 结构收敛已经完成，当前不再继续扩张新的结构层次。
   - 后续所有改动优先保持结构一致性、验证闭环和单一入口约定，其次才扩新能力。
+  - 后续路径与安装治理统一采用 `source repo -> runtime repo(~/.super-stack/runtime)`，并固定 `state` / `backup` 子目录边界。
   - 以后出现中途调整产品边界、架构方向或数据库策略时，必须先显式回退到 `plan`，再继续 `build`。
