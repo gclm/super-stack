@@ -1,5 +1,10 @@
 # super-stack
 
+[![Status](https://img.shields.io/badge/status-active-2ea44f)](https://github.com/gclm/super-stack)
+[![License: MIT](https://img.shields.io/badge/license-MIT-f5c542)](LICENSE)
+[![Hosts](https://img.shields.io/badge/hosts-Claude%20Code%20%7C%20Codex-1f6feb)](AGENTS.md)
+[![Legacy Repo](https://img.shields.io/badge/legacy-gclm--flow-8a8a8a)](https://github.com/gclm/gclm-flow)
+
 面向 `Claude Code` 与 `Codex` 的共享全局 workflow runtime。
 
 `super-stack` 的目标很明确：
