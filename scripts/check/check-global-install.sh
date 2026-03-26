@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=../lib/common.sh
 source "${SCRIPT_DIR}/../lib/common.sh"
+# shellcheck source=../lib/install-state.sh
+source "${SCRIPT_DIR}/../lib/install-state.sh"
 # shellcheck source=../lib/checks.sh
 source "${SCRIPT_DIR}/../lib/checks.sh"
 
@@ -15,6 +17,8 @@ USER_AGENTS_HOME="${HOME}/.agents"
 STATE_ROOT="${SUPER_STACK_STATE_BASE}"
 STATE_MANIFEST="${STATE_ROOT}/install-manifest.tsv"
 BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}"
+
+SOURCE_REPO_FILE="$(source_repo_path_file)"
 
 RUNTIME_AGENTS="${RUNTIME_ROOT}/AGENTS.md"
 CODEX_AGENTS_FILE="${CODEX_HOME}/AGENTS.md"
@@ -139,6 +143,7 @@ EOF
 )
 
 printf '== Runtime ==\n'
+check_file "$SOURCE_REPO_FILE" "源仓路径记录文件"
 check_file "$RUNTIME_AGENTS" "共享运行仓库 AGENTS"
 check_same_content "$RUNTIME_AGENTS" "$REPO_AGENTS_FILE" "共享运行仓库 AGENTS 与仓库一致"
 check_dir "$STATE_ROOT" "安装状态目录"
@@ -186,6 +191,7 @@ check_file "$GLOBAL_BROWSER_RESET_BIN" "浏览器会话重置入口"
 printf '\n'
 
 printf '== 策略 ==\n'
+printf '当前记录的 source repo: %s\n' "$(cat "$SOURCE_REPO_FILE" 2>/dev/null || true)"
 check_contains "$CODEX_AGENTS_FILE" "single global workflow source managed by super-stack" "Codex 已使用仅全局路由"
 check_contains "$CLAUDE_FILE" "single global workflow source managed by super-stack" "Claude 已使用仅全局路由"
 printf '\n'

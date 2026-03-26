@@ -31,6 +31,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
 - move long checklists, variant handling, and detailed heuristics into `references/`
 - avoid auxiliary files such as README, CHANGELOG, or installation notes inside a skill folder
 - when a skill changes repository-wide behavior expectations, update `AGENTS.md` or `.planning/STATE.md` if that context would otherwise drift
+- when host-installed skill copies also exist, treat the repository skill under `.agents/skills/` as the source of truth and avoid making the runtime copy the only edited location
 - default user-facing examples, summaries, and prompts to Chinese unless the repository or external interface requires English
 
 ## Process
@@ -41,6 +42,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
    - target `SKILL.md`
    - needed `references/`
    - any routing or state files that must stay aligned
+   - if runtime-installed skill copies exist, the source-repository location that must be updated first
 4. Implement the smallest coherent skill change.
 5. Run a text-level self-check for:
    - clear trigger description

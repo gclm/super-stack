@@ -42,6 +42,7 @@ If the project path is missing, ask the user for it in one short sentence:
 - focus on repeated failure patterns, route misses, scope drift, verification gaps, and communication friction
 - separate “this project was unusually messy” from “super-stack rule design is weak”
 - when proposing repository changes, name the exact file or skill that should absorb the lesson
+- when the lesson implies a skill change, recommend the source-repository skill path rather than a host-installed runtime copy
 - do not rely on broad global history summarizers as the default or only evidence path; start from path-correlated sources first
 - do not stop after a single weak source; if path correlation is missing, continue through the next record source or explicitly report the evidence gap
 - default retrospective summaries and recommendations to Chinese

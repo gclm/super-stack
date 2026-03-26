@@ -14,6 +14,13 @@ This repository provides a shared core:
 
 Use one workflow core across multiple agent hosts without coupling the project to a single plugin system.
 
+## Skill Source Of Truth
+
+Skills in this repository are maintained in the source tree under `.agents/skills/`.
+
+Treat host-installed skill directories such as `~/.agents/skills` or `~/.codex/skills` as runtime copies unless a repository explicitly says otherwise.
+When improving a reusable skill, update the source repository first and only then sync or reinstall the runtime copies.
+
 The design principle is:
 
 1. Keep shared behavior in host-neutral files.
@@ -58,6 +65,7 @@ Supporting skills can be used within or between stages when appropriate:
 - `performance-investigation` for evidence-based bottleneck diagnosis
 - `browse` for browser-side DOM, style, console, and network verification
 - `pdf` for PDF text extraction, rendering review, and generation tasks where layout or document fidelity matters
+- `doc` for DOCX text extraction, structured editing, and rendered layout review when Word document fidelity matters
 
 ## Default Execution Policy
 
@@ -246,6 +254,7 @@ Do not claim a later stage is complete while its exit criteria are still missing
 - Read local code and docs before making architectural assumptions.
 - Prefer evidence over memory when behavior can be verified quickly.
 - Keep edits targeted and reversible.
+- Treat transient VPN or proxy related SSL and download failures as retry-first problems unless the error is clearly deterministic.
 - Do not claim completion without fresh verification evidence.
 - Use `protocols/workflow-governance.md` when shared operating guards matter, especially for scope backtracking, environment interpretation, design artifact typing, and fork-aware redesign work.
 - For reviews, prioritize correctness, regressions, security, and missing tests.

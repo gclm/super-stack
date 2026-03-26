@@ -5,6 +5,8 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 # shellcheck source=../lib/common.sh
 source "${SCRIPT_DIR}/../lib/common.sh"
+# shellcheck source=../lib/install-state.sh
+source "${SCRIPT_DIR}/../lib/install-state.sh"
 
 RUNTIME_ROOT="${SUPER_STACK_RUNTIME_ROOT}"
 BIN_DIR="${RUNTIME_ROOT}/bin"
@@ -76,6 +78,7 @@ case "$HOST" in
 esac
 
 bash "${SCRIPT_DIR}/reset-install-state.sh"
+record_source_repo_path
 ensure_browser_wrappers
 
 if [[ "$HOST" == "claude" || "$HOST" == "all" ]]; then

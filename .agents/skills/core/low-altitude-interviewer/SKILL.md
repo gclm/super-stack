@@ -12,6 +12,7 @@ Use this skill when hiring or interviewing for low-altitude roles, especially ba
 - the job description or the user's hiring intent
 - the candidate resumes or candidate summaries
 - `references/screening-rubric.md`
+- `references/output-templates.md` when you need reusable screening tables, candidate summaries, or interview question structure
 - any user-specific hiring preferences such as preferred stack, internship duration, location, or arrival time
 
 ## Goals
@@ -37,7 +38,8 @@ Use this skill when hiring or interviewing for low-altitude roles, especially ba
 3. Use `references/screening-rubric.md` to score relevance.
 4. Group candidates into recommendation tiers.
 5. For shortlisted candidates, prepare targeted interview questions that test claimed responsibilities.
-6. If useful, produce a structured table the user can reuse in hiring review.
+6. Use `references/output-templates.md` when the user needs reusable screening tables, per-candidate summaries, or interview prep packs.
+7. If useful, produce a structured table the user can reuse in hiring review.
 
 ## Output
 

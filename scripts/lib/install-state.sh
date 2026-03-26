@@ -9,6 +9,7 @@ source "${INSTALL_STATE_LIB_DIR}/common.sh"
 SUPER_STACK_STATE_ROOT="${SUPER_STACK_STATE_BASE}"
 SUPER_STACK_MANIFEST="${SUPER_STACK_STATE_ROOT}/install-manifest.tsv"
 SUPER_STACK_RESTORE_BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}/install-state"
+SUPER_STACK_SOURCE_REPO_FILE="${SUPER_STACK_STATE_ROOT}/source-repo-path.txt"
 
 state_root() {
   printf '%s\n' "$SUPER_STACK_STATE_ROOT"
@@ -72,4 +73,13 @@ restore_recorded_targets() {
         ;;
     esac
   done < "$SUPER_STACK_MANIFEST"
+}
+
+record_source_repo_path() {
+  mkdir -p "$SUPER_STACK_STATE_ROOT"
+  printf '%s\n' "$REPO_ROOT" > "$SUPER_STACK_SOURCE_REPO_FILE"
+}
+
+source_repo_path_file() {
+  printf '%s\n' "$SUPER_STACK_SOURCE_REPO_FILE"
 }

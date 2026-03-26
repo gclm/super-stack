@@ -36,6 +36,28 @@ When making commits for a project that adopts super-stack defaults, use Angular 
 
 ## Shared Operating Guards
 
+## Transient Network Defaults
+
+When downloads, dependency installs, or remote fetches fail and the error looks transient rather than deterministic, do not stop at the first failure.
+
+Treat these as likely transient failures first:
+
+- SSL handshake failures
+- certificate errors that appear intermittently under VPN or proxy routing
+- connection reset, timeout, broken pipe, or similar transport interruptions
+- temporary CDN or mirror fetch failures
+
+Default handling:
+
+1. First check whether the command itself is correct.
+2. If the command looks correct and the failure looks network-related, retry instead of immediately concluding the dependency is unavailable.
+3. Wait a random short backoff before retrying, such as 3-12 seconds for early retries.
+4. Retry at least 3 times before escalating unless the failure is clearly deterministic, such as 404, permission denied, or invalid package names.
+5. If mirrors are configurable, try an alternate official or trusted mirror after repeated transient failures.
+6. After repeated failures, report both the command and the transient symptoms so the user can decide whether to switch VPN, proxy, or network conditions.
+
+Do not classify a dependency as permanently unavailable after a single flaky network failure.
+
 - If the user changes product entry shape, current-phase scope, architecture direction, database strategy, or reference-reuse boundary, explicitly backtrack to `plan` before more implementation.
 - Distinguish missing tools from shell initialization failures before concluding an environment cannot support verification.
 - Run the smallest real build/check path early on new scaffolds or unstable environments instead of delaying all validation until after broad implementation.

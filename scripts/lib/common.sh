@@ -163,3 +163,27 @@ copy_dir_if_missing() {
   ensure_dir "$(dirname "$dest")"
   cp -R "$src" "$dest"
 }
+
+retry_with_backoff() {
+  local max_attempts="$1"
+  shift
+
+  local attempt=1
+  local base_sleep=3
+
+  while true; do
+    if "$@"; then
+      return 0
+    fi
+
+    if (( attempt >= max_attempts )); then
+      return 1
+    fi
+
+    local jitter=$((RANDOM % 10))
+    local sleep_seconds=$((base_sleep + jitter))
+    log "命令执行失败，${sleep_seconds}s 后进行第 $((attempt + 1))/${max_attempts} 次重试：$*"
+    sleep "${sleep_seconds}"
+    attempt=$((attempt + 1))
+  done
+}
