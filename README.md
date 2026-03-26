@@ -17,6 +17,13 @@
 - 浏览器默认主链路是 `agent-browser` + `super-stack-browser`
 - `~/.super-stack/runtime` 是纯运行仓库，不是重新安装用的完整 source repo 副本
 
+## 仓库关系
+
+- 当前主仓库：`super-stack`
+- 历史参考仓库：[`gclm-flow`](https://github.com/gclm/gclm-flow)
+- 后续公开更新、结构演进与发布统一在当前仓库进行
+- `gclm-flow` 仅保留为历史配置、旧技能与演进路径参考，不再作为主发布源
+
 ## 快速开始
 
 安装 `Claude` 与 `Codex`：
