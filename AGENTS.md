@@ -57,6 +57,7 @@ Supporting skills can be used within or between stages when appropriate:
 - `security-review` for trust-boundary and abuse-path review
 - `performance-investigation` for evidence-based bottleneck diagnosis
 - `browse` for browser-side DOM, style, console, and network verification
+- `pdf` for PDF text extraction, rendering review, and generation tasks where layout or document fidelity matters
 
 ## Default Execution Policy
 

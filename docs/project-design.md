@@ -316,7 +316,7 @@ Codex 当前已接入的 hooks 包括：
 所以后续要做的不是再发明概念，而是围绕这套 source/runtime + state/backup 结构保持安装、检查、卸载与文档同步。
 其中安装动作始终从 source repo 发起，runtime 只保留运行所需最小资产。
 
-完整说明见 [source/runtime 边界设计](/Users/gclm/Codes/ai/claude-stack-plugin/docs/source-runtime-boundary.md)。
+完整说明见 [source/runtime 边界设计](source-runtime-boundary.md)。
 
 ### 5.4 浏览器接线
 
@@ -335,7 +335,7 @@ Codex 当前已接入的 hooks 包括：
 
 浏览器技术调研与历史取舍不再放在本设计文档中展开，统一见：
 
-- [浏览器技术选型记录](/Users/gclm/Codes/ai/claude-stack-plugin/docs/browser-technology-options.md)
+- [浏览器技术选型记录](browser-technology-options.md)
 
 ## 6. 全局安装主线
 
@@ -413,7 +413,7 @@ Codex 当前已接入的 hooks 包括：
 
 当前共享脚本：
 
-- [readonly_command_guard.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/hooks/readonly_command_guard.py)
+- [readonly_command_guard.py](../scripts/hooks/readonly_command_guard.py)
 
 当前策略：
 

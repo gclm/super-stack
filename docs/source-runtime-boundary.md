@@ -87,9 +87,9 @@
 
 当前浏览器包装脚本：
 
-- [super-stack-browser](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser)
-- [super-stack-browser-health](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser-health)
-- [super-stack-browser-reset](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser-reset)
+- [super-stack-browser](../bin/super-stack-browser)
+- [super-stack-browser-health](../bin/super-stack-browser-health)
+- [super-stack-browser-reset](../bin/super-stack-browser-reset)
 
 都应该作为源仓库里的实体脚本维护，安装时直接复制到：
 
@@ -132,10 +132,10 @@
 
 比如：
 
-- [test.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/test.sh) 是统一测试入口
-- [python.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/python.sh) 负责 Python 测试编排
-- [tests/shell](/Users/gclm/Codes/ai/claude-stack-plugin/tests/shell) 放 shell 用例
-- [tests/python](/Users/gclm/Codes/ai/claude-stack-plugin/tests/python) 放 Python 用例
+- [test.sh](../scripts/test/test.sh) 是统一测试入口
+- [python.sh](../scripts/test/python.sh) 负责 Python 测试编排
+- [tests/shell](../tests/shell) 放 shell 用例
+- [tests/python](../tests/python) 放 Python 用例
 
 所以保留两层是合理的，只要后续坚持：
 

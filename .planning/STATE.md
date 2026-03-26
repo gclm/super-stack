@@ -7,6 +7,7 @@
 
 - current baseline:
   - `super-stack` 已明确只维护全局 workflow runtime，不再维护项目级安装分支。
+  - 旧仓库 `gclm-flow` 当前定位为历史参考与素材来源，不再作为继续发布的主仓库；后续公开发布与结构收敛统一以 `super-stack` 为准。
   - 脚本入口已统一到 `scripts/install/`、`scripts/check/`、`scripts/smoke/`、`scripts/test/`、`scripts/lib/`。
   - README、docs、CI、tests、`.planning/codebase/*` 已切换到同一套目录口径。
   - 当前目录结构已明确收敛为：`~/.super-stack/runtime` 运行仓库、`~/.super-stack/state` 安装状态、`~/.super-stack/backup` 备份目录、`artifacts/` 运行产物目录。
@@ -42,11 +43,13 @@
   - 本轮已完成全仓路径与口径审计，技能、宿主配置、安装脚本、检查脚本、测试与文档当前均已适配 `runtime/state/backup` 与 `artifacts/` 结构。
   - 本轮已完成 fresh verification：`bash -n` 覆盖主要 shell 入口，`bash scripts/test/test.sh` 全量通过，且全仓未再检出 `.claude-stack`、`.super-stack/bin`、`.super-stack/scripts`、`.super-stack-state` 等旧路径残留。
   - runtime 复制策略已从整库复制收敛为最小运行集，不再同步 `.git`、`.github`、`.idea`、`.planning`、`docs`、`tests`、`.agents`、`.claude` 等只属于 source repo 的目录。
+  - 发布前文档链接已完成一次仓库相对路径收口，README 与 `docs/` 内不再残留旧的本地 source repo 绝对路径。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
 
 - next actions:
+  - 为 GitHub 发布补齐远端仓库、推送主分支，并继续保持当前仓库作为唯一公开源。
   - 继续观察宿主入口、skills 镜像和 hooks 在真实环境中的稳定性，确认不再回退到宿主各自复制副本的旧路径。
   - 如后续需要进一步精简，可评估是否把 `sync-to-claude.sh` / `sync-to-codex.sh` 再往更薄的接线脚本方向收缩。
   - 继续维持安装、检查、卸载脚本围绕“source repo -> ~/.super-stack/runtime”工作，并保持状态/备份固定在同一根目录下。

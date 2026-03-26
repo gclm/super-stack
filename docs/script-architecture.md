@@ -18,14 +18,14 @@
 
 安装与接线相关入口：
 
-- [install.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/install.sh)
-- [uninstall-global.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/uninstall-global.sh)
-- [sync-to-claude.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/sync-to-claude.sh)
-- [sync-to-codex.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/sync-to-codex.sh)
-- [merge-claude-hooks.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/merge-claude-hooks.sh)
-- [merge-codex-hooks.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/merge-codex-hooks.sh)
-- [reset-browser-session.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/reset-browser-session.sh)
-- [reset-install-state.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/reset-install-state.sh)
+- [install.sh](../scripts/install/install.sh)
+- [uninstall-global.sh](../scripts/install/uninstall-global.sh)
+- [sync-to-claude.sh](../scripts/install/sync-to-claude.sh)
+- [sync-to-codex.sh](../scripts/install/sync-to-codex.sh)
+- [merge-claude-hooks.sh](../scripts/install/merge-claude-hooks.sh)
+- [merge-codex-hooks.sh](../scripts/install/merge-codex-hooks.sh)
+- [reset-browser-session.sh](../scripts/install/reset-browser-session.sh)
+- [reset-install-state.sh](../scripts/install/reset-install-state.sh)
 
 适合放：
 
@@ -42,10 +42,10 @@
 
 安装结果与运行态检查：
 
-- [check-global-install.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-global-install.sh)
-- [check-browser-capability.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-browser-capability.sh)
-- [check-browser-health.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-browser-health.sh)
-- [check-codex-runtime.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/check/check-codex-runtime.sh)
+- [check-global-install.sh](../scripts/check/check-global-install.sh)
+- [check-browser-capability.sh](../scripts/check/check-browser-capability.sh)
+- [check-browser-health.sh](../scripts/check/check-browser-health.sh)
+- [check-codex-runtime.sh](../scripts/check/check-codex-runtime.sh)
 
 适合放：
 
@@ -57,13 +57,13 @@
 
 真实环境回归入口：
 
-- [claude-global.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/claude-global.sh)
-- [codex-global.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/codex-global.sh)
-- [codex-regression-suite.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/codex-regression-suite.sh)
-- [codex-scenarios.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/codex-scenarios.sh)
-- [readonly-hook.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/readonly-hook.sh)
-- [browser-extraction.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/browser-extraction.sh)
-- [browser-lifecycle.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/browser-lifecycle.sh)
+- [claude-global.sh](../scripts/smoke/claude-global.sh)
+- [codex-global.sh](../scripts/smoke/codex-global.sh)
+- [codex-regression-suite.sh](../scripts/smoke/codex-regression-suite.sh)
+- [codex-scenarios.sh](../scripts/smoke/codex-scenarios.sh)
+- [readonly-hook.sh](../scripts/smoke/readonly-hook.sh)
+- [browser-extraction.sh](../scripts/smoke/browser-extraction.sh)
+- [browser-lifecycle.sh](../scripts/smoke/browser-lifecycle.sh)
 
 适合放：
 
@@ -74,9 +74,9 @@
 
 自动化测试入口：
 
-- [test.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/test.sh)
-- [python.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/python.sh)
-- [shell-integration.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/shell-integration.sh)
+- [test.sh](../scripts/test/test.sh)
+- [python.sh](../scripts/test/python.sh)
+- [shell-integration.sh](../scripts/test/shell-integration.sh)
 
 适合放：
 
@@ -87,9 +87,9 @@
 
 公共函数库：
 
-- [common.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/lib/common.sh)
-- [checks.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/lib/checks.sh)
-- [install-state.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/lib/install-state.sh)
+- [common.sh](../scripts/lib/common.sh)
+- [checks.sh](../scripts/lib/checks.sh)
+- [install-state.sh](../scripts/lib/install-state.sh)
 
 原则：
 
@@ -100,15 +100,15 @@
 
 运行态 hook：
 
-- [readonly_command_guard.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/hooks/readonly_command_guard.py)
+- [readonly_command_guard.py](../scripts/hooks/readonly_command_guard.py)
 
 ### 1.7 `bin/`
 
 稳定入口脚本：
 
-- [super-stack-browser](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser)
-- [super-stack-browser-health](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser-health)
-- [super-stack-browser-reset](/Users/gclm/Codes/ai/claude-stack-plugin/bin/super-stack-browser-reset)
+- [super-stack-browser](../bin/super-stack-browser)
+- [super-stack-browser-health](../bin/super-stack-browser-health)
+- [super-stack-browser-reset](../bin/super-stack-browser-reset)
 
 原则：
 
@@ -120,11 +120,11 @@
 浏览器抽取与渲染：
 
 - extractors:
-  - [generic-page.js](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser/extractors/generic-page.js)
-  - [xiaohongshu-note.js](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser/extractors/xiaohongshu-note.js)
+  - [generic-page.js](../scripts/browser/extractors/generic-page.js)
+  - [xiaohongshu-note.js](../scripts/browser/extractors/xiaohongshu-note.js)
 - renderers:
-  - [decode_browser_eval.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser/renderers/decode_browser_eval.py)
-  - [render_browser_report.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/browser/renderers/render_browser_report.py)
+  - [decode_browser_eval.py](../scripts/browser/renderers/decode_browser_eval.py)
+  - [render_browser_report.py](../scripts/browser/renderers/render_browser_report.py)
 
 ### 1.9 `artifacts/`
 

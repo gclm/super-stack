@@ -22,12 +22,12 @@
 
 当前入口：
 
-- [scripts/test/python.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/python.sh)
+- [scripts/test/python.sh](../scripts/test/python.sh)
 
 当前覆盖：
 
-- [tests/python/test_readonly_command_guard.py](/Users/gclm/Codes/ai/claude-stack-plugin/tests/python/test_readonly_command_guard.py)
-- [tests/python/test_super_stack_state.py](/Users/gclm/Codes/ai/claude-stack-plugin/tests/python/test_super_stack_state.py)
+- [tests/python/test_readonly_command_guard.py](../tests/python/test_readonly_command_guard.py)
+- [tests/python/test_super_stack_state.py](../tests/python/test_super_stack_state.py)
 
 ### 1.2 integration
 
@@ -40,13 +40,13 @@
 
 当前入口：
 
-- [scripts/test/shell-integration.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/shell-integration.sh)
+- [scripts/test/shell-integration.sh](../scripts/test/shell-integration.sh)
 
 当前覆盖：
 
-- [tests/shell/test_global_install_roundtrip.sh](/Users/gclm/Codes/ai/claude-stack-plugin/tests/shell/test_global_install_roundtrip.sh)
-- [tests/shell/test_install_state_roundtrip.sh](/Users/gclm/Codes/ai/claude-stack-plugin/tests/shell/test_install_state_roundtrip.sh)
-- [tests/shell/test_hook_merge_idempotent.sh](/Users/gclm/Codes/ai/claude-stack-plugin/tests/shell/test_hook_merge_idempotent.sh)
+- [tests/shell/test_global_install_roundtrip.sh](../tests/shell/test_global_install_roundtrip.sh)
+- [tests/shell/test_install_state_roundtrip.sh](../tests/shell/test_install_state_roundtrip.sh)
+- [tests/shell/test_hook_merge_idempotent.sh](../tests/shell/test_hook_merge_idempotent.sh)
 
 ### 1.3 smoke
 
@@ -64,16 +64,16 @@
 
 当前代表入口：
 
-- [scripts/smoke/readonly-hook.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/readonly-hook.sh)
-- [scripts/smoke/codex-regression-suite.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/codex-regression-suite.sh)
-- [scripts/smoke/claude-global.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/claude-global.sh)
-- [scripts/smoke/browser-extraction.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/browser-extraction.sh)
+- [scripts/smoke/readonly-hook.sh](../scripts/smoke/readonly-hook.sh)
+- [scripts/smoke/codex-regression-suite.sh](../scripts/smoke/codex-regression-suite.sh)
+- [scripts/smoke/claude-global.sh](../scripts/smoke/claude-global.sh)
+- [scripts/smoke/browser-extraction.sh](../scripts/smoke/browser-extraction.sh)
 
 ## 2. 统一测试入口
 
 统一入口见：
 
-- [scripts/test/test.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/test/test.sh)
+- [scripts/test/test.sh](../scripts/test/test.sh)
 
 常用方式：
 
@@ -116,8 +116,8 @@
 
 专项矩阵模板：
 
-- [BROWSER_REGRESSION_MATRIX.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/BROWSER_REGRESSION_MATRIX.md)
-- [HOOK_RISK_REGRESSION_MATRIX.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/HOOK_RISK_REGRESSION_MATRIX.md)
+- [BROWSER_REGRESSION_MATRIX.md](../templates/validation/BROWSER_REGRESSION_MATRIX.md)
+- [HOOK_RISK_REGRESSION_MATRIX.md](../templates/validation/HOOK_RISK_REGRESSION_MATRIX.md)
 
 还没有进入的内容：
 

@@ -97,23 +97,23 @@ pwd && rg TODO README.md
 
 共享判定脚本：
 
-- [readonly_command_guard.py](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/hooks/readonly_command_guard.py)
+- [readonly_command_guard.py](../scripts/hooks/readonly_command_guard.py)
 
 Claude 接线：
 
-- [.claude/hooks/hooks.json](/Users/gclm/Codes/ai/claude-stack-plugin/.claude/hooks/hooks.json)
+- [.claude/hooks/hooks.json](../.claude/hooks/hooks.json)
 - 安装后会合并进 `~/.claude/settings.json`
 
 Codex 接线：
 
-- [merge-codex-hooks.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/install/merge-codex-hooks.sh)
+- [merge-codex-hooks.sh](../scripts/install/merge-codex-hooks.sh)
 - 安装后会合并进 `~/.codex/config.toml`
 
 ## 当前验证方式
 
 基础回归脚本：
 
-- [readonly-hook.sh](/Users/gclm/Codes/ai/claude-stack-plugin/scripts/smoke/readonly-hook.sh)
+- [readonly-hook.sh](../scripts/smoke/readonly-hook.sh)
 
 它当前验证：
 
@@ -125,7 +125,7 @@ Codex 接线：
 
 专项矩阵模板：
 
-- [HOOK_RISK_REGRESSION_MATRIX.md](/Users/gclm/Codes/ai/claude-stack-plugin/templates/validation/HOOK_RISK_REGRESSION_MATRIX.md)
+- [HOOK_RISK_REGRESSION_MATRIX.md](../templates/validation/HOOK_RISK_REGRESSION_MATRIX.md)
 
 ## 下一步建议
 
