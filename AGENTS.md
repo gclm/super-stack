@@ -28,6 +28,14 @@ The design principle is:
 3. Prefer reusable skills over giant system prompts.
 4. Persist project state in files, not only in conversation context.
 
+## Super-Stack Self-Maintenance
+
+When the task targets super-stack itself, such as changing `AGENTS.md`, `protocols/`, `.agents/skills/`, `templates/`, or install-state behavior, locate the source-of-truth repository before proposing or making changes.
+
+Prefer `~/.super-stack/state/source-repo-path.txt` over directory guessing.
+If that file exists and points to a valid Git repository, treat it as the source repository.
+Do not assume runtime copies such as `~/.agents/skills`, `~/.codex/skills`, or `~/.super-stack/runtime` are the source of truth.
+
 ## Core Workflow
 
 The default delivery chain is:

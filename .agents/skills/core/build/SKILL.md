@@ -17,6 +17,7 @@ Use this skill when the project has a current task ready for execution.
 - project-local rules from `AGENTS.md` and nearby skill files
 - `references/environment-preflight.md` when tools, runtimes, or entrypoints may be unstable
 - `references/execution-guardrails.md` when scope, state writeback, or temporary unblock work may drift
+- `references/pyramid-doc-writing.md` when producing or revising a proposal, design doc, architecture note, or module design
 
 ## Goals
 
@@ -26,6 +27,7 @@ Use this skill when the project has a current task ready for execution.
 - detect when execution should pause so planning can be refreshed instead of silently drifting
 - avoid bypassing `debug` or `tdd-execution` when the work really depends on diagnosis or provable behavior change
 - avoid continuing implementation when the user's real need has shifted to `review`, `verify`, or `qa`
+- keep proposal and design documents at the intended depth instead of drifting into mixed-layer output
 
 ## Rules
 
@@ -59,18 +61,24 @@ Use this skill when the project has a current task ready for execution.
 - when writing user-reviewable docs or decision records, prefer Chinese unless the project overrides that rule
 - when adding or editing user-facing script messages, prompts, or validation summaries, default them to Chinese unless an external interface requires English
 - when a project uses super-stack default commit rules, use Angular commit structure with Chinese summaries
+- when producing a user-reviewable proposal or design document, use pyramid structure as the default starting point unless the task has a stronger domain-specific required shape
+- default proposal-style output to `standard` unless the user clearly asks for `brief` or `deep`
+- keep the main document decision-oriented; move implementation-heavy detail to appendix or implementation notes when possible
+- avoid letting a single proposal document silently become a mixed review doc, design doc, and implementation manual
+- if a document starts carrying decision, design, and implementation layers together, prefer splitting or regrouping before continuing to expand it in place
 
 ## Steps
 
 1. Identify the current task from state or roadmap.
 2. Run a quick preflight for the tools and entrypoints this task depends on.
 3. Use `references/execution-guardrails.md` to confirm the task still matches the current scope, to classify any temporary unblock work, to classify incidental findings, and to decide whether the work should really be routed through `debug`, `tdd-execution`, `review`, `verify`, or `qa` first.
-4. For API, auth, tenant, admin, upload, download, callback, or webhook changes, write down the boundary matrix before editing.
-5. Inspect the relevant code paths.
-6. Identify downstream surfaces that must stay aligned, especially README, architecture docs, test entrypoints, CI paths, SDK callers, and planning state.
-7. Implement the smallest sufficient change.
-8. Run relevant verification, including the nearest real runtime path when practical.
-9. Update `.planning/STATE.md` with progress, blockers, environment findings, and any temporary-versus-final decisions.
+4. When writing a proposal or design document, use `references/pyramid-doc-writing.md` to confirm the selected depth mode, the default section structure, the main-doc versus appendix boundary, and any relevant drift signals before finalizing the draft.
+5. For API, auth, tenant, admin, upload, download, callback, or webhook changes, write down the boundary matrix before editing.
+6. Inspect the relevant code paths.
+7. Identify downstream surfaces that must stay aligned, especially README, architecture docs, test entrypoints, CI paths, SDK callers, and planning state.
+8. Implement the smallest sufficient change.
+9. Run relevant verification, including the nearest real runtime path when practical.
+10. Update `.planning/STATE.md` with progress, blockers, environment findings, and any temporary-versus-final decisions.
 
 ## Output
 
@@ -80,5 +88,6 @@ Tell the user:
 - what environment or toolchain assumptions were verified
 - how incidental issues were classified: `current must-fix`, `same-batch can-include`, or `follow-up`
 - whether any explicit backtrack to `plan`, `discuss`, `debug`, `tdd-execution`, `review`, `verify`, or `qa` was required
+- what document depth and structure were used when the task produced a proposal or design document, when relevant
 - what was verified
 - whether the next step is another `build`, `review`, `verify`, `qa`, or `ship`

@@ -36,6 +36,14 @@ When making commits for a project that adopts super-stack defaults, use Angular 
 
 ## Shared Operating Guards
 
+- When maintaining super-stack itself, prefer the repository path recorded in `~/.super-stack/state/source-repo-path.txt` over directory guessing.
+- If the state file exists and points to a valid Git repository, use that repository as the source of truth before proposing or applying changes.
+- Do not treat runtime or installed copies such as `~/.agents/skills`, `~/.codex/skills`, or `~/.super-stack/runtime` as the default source repository.
+- For super-stack self-maintenance tasks, the expected order is:
+  1. identify the source repository from install state
+  2. confirm the path is valid
+  3. only then inspect or edit skills, protocols, templates, or `AGENTS.md`
+
 ## Transient Network Defaults
 
 When downloads, dependency installs, or remote fetches fail and the error looks transient rather than deterministic, do not stop at the first failure.
@@ -63,6 +71,7 @@ Do not classify a dependency as permanently unavailable after a single flaky net
 - Run the smallest real build/check path early on new scaffolds or unstable environments instead of delaying all validation until after broad implementation.
 - For design or prototype tasks, identify the artifact type before producing UI output; do not default to a marketing homepage when the real target is an existing product flow.
 - For fork-based product redesign, define upstream-merge boundaries before broad UI rewrites so design exploration does not hide long-term maintenance risk.
+- For `map-codebase` on clearly multi-module repositories, confirm the target module with the user before broad deep reads unless the user explicitly asked for a full-repository map.
 - Distinguish `review`, `verify`, and `qa` explicitly:
   - `review` finds risks in an existing change
   - `verify` proves whether the requested result is complete

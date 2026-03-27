@@ -104,3 +104,15 @@ Before broad edits on API, auth, tenant, admin, upload, download, callback, or w
 - response fields that must be masked, omitted, or sanitized
 - side effects, callbacks, or external systems touched
 - strongest available verification path: `compile`, `test`, `scripted-flow`, or `real-integration`
+
+## 6. Document Layering Guardrail
+
+When the output is a proposal, design doc, architecture note, or module design, watch for main-body drift.
+
+If the same main document is simultaneously carrying:
+
+- decision content
+- design explanation
+- implementation-heavy detail
+
+prefer regrouping or splitting the artifact instead of automatically continuing to add more detail in place.
