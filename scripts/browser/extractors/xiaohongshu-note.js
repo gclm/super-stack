@@ -1,9 +1,13 @@
 (() => {
-  const clean = (value) => (value || "").trim();
+  const clean = (value) => (value || "").replace(/[ \t]+/g, " ").trim();
   const title =
     clean(document.querySelector("#detail-title")?.innerText) ||
     document.title.replace(/ - 小红书$/, "");
-  const body = clean(document.querySelector("#detail-desc")?.innerText);
+  const body = (document.querySelector("#detail-desc")?.innerText || "")
+    .split("\n")
+    .map((line) => clean(line))
+    .filter(Boolean)
+    .join("\n\n");
   const commentTotal =
     Array.from(document.querySelectorAll("*"))
       .map((el) => clean(el.innerText))
@@ -65,11 +69,13 @@
 
   return JSON.stringify(
     {
-      schemaVersion: "1.0",
+      schemaVersion: "1.1",
       adapter: "xiaohongshu-note",
       kind: "social-note",
+      sourcePlatform: "xiaohongshu",
       title,
       author,
+      publishedAt: "",
       summary: body,
       body,
       commentTotal,

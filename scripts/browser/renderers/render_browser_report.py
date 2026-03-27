@@ -5,6 +5,26 @@ import pathlib
 import sys
 
 
+def normalize_multiline(text: str, max_chars: int | None = None) -> str:
+    blocks = [block.strip() for block in str(text or "").split("\n\n")]
+    lines: list[str] = []
+    total = 0
+
+    for block in blocks:
+        if not block:
+            continue
+        normalized = "\n".join(line.strip() for line in block.splitlines() if line.strip()).strip()
+        if not normalized:
+            continue
+        next_total = total + len(normalized) + (2 if lines else 0)
+        if max_chars is not None and next_total > max_chars:
+            break
+        lines.append(normalized)
+        total = next_total
+
+    return "\n\n".join(lines).strip()
+
+
 def split_comment_block(block: str) -> dict | None:
     lines = [line.strip() for line in block.splitlines() if line.strip()]
     if not lines:
@@ -75,6 +95,8 @@ def main() -> int:
     comments = normalized_comments(data)
     images = data.get("imageUrls") or []
     notes = data.get("notes") or []
+    summary = normalize_multiline(data.get("summary") or "", max_chars=300)
+    body = normalize_multiline(data.get("body") or "", max_chars=12000)
 
     lines = [
         "# 浏览器提取回归结果",
@@ -88,6 +110,7 @@ def main() -> int:
         "",
         f"- adapter：`{data.get('adapter') or 'unknown'}`",
         f"- kind：`{data.get('kind') or 'unknown'}`",
+        f"- sourcePlatform：`{data.get('sourcePlatform') or 'unknown'}`",
         "",
         "## 标题",
         "",
@@ -96,6 +119,10 @@ def main() -> int:
         "## 作者",
         "",
         data.get("author") or "未识别",
+        "",
+        "## 发布时间",
+        "",
+        data.get("publishedAt") or "未识别",
         "",
         "## 图片链接",
         "",
@@ -111,11 +138,11 @@ def main() -> int:
             "",
             "## 正文摘要",
             "",
-            data.get("summary") or "未提取到摘要",
+            summary or "未提取到摘要",
             "",
             "## 正文内容",
             "",
-            data.get("body") or "未提取到正文",
+            body or "未提取到正文",
             "",
             "## 评论概览",
             "",
@@ -142,7 +169,7 @@ def main() -> int:
             "",
             "- 浏览器入口：`super-stack-browser`",
             f"- 会话：`{session_name}`",
-            "- 输出格式：统一 evidence schema + Markdown renderer",
+            "- 输出格式：统一内容获取 evidence schema + Markdown renderer",
         ]
     )
 

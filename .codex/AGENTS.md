@@ -48,6 +48,18 @@ Treat this as a fixed procedure, not a suggestion.
 Use the backtracking rules from root `AGENTS.md`.
 State the backtrack in plain language so the user can follow the workflow change.
 
+## Codex Browser Escalation
+
+For Codex, prefer `browse` early when a request includes a concrete URL and the answer depends on the page's real content.
+
+Use this heuristic:
+
+- if the user links a webpage, article, post, document, or authenticated product page and asks to analyze, summarize, inspect, or verify what is on that page, prefer `browse`
+- if `super-stack-browser` is available, do not stop at `curl`, `requests`, raw HTML, search snippets, or mirror pages before attempting original-page browser evidence
+- if browser evidence still cannot be obtained, say that explicitly before continuing with fallback sources
+
+Treat this as a browse-first heuristic for URL-content analysis, not a suggestion to browse every casual link mention.
+
 ## Codex Role Escalation
 
 Use role files in `.codex/agents/` to support a stage, not replace the stage router from root `AGENTS.md`:

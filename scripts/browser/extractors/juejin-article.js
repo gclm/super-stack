@@ -1,18 +1,18 @@
 (() => {
   const clean = (value) => (value || "").replace(/[ \t]+/g, " ").trim();
   const uniq = (items) => [...new Set(items.filter(Boolean))];
-  const MAX_BODY_CHARS = 10000;
+  const MAX_BODY_CHARS = 12000;
 
-  const pickParagraphs = (selector) => {
+  const pickParagraphs = (root, selector) => {
     const paragraphs = [];
-    for (const node of Array.from(document.querySelectorAll(selector))) {
+    for (const node of Array.from((root || document).querySelectorAll(selector))) {
       const text = (node.innerText || "")
         .split("\n")
         .map((line) => clean(line))
         .filter(Boolean)
         .join("\n")
         .trim();
-      if (!text || text.length < 20) continue;
+      if (!text || text.length < 8) continue;
       const duplicate = paragraphs.some(
         (existing) =>
           existing === text ||
@@ -49,48 +49,64 @@
     return selected.join("\n\n");
   };
 
+  const textOf = (selector) => clean(document.querySelector(selector)?.innerText);
+  const contentRoot =
+    document.querySelector(".article-viewer") ||
+    document.querySelector(".markdown-body") ||
+    document.querySelector("article");
+
   const title =
+    textOf(".article-title") ||
+    textOf("h1") ||
     clean(document.querySelector('meta[property="og:title"]')?.content) ||
-    clean(document.querySelector("title")?.innerText) ||
-    clean(document.title);
+    clean(document.title).replace(/\s*-\s*掘金\s*$/, "");
 
   const author =
-    clean(document.querySelector('meta[name="author"]')?.content) ||
-    clean(document.querySelector('meta[property="article:author"]')?.content) ||
-    clean(document.querySelector("article [rel='author']")?.innerText) ||
-    clean(document.querySelector("article .author")?.innerText);
+    textOf(".author-info-box .author-name") ||
+    textOf(".byline-box .username") ||
+    clean(document.querySelector('meta[name="author"]')?.content);
+
+  const publishedAt =
+    textOf(".meta-box time") ||
+    textOf(".meta-box") ||
+    clean(document.querySelector('meta[property="article:published_time"]')?.content);
+
+  const bodyParagraphs = pickParagraphs(
+    contentRoot || document,
+    "p, li, blockquote, h2, h3, h4, h5, pre"
+  );
 
   const summary =
     clean(document.querySelector('meta[name="description"]')?.content) ||
-    clean(document.querySelector('meta[property="og:description"]')?.content);
+    clean(document.querySelector('meta[property="og:description"]')?.content) ||
+    buildSummary(bodyParagraphs);
 
-  const bodyParagraphs = pickParagraphs("article p, main p, article li, main li, article blockquote, main blockquote");
   const body = buildBody(bodyParagraphs);
 
   const imageUrls = uniq(
-    [
-      clean(document.querySelector('meta[property="og:image"]')?.content),
-      ...Array.from(document.querySelectorAll("article img, main img, img"))
-        .map((img) => img.currentSrc || img.src || "")
-        .filter((src) => /^https?:\/\//.test(src)),
-    ]
-  ).slice(0, 20);
+    Array.from((contentRoot || document).querySelectorAll("img"))
+      .map((img) => img.currentSrc || img.src || "")
+      .filter((src) => /^https?:\/\//.test(src))
+  ).slice(0, 30);
 
   return JSON.stringify(
     {
       schemaVersion: "1.1",
-      adapter: "generic-page",
-      kind: "generic-page",
-      sourcePlatform: "generic-web",
+      adapter: "juejin-article",
+      kind: "article",
+      sourcePlatform: "juejin",
       title,
       author,
-      publishedAt: "",
-      summary: summary || buildSummary(bodyParagraphs),
+      publishedAt,
+      summary,
       body,
       commentTotal: "",
       comments: [],
       imageUrls,
-      notes: ["generic-page extractor: extracted from meta/article/main selectors"],
+      notes: [
+        "juejin-article extractor: title/author/body extracted from article-viewer or markdown-body",
+        "juejin-article extractor: paragraph dedupe enabled to reduce markdown-body nesting noise",
+      ],
     },
     null,
     2

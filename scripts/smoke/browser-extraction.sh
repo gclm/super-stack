@@ -16,7 +16,7 @@ BROWSER_DIR="${SCRIPT_DIR}/../browser"
 usage() {
   cat <<'EOF'
 用法：
-  scripts/smoke/browser-extraction.sh --url URL [--adapter auto|xiaohongshu-note|generic-page] [--output PATH]
+  scripts/smoke/browser-extraction.sh --url URL [--adapter auto|wechat-article|xiaohongshu-note|douyin-content|juejin-article|generic-page] [--output PATH]
 
 示例：
   scripts/smoke/browser-extraction.sh \
@@ -71,7 +71,10 @@ EVIDENCE_JSON="${TMP_DIR}/evidence.json"
 detect_adapter() {
   local url="$1"
   case "$url" in
+    *mp.weixin.qq.com/s/*) printf 'wechat-article\n' ;;
     *xiaohongshu.com/explore/*|*xiaohongshu.com/discovery/item/*) printf 'xiaohongshu-note\n' ;;
+    *douyin.com/*) printf 'douyin-content\n' ;;
+    *juejin.cn/post/*) printf 'juejin-article\n' ;;
     *) printf 'generic-page\n' ;;
   esac
 }
@@ -81,7 +84,7 @@ if [[ "${ADAPTER}" == "auto" ]]; then
 fi
 
 case "${ADAPTER}" in
-  xiaohongshu-note|generic-page) ;;
+  wechat-article|xiaohongshu-note|douyin-content|juejin-article|generic-page) ;;
   *) die "不支持的 --adapter：${ADAPTER}" ;;
 esac
 

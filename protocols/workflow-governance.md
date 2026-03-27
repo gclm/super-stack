@@ -44,6 +44,18 @@ When making commits for a project that adopts super-stack defaults, use Angular 
   2. confirm the path is valid
   3. only then inspect or edit skills, protocols, templates, or `AGENTS.md`
 
+## Browser Evidence
+
+When a task references a concrete URL and the answer depends on the page's real content, prefer browser evidence from the original page over secondary sources.
+
+Apply these rules:
+
+- use `super-stack-browser` first when it is available for the current host
+- do not stop at `curl`, `requests`, mirror pages, or search snippets when original-page browser evidence is available
+- if browser evidence cannot be obtained because of login, verification, network, or host limits, say so explicitly before using a fallback source
+- do not present mirror content, raw HTML extraction, or search summaries as if they came from the original page
+- treat staying on text-only fetch for concrete page analysis, while browser tooling is available, as a workflow error unless the user explicitly asked to avoid browser inspection
+
 ## Transient Network Defaults
 
 When downloads, dependency installs, or remote fetches fail and the error looks transient rather than deterministic, do not stop at the first failure.

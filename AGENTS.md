@@ -85,12 +85,13 @@ When a request arrives, decide the current stage before taking action.
 4. If the user is comparing approaches or asking "what is the best way", start at `brainstorm`.
 5. If the repository is unfamiliar or the task depends on understanding existing structure, start at `map-codebase`.
    When doing so, use a layered entry strategy: establish project baseline first, then nearby design, then the user-targeted module or flow.
-6. If scope is already clear but task breakdown is missing, start at `plan`.
-7. If there is a current task with enough context to implement safely, go to `build`.
-8. If the user asks for audit, PR review, merge readiness, bug/risk scan, regression review, or "帮我看看哪里有问题", go to `review`.
-9. If implementation already exists and the remaining question is whether the requested outcome was actually achieved, go to `verify`.
-10. If the task is user-facing validation, end-to-end confidence, staging checks, smoke validation, or release-candidate validation, go to `qa`.
-11. If the work is complete and needs handoff, merge prep, or release summary, go to `ship`.
+6. If the user provides a concrete URL and the answer depends on the page's actual rendered content, start at `browse`.
+7. If scope is already clear but task breakdown is missing, start at `plan`.
+8. If there is a current task with enough context to implement safely, go to `build`.
+9. If the user asks for audit, PR review, merge readiness, bug/risk scan, regression review, or "帮我看看哪里有问题", go to `review`.
+10. If implementation already exists and the remaining question is whether the requested outcome was actually achieved, go to `verify`.
+11. If the task is user-facing validation, end-to-end confidence, staging checks, smoke validation, or release-candidate validation, go to `qa`.
+12. If the work is complete and needs handoff, merge prep, or release summary, go to `ship`.
 
 Do not skip backward silently. If work reveals missing context, explicitly step back to the earlier stage that is needed.
 
@@ -171,6 +172,7 @@ Use supporting skills when the problem shape requires them:
   - the problem is latency, throughput, memory, CPU, or rendering slowdown and the bottleneck is not yet confirmed
 - `browse`
   - the task needs browser-side evidence such as DOM state, styles, console errors, network requests, or runtime UI behavior
+  - the task points at a concrete webpage, article, post, or document URL and the answer depends on the original page content rather than a secondary summary
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 
@@ -332,6 +334,9 @@ Use these explicit backtracks:
   - when code already exists and the unresolved question is completion evidence
 - from `build` back to `qa`
   - when the main work is validating a user flow, smoke path, staging candidate, or real runtime behavior
+- from `discuss`, `build`, or `verify` back to `browse`
+  - when the task depends on a specific webpage's real rendered content, DOM, authenticated browser-visible state, or runtime browser evidence
+  - when static fetches, mirrors, search snippets, or raw HTML no longer provide trustworthy proof
 - from `verify` back to `build`
   - when evidence shows the requested outcome is not met
 - from `qa` back to `build`
@@ -361,6 +366,7 @@ Map common requests to the workflow explicitly:
 - evidence gathering before completion -> `verify`
 - user-facing or end-to-end validation -> `qa`
 - release or handoff preparation -> `ship`
+- concrete webpage, article, post, or document content analysis -> `browse`
 
 If the host does not automatically execute `SKILL.md` files, treat the names above as workflow stages and read the relevant skill file manually when more detail is needed.
 
