@@ -44,6 +44,12 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 - do not imply `real-integration` confidence when only `compile`, `test`, or `scripted-flow` evidence exists
 - if verification reveals likely defects or regressions that need findings-first treatment, route back to `review` or `build`
 - if verification reveals the missing confidence is really about user-flow or runtime behavior, route to `qa`
+- for complex or ambiguous tasks, always separate:
+  - `已实现`
+  - `已验证`
+  - `未验证`
+  - `缺口`
+- do not use completion language such as “已经完成” when the strongest proof only shows implementation exists but fresh validation is still partial
 
 ## Steps
 
@@ -58,7 +64,12 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 5. State the strongest evidence level reached and the missing next level, if any.
 6. When a check fails, distinguish missing tools from shell-init or runtime-environment issues before concluding the feature is unverified.
 7. Run them.
-8. Summarize what is verified and what is still partial.
+8. Summarize the result using four buckets:
+   - `已实现`
+   - `已验证`
+   - `未验证`
+   - `缺口`
+9. If the request is really asking “是否已经做到/做到哪一步了”, make sure the answer distinguishes implementation progress from proof strength instead of returning a single blended confidence statement.
 
 ## Output
 
@@ -66,9 +77,10 @@ Report:
 
 - scope alignment
 - strongest evidence level reached
-- verified
-- partially verified
-- not verified
+- 已实现
+- 已验证
+- 未验证
+- 缺口
 - any evidence-boundary warning, especially when CI passes but real host validation was not run
 - any environment-boundary warning when verification is blocked by shell setup, runtime activation, login state, or host-only dependencies
 

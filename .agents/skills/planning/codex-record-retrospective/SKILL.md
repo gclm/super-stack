@@ -51,6 +51,7 @@ If the project path is missing, ask the user for it in one short sentence:
 
 1. Confirm the target project path.
 2. Run `scripts/find_codex_project_records.py --project-path <path>` first to get a path-correlated evidence scan.
+   - if the project was moved or renamed across roots, add `--project-path-alias <old-path>` for each known historical path before falling back to broader fuzzy correlation.
 3. For the strongest candidate sessions, run `scripts/extract_codex_session_timeline.py --session-id <id>` to get a readable timeline before doing manual deep reads.
 4. Use `references/record-sources.md` to locate any extra sources still needed.
 5. Start with path-correlated sources such as `session_index`, `sessions`, or `archived_sessions` before broad history summaries.

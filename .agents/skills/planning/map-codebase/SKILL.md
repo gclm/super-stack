@@ -24,6 +24,20 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 - prepare material that later skills can use without re-exploring everything
 - surface mismatches between documented structure and actual repository structure
 
+## Multi-Module Guard
+
+If the baseline scan shows this is a multi-module or multi-app repository, do not assume the user wants a full-repository map unless they clearly asked for that.
+
+Use this rule:
+
+- if the user already names the target module, service, app, or flow, continue with that boundary
+- if the repository is clearly multi-module and the target is still ambiguous, pause and ask one short question to confirm which module or scope they want mapped first
+- only do a broad full-repository map without confirmation when the user explicitly asks for the whole repository or when the module boundary truly cannot be separated safely
+
+The confirmation should be short and concrete, for example:
+
+- `这个仓库看起来是多模块的，你这次想先聚焦哪个模块？`
+
 ## Output Location
 
 Write findings under `.planning/codebase/` in the target project, using these files:
@@ -60,6 +74,7 @@ Within those layers, investigate in this order:
 9. Hotspots, risks, and unclear areas
 
 When the user already points to a module or objective, do not treat that as permission to skip the baseline layer.
+When the repository is multi-module, keep the baseline layer narrow and only wide enough to identify the module boundary before deepening.
 When the baseline is already clear, do not keep broadening the scan beyond the target layer.
 
 ## Evidence Rules

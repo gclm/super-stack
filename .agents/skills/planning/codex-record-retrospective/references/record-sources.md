@@ -8,6 +8,7 @@ Check the strongest available sources first:
 
 - `scripts/find_codex_project_records.py`
   - repository-managed path scan for project-specific retrospective work
+  - supports `--project-path-alias` for migrated or historically moved repositories
 - `scripts/extract_codex_session_timeline.py`
   - repository-managed session timeline extractor for turning raw JSONL traces into readable user / assistant / tool chronology
 - `~/.codex/history.jsonl`

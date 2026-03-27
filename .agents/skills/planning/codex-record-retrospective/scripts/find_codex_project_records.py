@@ -20,6 +20,12 @@ class Match:
     snippet: str
 
 
+@dataclass(frozen=True)
+class PathTarget:
+    label: str
+    path: str
+
+
 def short(text: str, limit: int = 220) -> str:
     text = " ".join(text.split())
     if len(text) <= limit:
@@ -117,7 +123,15 @@ def contains_term(strings: Iterable[str], terms: list[str]) -> str | None:
     return None
 
 
-def scan_session_like_file(path: Path, project_path: str, terms: list[str], source: str) -> list[Match]:
+def find_exact_path_match(strings: Iterable[str], targets: list[PathTarget]) -> PathTarget | None:
+    for text in strings:
+        for target in targets:
+            if target.path in text:
+                return target
+    return None
+
+
+def scan_session_like_file(path: Path, targets: list[PathTarget], terms: list[str], source: str) -> list[Match]:
     matches: list[Match] = []
     rows = load_jsonl(path)
     session_id: str | None = None
@@ -126,28 +140,36 @@ def scan_session_like_file(path: Path, project_path: str, terms: list[str], sour
             payload = row.get("payload", {})
             session_id = payload.get("id") or session_id
             cwd = str(payload.get("cwd", ""))
-            if cwd == project_path:
+            cwd_target = next((target for target in targets if cwd == target.path), None)
+            if cwd_target:
+                reason = "session_meta.cwd exact match"
+                if cwd_target.label != "primary":
+                    reason = f"{cwd_target.label} path session_meta.cwd exact match"
                 matches.append(
                     Match(
                         source=source,
                         file=str(path),
                         session_id=session_id,
                         strength="strong",
-                        reason="session_meta.cwd exact match",
+                        reason=reason,
                         snippet=short(json.dumps(payload, ensure_ascii=False)),
                     )
                 )
                 continue
         strings = list(iter_strings(row))
-        if any(project_path in s for s in strings):
+        exact_target = find_exact_path_match(strings, targets)
+        if exact_target:
+            reason = "exact project path mention"
+            if exact_target.label != "primary":
+                reason = f"exact {exact_target.label} path mention"
             matches.append(
                 Match(
                     source=source,
                     file=str(path),
                     session_id=session_id,
                     strength="strong",
-                    reason="exact project path mention",
-                    snippet=short(next(s for s in strings if project_path in s)),
+                    reason=reason,
+                    snippet=short(next(s for s in strings if exact_target.path in s)),
                 )
             )
             continue
@@ -166,20 +188,24 @@ def scan_session_like_file(path: Path, project_path: str, terms: list[str], sour
     return matches
 
 
-def scan_history(path: Path, project_path: str, terms: list[str]) -> list[Match]:
+def scan_history(path: Path, targets: list[PathTarget], terms: list[str]) -> list[Match]:
     matches: list[Match] = []
     rows = load_jsonl(path)
     for row in rows:
         text = str(row.get("text", ""))
         session_id = row.get("session_id")
-        if project_path in text:
+        exact_target = next((target for target in targets if target.path in text), None)
+        if exact_target:
+            reason = "exact project path mention"
+            if exact_target.label != "primary":
+                reason = f"exact {exact_target.label} path mention"
             matches.append(
                 Match(
                     source="history",
                     file=str(path),
                     session_id=session_id,
                     strength="strong",
-                    reason="exact project path mention",
+                    reason=reason,
                     snippet=short(text),
                 )
             )
@@ -200,19 +226,23 @@ def scan_history(path: Path, project_path: str, terms: list[str]) -> list[Match]
     return matches
 
 
-def scan_session_index(path: Path, project_path: str, terms: list[str]) -> list[Match]:
+def scan_session_index(path: Path, targets: list[PathTarget], terms: list[str]) -> list[Match]:
     matches: list[Match] = []
     rows = load_jsonl(path)
     for row in rows:
         strings = list(iter_strings(row))
-        if any(project_path in s for s in strings):
+        exact_target = find_exact_path_match(strings, targets)
+        if exact_target:
+            reason = "exact project path mention"
+            if exact_target.label != "primary":
+                reason = f"exact {exact_target.label} path mention"
             matches.append(
                 Match(
                     source="session_index",
                     file=str(path),
                     session_id=row.get("id"),
                     strength="medium",
-                    reason="exact project path mention",
+                    reason=reason,
                     snippet=short(json.dumps(row, ensure_ascii=False)),
                 )
             )
@@ -232,33 +262,51 @@ def scan_session_index(path: Path, project_path: str, terms: list[str]) -> list[
     return matches
 
 
-def build_report(project_path: Path, codex_home: Path, max_samples: int) -> dict[str, object]:
-    project_path_str = str(project_path)
-    terms = project_terms(project_path)
+def build_targets(project_path: Path, alias_paths: list[Path]) -> list[PathTarget]:
+    seen: set[str] = set()
+    targets: list[PathTarget] = []
+
+    primary = str(project_path)
+    targets.append(PathTarget(label="primary", path=primary))
+    seen.add(primary)
+
+    for index, alias_path in enumerate(alias_paths, start=1):
+        alias = str(alias_path)
+        if alias in seen:
+            continue
+        targets.append(PathTarget(label=f"alias{index}", path=alias))
+        seen.add(alias)
+
+    return targets
+
+
+def build_report(project_path: Path, alias_paths: list[Path], codex_home: Path, max_samples: int) -> dict[str, object]:
+    targets = build_targets(project_path, alias_paths)
+    terms = sorted({term for path in [project_path, *alias_paths] for term in project_terms(path)})
     matches: list[Match] = []
     checked_sources: list[str] = []
 
     session_index = codex_home / "session_index.jsonl"
     if session_index.exists():
         checked_sources.append(str(session_index))
-        matches.extend(scan_session_index(session_index, project_path_str, terms))
+        matches.extend(scan_session_index(session_index, targets, terms))
 
     sessions_dir = codex_home / "sessions"
     if sessions_dir.exists():
         checked_sources.append(str(sessions_dir))
         for path in sorted(sessions_dir.rglob("*.jsonl")):
-            matches.extend(scan_session_like_file(path, project_path_str, terms, "sessions"))
+            matches.extend(scan_session_like_file(path, targets, terms, "sessions"))
 
     archived_dir = codex_home / "archived_sessions"
     if archived_dir.exists():
         checked_sources.append(str(archived_dir))
         for path in sorted(archived_dir.glob("*.jsonl")):
-            matches.extend(scan_session_like_file(path, project_path_str, terms, "archived_sessions"))
+            matches.extend(scan_session_like_file(path, targets, terms, "archived_sessions"))
 
     history = codex_home / "history.jsonl"
     if history.exists():
         checked_sources.append(str(history))
-        matches.extend(scan_history(history, project_path_str, terms))
+        matches.extend(scan_history(history, targets, terms))
 
     by_source = Counter(match.source for match in matches)
     by_strength = Counter(match.strength for match in matches)
@@ -272,7 +320,10 @@ def build_report(project_path: Path, codex_home: Path, max_samples: int) -> dict
         evidence_gaps.append("未在已索引记录中找到该项目路径的直接命中。可能是会话尚未入库，或项目在记录中只以弱上下文出现。")
     elif not by_strength.get("strong"):
         evidence_gaps.append("只找到弱相关命中，没有找到 `cwd` 或项目绝对路径的强证据。")
-    if not any(match.source in {"sessions", "archived_sessions"} and match.reason == "session_meta.cwd exact match" for match in matches):
+    if not any(
+        match.source in {"sessions", "archived_sessions"} and "session_meta.cwd exact match" in match.reason
+        for match in matches
+    ):
         evidence_gaps.append("未找到 `session_meta.cwd` 的精确匹配，当前还不能完全确认是哪一条 session 对应目标项目。")
 
     sample_matches = []
@@ -309,7 +360,8 @@ def build_report(project_path: Path, codex_home: Path, max_samples: int) -> dict
         )
 
     return {
-        "project_path": project_path_str,
+        "project_path": str(project_path),
+        "project_aliases": [target.path for target in targets if target.label != "primary"],
         "codex_home": str(codex_home),
         "checked_sources": checked_sources,
         "project_terms": terms,
@@ -328,6 +380,9 @@ def build_report(project_path: Path, codex_home: Path, max_samples: int) -> dict
 def render_markdown(report: dict[str, object]) -> str:
     lines = ["# Codex Project Record Scan", ""]
     lines.append(f"- 项目路径: `{report['project_path']}`")
+    aliases = report.get("project_aliases") or []
+    if aliases:
+        lines.append(f"- 路径别名: {', '.join(f'`{item}`' for item in aliases)}")
     lines.append(f"- Codex 目录: `{report['codex_home']}`")
     lines.append(f"- 扫描源数量: {len(report['checked_sources'])}")
     lines.append("")
@@ -369,6 +424,12 @@ def render_markdown(report: dict[str, object]) -> str:
 def main() -> int:
     parser = argparse.ArgumentParser(description="Locate Codex local records related to a specific project path.")
     parser.add_argument("--project-path", required=True)
+    parser.add_argument(
+        "--project-path-alias",
+        action="append",
+        default=[],
+        help="Additional historical or migrated project path to scan alongside the primary project path. Repeatable.",
+    )
     parser.add_argument("--codex-home", default=str(Path.home() / ".codex"))
     parser.add_argument("--max-samples", type=int, default=12)
     parser.add_argument("--format", choices=["json", "markdown"], default="markdown")
@@ -376,6 +437,7 @@ def main() -> int:
 
     report = build_report(
         project_path=Path(args.project_path).expanduser().resolve(),
+        alias_paths=[Path(item).expanduser().resolve() for item in args.project_path_alias],
         codex_home=Path(args.codex_home).expanduser().resolve(),
         max_samples=max(args.max_samples, 1),
     )
