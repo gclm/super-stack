@@ -64,10 +64,10 @@
 
 当前代表入口：
 
-- [scripts/smoke/readonly-hook.sh](../scripts/smoke/readonly-hook.sh)
-- [scripts/smoke/codex-regression-suite.sh](../scripts/smoke/codex-regression-suite.sh)
-- [scripts/smoke/claude-global.sh](../scripts/smoke/claude-global.sh)
-- [scripts/smoke/browser-extraction.sh](../scripts/smoke/browser-extraction.sh)
+- [scripts/smoke/hooks/readonly-hook.sh](../scripts/smoke/hooks/readonly-hook.sh)
+- [scripts/smoke/host/codex-regression-suite.sh](../scripts/smoke/host/codex-regression-suite.sh)
+- [scripts/smoke/host/claude-global.sh](../scripts/smoke/host/claude-global.sh)
+- [scripts/smoke/browser/browser-extraction.sh](../scripts/smoke/browser/browser-extraction.sh)
 
 ## 2. 统一测试入口
 
@@ -97,13 +97,13 @@
 |------|------------|------|
 | `scripts/hooks/readonly_command_guard.py` | unit | 纯逻辑判断多，宿主依赖弱 |
 | `.codex/hooks/super_stack_state.py` | unit | 输入输出稳定，适合直接断言 JSON |
-| `scripts/lib/install-state.sh` | integration | 关键在文件恢复行为，不是单行函数 |
-| `scripts/install/merge-codex-hooks.sh` | integration | 关键在文件写入和幂等性 |
-| `scripts/install/merge-claude-hooks.sh` | integration | 关键在 JSON merge 结果 |
+| `scripts/lib/install-state.sh` | integration | 关键在文件恢复行为与安装前状态记录，不应被误判为多余包装层 |
+| `scripts/install/install-codex.sh` | integration | 关键在 Codex 受管块合并与幂等性 |
+| `scripts/install/install-claude.sh` | integration | 关键在 Claude hooks JSON merge 结果 |
 | `scripts/check/check-global-install.sh` | integration | 依赖安装后文件布局 |
-| `scripts/smoke/codex-regression-suite.sh` | smoke | 依赖真实 Codex 运行态 |
-| `scripts/smoke/claude-global.sh` | smoke | 依赖真实 Claude 接线 |
-| `scripts/smoke/browser-extraction.sh` | smoke | 依赖真实浏览器与页面状态 |
+| `scripts/smoke/host/codex-regression-suite.sh` | smoke | 依赖真实 Codex 运行态 |
+| `scripts/smoke/host/claude-global.sh` | smoke | 依赖真实 Claude 接线 |
+| `scripts/smoke/browser/browser-extraction.sh` | smoke | 依赖真实浏览器与页面状态 |
 
 ## 4. 当前边界
 

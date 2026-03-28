@@ -6,9 +6,9 @@
   - `scripts/test/shell-integration.sh` 运行基于临时 HOME 的 shell integration test。
   - `.github/workflows/ci.yml` 在 PR / push 上执行语法检查、unit、integration。
   - `scripts/check/check-global-install.sh` 做全局安装结果检查。
-  - `scripts/smoke/codex-regression-suite.sh`、`scripts/smoke/codex-scenarios.sh`、`scripts/smoke/claude-global.sh` 做宿主行为回归。
-  - `scripts/smoke/readonly-hook.sh` 验证只读 hook 行为。
-  - `scripts/smoke/browser-extraction.sh` 验证浏览器抽取链路，默认把报告写到 `artifacts/`。
+  - `scripts/smoke/host/codex-regression-suite.sh`、`scripts/smoke/host/codex-scenarios.sh`、`scripts/smoke/host/claude-global.sh` 做宿主行为回归。
+  - `scripts/smoke/hooks/readonly-hook.sh` 验证只读 hook 行为。
+  - `scripts/smoke/browser/browser-extraction.sh` 验证浏览器抽取链路，默认把报告写到 `artifacts/`。
 - Main gaps:
   - CI 已覆盖语法检查、unit 与 integration，但 smoke 仍更依赖本机环境。
   - 浏览器 smoke test 当前针对特定站点结构，泛化证据不足。

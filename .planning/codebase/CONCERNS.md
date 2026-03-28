@@ -7,8 +7,8 @@
 - smoke 仍然是高价值但高成本验证层：
   - 关键宿主行为最终仍依赖 smoke 验证，一旦环境差异引发失败，定位成本依然偏高。
 - 浏览器抽取能力站点耦合明显：
-  - `scripts/smoke/browser-extraction.sh` 这条链路虽然已拆为适配器，但现有 DOM 选择器和内容过滤规则仍明显围绕小红书页面结构编写。
+  - `scripts/smoke/browser/browser-extraction.sh` 这条链路虽然已拆为适配器，但现有 DOM 选择器和内容过滤规则仍明显围绕小红书页面结构编写。
 - hooks 仍停留在“只读放行”阶段：
   - `readonly_command_guard.py` 规则多为白名单/正则判断，尚未实现文档里规划的风险分级、路径保护、deny/ask 策略。
 - 公共 shell 能力的自动化覆盖还可以更细：
-  - `scripts/lib/checks.sh`、`scripts/lib/install-state.sh` 这类公共层虽然已经被集成测试间接覆盖，但细粒度回归仍然偏少。
+  - `scripts/lib/install-state.sh` 与当前合并在 `scripts/lib/common.sh` 中的公共检查函数虽然已经被集成测试间接覆盖，但细粒度回归仍然偏少。

@@ -164,7 +164,7 @@
 - 统一所有示例和脚本到 `super-stack-browser`
 - 增加一键重连稳定会话脚本
 - 增加 `browse` 真浏览器回归脚本
-- 在 `scripts/smoke/claude-global.sh` 中继续验证 browser active check
+- 在 `scripts/smoke/host/claude-global.sh` 中继续验证 browser active check
 
 ### 5.2 hooks 风险治理
 

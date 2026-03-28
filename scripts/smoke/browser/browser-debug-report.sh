@@ -19,10 +19,10 @@ RENDER_PY="${SCRIPT_DIR}/../browser/renderers/render_browser_debug_report.py"
 usage() {
   cat <<'EOF'
 用法：
-  scripts/smoke/browser-debug-report.sh --url URL [--selector CSS] [--network-filter PATTERN] [--hint TEXT] [--output PATH]
+  scripts/smoke/browser/browser-debug-report.sh --url URL [--selector CSS] [--network-filter PATTERN] [--hint TEXT] [--output PATH]
 
 示例：
-  bash scripts/smoke/browser-debug-report.sh \
+  bash scripts/smoke/browser/browser-debug-report.sh \
     --url "http://localhost:3000" \
     --selector "#app" \
     --network-filter "/api/" \

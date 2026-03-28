@@ -1,0 +1,117 @@
+{
+  "module_scope_ambiguity": {
+    "problem_type": "planning problem",
+    "target_files": [
+      ".agents/skills/planning/map-codebase/SKILL.md",
+      "protocols/workflow-governance.md"
+    ],
+    "change_kind": "tighten scope-entry guidance",
+    "default_confidence": 0.82,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认多模块仓库的范围确认规则仍与根路由一致"
+  },
+  "verify_overclaim": {
+    "problem_type": "verification problem",
+    "target_files": [
+      ".agents/skills/quality/verify/SKILL.md",
+      "protocols/verify.md"
+    ],
+    "change_kind": "strengthen evidence wording",
+    "default_confidence": 0.9,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认已实现/已验证/未验证/缺口四段式仍保持一致"
+  },
+  "route_not_explicit": {
+    "problem_type": "routing problem",
+    "target_files": [
+      "AGENTS.md",
+      "protocols/workflow-governance.md"
+    ],
+    "change_kind": "clarify routing or backtrack rule",
+    "default_confidence": 0.86,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认新增规则不会与现有阶段边界冲突"
+  },
+  "record_path_migration_gap": {
+    "problem_type": "host/runtime limitation",
+    "target_files": [
+      ".agents/skills/planning/codex-record-retrospective/SKILL.md",
+      ".agents/skills/planning/codex-record-retrospective/references/record-sources.md",
+      ".agents/skills/planning/codex-record-retrospective/scripts/find_codex_project_records.py"
+    ],
+    "change_kind": "improve path correlation coverage",
+    "default_confidence": 0.88,
+    "approval_level": "apply-approved",
+    "validation_hint": "使用历史路径 alias 进行一次 fresh verification"
+  },
+  "host_limitation_not_explained": {
+    "problem_type": "host/runtime limitation",
+    "target_files": [
+      ".codex/AGENTS.md",
+      "AGENTS.md"
+    ],
+    "change_kind": "clarify host constraint reporting",
+    "default_confidence": 0.74,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认宿主限制与共享工作流边界没有重复或冲突"
+  },
+  "skill_entry_bloat": {
+    "problem_type": "implementation discipline problem",
+    "target_files": [
+      ".agents/skills/core/skill-maintenance/SKILL.md",
+      ".agents/skills/core/skill-maintenance/references/skill-authoring-checklist.md"
+    ],
+    "change_kind": "move detail from entry file to references",
+    "default_confidence": 0.76,
+    "approval_level": "apply-approved",
+    "validation_hint": "确认技能入口仍聚焦触发面、规则、流程与输出"
+  },
+  "evidence_gap_not_called_out": {
+    "problem_type": "verification problem",
+    "target_files": [
+      ".agents/skills/quality/verify/SKILL.md",
+      "protocols/verify.md",
+      ".agents/skills/planning/codex-record-retrospective/SKILL.md"
+    ],
+    "change_kind": "require explicit evidence-gap reporting",
+    "default_confidence": 0.84,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认复杂任务报告继续显式区分证据和推断"
+  },
+  "premature_completion": {
+    "problem_type": "long-running execution gap",
+    "target_files": [
+      ".agents/skills/quality/verify/SKILL.md",
+      ".agents/skills/ship/ship/SKILL.md",
+      "protocols/verify.md"
+    ],
+    "change_kind": "strengthen completion gate before stop",
+    "default_confidence": 0.87,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认复杂任务仍显式区分已实现、已验证与仍有缺口"
+  },
+  "missing_progress_artifacts": {
+    "problem_type": "long-running execution gap",
+    "target_files": [
+      ".agents/skills/planning/plan/SKILL.md",
+      ".planning/ROADMAP.md",
+      ".agents/skills/planning/codex-record-retrospective/references/long-running-agent-patterns.md"
+    ],
+    "change_kind": "introduce durable progress artifact guidance",
+    "default_confidence": 0.79,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认仅在长任务或多 session 场景下建议额外进度产物，避免把轻任务机械重型化"
+  },
+  "session_slice_required": {
+    "problem_type": "long-running execution gap",
+    "target_files": [
+      ".agents/skills/planning/codex-record-retrospective/SKILL.md",
+      ".agents/skills/planning/codex-record-retrospective/references/record-sources.md",
+      "docs/auto-retrospective-evolution.md"
+    ],
+    "change_kind": "require slice-first retrospective boundary for mixed sessions",
+    "default_confidence": 0.85,
+    "approval_level": "patch-proposed",
+    "validation_hint": "确认一个 session 多话题时仍优先 path correlation、timeline extraction、再按目标 slice 提炼 lessons"
+  }
+}

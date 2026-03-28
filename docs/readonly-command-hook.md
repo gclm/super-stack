@@ -101,19 +101,19 @@ pwd && rg TODO README.md
 
 Claude 接线：
 
-- [.claude/hooks/hooks.json](../.claude/hooks/hooks.json)
-- 安装后会合并进 `~/.claude/settings.json`
+- [managed-config.json](../config/managed-config.json) 中的 `claude_hooks` block
+- [render_managed_config.py](../scripts/config/render_managed_config.py) 会将其渲染后合并进 `~/.claude/settings.json`
 
 Codex 接线：
 
-- [merge-codex-hooks.sh](../scripts/install/merge-codex-hooks.sh)
-- 安装后会合并进 `~/.codex/config.toml`
+- [managed-config.json](../config/managed-config.json) 中的 `codex_hooks` block
+- [render_managed_config.py](../scripts/config/render_managed_config.py) 会将其渲染后由 [install-codex.sh](../scripts/install/install-codex.sh) 合并进 `~/.codex/config.toml`
 
 ## 当前验证方式
 
 基础回归脚本：
 
-- [readonly-hook.sh](../scripts/smoke/readonly-hook.sh)
+- [readonly-hook.sh](../scripts/smoke/hooks/readonly-hook.sh)
 
 它当前验证：
 

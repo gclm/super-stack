@@ -17,7 +17,7 @@
 - `scripts/check/`: 全局安装检查、浏览器能力检查、Codex 运行态检查
 - `scripts/smoke/`: Claude / Codex / browser / readonly hook 的真实环境回归
 - `scripts/test/`: 自动化测试统一入口，以及 unit / integration 分层入口
-- `scripts/lib/`: shell 公共函数、检查辅助、安装状态记录与恢复
+- `scripts/lib/`: shell 公共函数、安装状态记录与恢复
 - `scripts/hooks/`: 运行态 hook 逻辑
 - `scripts/browser/`: 浏览器抽取适配器与渲染器
 - `artifacts/`: 浏览器抽取报告等运行产物输出目录
@@ -76,17 +76,26 @@
 
 ### P1：补强真实环境验证
 
-1. 完善 `scripts/smoke/claude-global.sh`
+1. 完善 `scripts/smoke/host/claude-global.sh`
    - 目标：让 Claude 侧 browser active check、skills 加载、hooks 触发证据更完整。
-2. 完善 `scripts/smoke/codex-regression-suite.sh`
+2. 完善 `scripts/smoke/host/codex-regression-suite.sh`
    - 目标：补更多阶段/skill 路由回归样例，减少路由漂移。
-3. 完善 `scripts/smoke/browser-extraction.sh`
+3. 完善 `scripts/smoke/browser/browser-extraction.sh`
    - 目标：继续降低对小红书页面结构的耦合，增强 generic-page 验证证据。
+
+### P1：补强长任务与自动复盘闭环
+
+1. 把自动复盘日常化
+   - 目标：工作日自动回顾前一天的高价值 session，输出 retrospective 和 recommendation。
+2. 为长任务补更明确的恢复上下文约定
+   - 目标：当任务跨 session 时，`STATE.md`、`ROADMAP.md` 与 artifact/ledger 的分工更清晰，减少“只靠聊天记忆恢复”的情况。
+3. 为“过早完成”和“缺少进度产物”建立回写路径
+   - 目标：让这类问题优先回写到 `plan / verify / ship / retrospective references`，而不是只停留在个案里。
 
 ### P2：让测试体系更稳
 
 1. 增加对 shell 公共库的更细粒度回归
-   - 重点：`scripts/lib/install-state.sh`、`scripts/lib/checks.sh`
+   - 重点：`scripts/lib/install-state.sh` 与已并入 `scripts/lib/common.sh` 的公共检查/断言函数
 2. 增加对 browser renderers / extractors 的更明确自动化断言
    - 目标：让 browser 相关变更更早在 unit 或 integration 层暴露
 3. 评估 smoke 的半自动执行策略

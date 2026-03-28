@@ -13,9 +13,8 @@ BIN_DIR="${RUNTIME_ROOT}/bin"
 MANAGED_BIN_DIR="${REPO_ROOT}/bin"
 
 ensure_browser_wrappers() {
-  local stable_wrapper="${BIN_DIR}/super-stack-browser"
-  local health_wrapper="${BIN_DIR}/super-stack-browser-health"
-  local reset_wrapper="${BIN_DIR}/super-stack-browser-reset"
+  local wrapper_name
+  local target_path
 
   ensure_dir "${BIN_DIR}"
 
@@ -26,14 +25,26 @@ ensure_browser_wrappers() {
     log "agent-browser 已存在于 PATH 中"
   fi
 
-  cp "${MANAGED_BIN_DIR}/super-stack-browser" "${stable_wrapper}"
-  cp "${MANAGED_BIN_DIR}/super-stack-browser-health" "${health_wrapper}"
-  cp "${MANAGED_BIN_DIR}/super-stack-browser-reset" "${reset_wrapper}"
-  chmod +x "${stable_wrapper}" "${health_wrapper}" "${reset_wrapper}"
-
-  log "稳定浏览器入口已就绪：${stable_wrapper}"
-  log "浏览器健康检查入口已就绪：${health_wrapper}"
-  log "浏览器会话重置入口已就绪：${reset_wrapper}"
+  while IFS= read -r wrapper_name; do
+    [[ -n "${wrapper_name}" ]] || continue
+    target_path="${BIN_DIR}/${wrapper_name}"
+    cp "${MANAGED_BIN_DIR}/${wrapper_name}" "${target_path}"
+    chmod +x "${target_path}"
+    case "${wrapper_name}" in
+      super-stack-browser)
+        log "稳定浏览器入口已就绪：${target_path}"
+        ;;
+      super-stack-browser-health)
+        log "浏览器健康检查入口已就绪：${target_path}"
+        ;;
+      super-stack-browser-reset)
+        log "浏览器会话重置入口已就绪：${target_path}"
+        ;;
+      *)
+        log "浏览器 wrapper 已就绪：${target_path}"
+        ;;
+    esac
+  done < <(browser_wrapper_names)
 }
 
 usage() {
@@ -77,16 +88,17 @@ case "$HOST" in
   *) die "无效的 --host：$HOST" ;;
 esac
 
-bash "${SCRIPT_DIR}/reset-install-state.sh"
+reset_install_state
+log "已重置全局安装状态目录：$(state_root)"
 record_source_repo_path
 ensure_browser_wrappers
 
 if [[ "$HOST" == "claude" || "$HOST" == "all" ]]; then
-  bash "${SCRIPT_DIR}/sync-to-claude.sh"
+  bash "${SCRIPT_DIR}/install-claude.sh"
 fi
 
 if [[ "$HOST" == "codex" || "$HOST" == "all" ]]; then
-  bash "${SCRIPT_DIR}/sync-to-codex.sh"
+  bash "${SCRIPT_DIR}/install-codex.sh"
 fi
 
 log "安装完成"

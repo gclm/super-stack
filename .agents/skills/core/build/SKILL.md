@@ -34,22 +34,7 @@ Use this skill when the project has a current task ready for execution.
 - prefer test-first changes when practical
 - keep edits narrow
 - do not silently expand scope
-- when implementation uncovers adjacent issues, classify them before editing:
-  - `current must-fix`
-  - `same-batch can-include`
-  - `follow-up`
-- do not fix adjacent issues in the same batch until they are classified against the active task
-- if the work is a bug, failing test, flaky behavior, incorrect output, or unexplained runtime issue and the root cause is still unconfirmed, explicitly backtrack to `debug`
-- if the work is a behavior change or bugfix with a practical automated test path, explicitly backtrack to `tdd-execution` unless RED is clearly impractical
-- if the user mainly wants risk findings, merge readiness, or an audit of existing work, explicitly backtrack to `review`
-- if implementation already exists and the remaining question is whether the requested outcome is actually complete, explicitly backtrack to `verify`
-- if the main task is user-facing validation, smoke confidence, staging validation, or runtime flow checking, explicitly backtrack to `qa`
-- for API, auth, tenant, admin, callback, webhook, upload, or download tasks, confirm the boundary matrix before broad edits:
-  - who can call
-  - which workspace or tenant the resource belongs to
-  - what fields can be created or mutated
-  - what response data must be hidden or sanitized
-  - what external or script-based verification path exists
+- use `references/execution-guardrails.md` for explicit backtrack triggers, incidental issue classification, and high-risk boundary matrices
 - update planning state when a task meaningfully advances
 - run a quick environment preflight before assuming required tools are missing
 - distinguish tool absence from shell initialization issues such as missing `fnm`, `nvm`, `asdf`, or `mise` activation
@@ -70,15 +55,13 @@ Use this skill when the project has a current task ready for execution.
 ## Steps
 
 1. Identify the current task from state or roadmap.
-2. Run a quick preflight for the tools and entrypoints this task depends on.
-3. Use `references/execution-guardrails.md` to confirm the task still matches the current scope, to classify any temporary unblock work, to classify incidental findings, and to decide whether the work should really be routed through `debug`, `tdd-execution`, `review`, `verify`, or `qa` first.
-4. When writing a proposal or design document, use `references/pyramid-doc-writing.md` to confirm the selected depth mode, the default section structure, the main-doc versus appendix boundary, and any relevant drift signals before finalizing the draft.
-5. For API, auth, tenant, admin, upload, download, callback, or webhook changes, write down the boundary matrix before editing.
-6. Inspect the relevant code paths.
-7. Identify downstream surfaces that must stay aligned, especially README, architecture docs, test entrypoints, CI paths, SDK callers, and planning state.
-8. Implement the smallest sufficient change.
-9. Run relevant verification, including the nearest real runtime path when practical.
-10. Update `.planning/STATE.md` with progress, blockers, environment findings, and any temporary-versus-final decisions.
+2. Run a quick preflight for the required tools and entrypoints.
+3. Use `references/execution-guardrails.md` to confirm scope, classify incidental issues, and decide whether the work should backtrack to `debug`, `tdd-execution`, `review`, `verify`, or `qa`.
+4. When writing a proposal or design document, use `references/pyramid-doc-writing.md` to confirm depth mode and main-doc versus appendix boundaries.
+5. Inspect the relevant code paths and downstream surfaces that must stay aligned.
+6. Implement the smallest sufficient change.
+7. Run relevant verification, including the nearest real runtime path when practical.
+8. Update `.planning/STATE.md` with progress, blockers, environment findings, and temporary-versus-final decisions.
 
 ## Output
 

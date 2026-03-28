@@ -20,12 +20,11 @@
 
 - [install.sh](../scripts/install/install.sh)
 - [uninstall-global.sh](../scripts/install/uninstall-global.sh)
-- [sync-to-claude.sh](../scripts/install/sync-to-claude.sh)
-- [sync-to-codex.sh](../scripts/install/sync-to-codex.sh)
-- [merge-claude-hooks.sh](../scripts/install/merge-claude-hooks.sh)
-- [merge-codex-hooks.sh](../scripts/install/merge-codex-hooks.sh)
+- [install-claude.sh](../scripts/install/install-claude.sh)
+- [install-codex.sh](../scripts/install/install-codex.sh)
+- [install-claude.sh](../scripts/install/install-claude.sh)
+- [install-codex.sh](../scripts/install/install-codex.sh)
 - [reset-browser-session.sh](../scripts/install/reset-browser-session.sh)
-- [reset-install-state.sh](../scripts/install/reset-install-state.sh)
 
 适合放：
 
@@ -46,24 +45,26 @@
 - [check-browser-capability.sh](../scripts/check/check-browser-capability.sh)
 - [check-browser-health.sh](../scripts/check/check-browser-health.sh)
 - [check-codex-runtime.sh](../scripts/check/check-codex-runtime.sh)
+- [validate-skills.py](../scripts/check/validate-skills.py)
 
 适合放：
 
 - 健康检查
 - 环境探测
 - 安装后状态校验
+- 仓库内技能结构与引用约束的轻量静态校验
 
 ### 1.3 `scripts/smoke/`
 
 真实环境回归入口：
 
-- [claude-global.sh](../scripts/smoke/claude-global.sh)
-- [codex-global.sh](../scripts/smoke/codex-global.sh)
-- [codex-regression-suite.sh](../scripts/smoke/codex-regression-suite.sh)
-- [codex-scenarios.sh](../scripts/smoke/codex-scenarios.sh)
-- [readonly-hook.sh](../scripts/smoke/readonly-hook.sh)
-- [browser-extraction.sh](../scripts/smoke/browser-extraction.sh)
-- [browser-lifecycle.sh](../scripts/smoke/browser-lifecycle.sh)
+- [claude-global.sh](../scripts/smoke/host/claude-global.sh)
+- [codex-global.sh](../scripts/smoke/host/codex-global.sh)
+- [codex-regression-suite.sh](../scripts/smoke/host/codex-regression-suite.sh)
+- [codex-scenarios.sh](../scripts/smoke/host/codex-scenarios.sh)
+- [readonly-hook.sh](../scripts/smoke/hooks/readonly-hook.sh)
+- [browser-extraction.sh](../scripts/smoke/browser/browser-extraction.sh)
+- [browser-lifecycle.sh](../scripts/smoke/browser/browser-lifecycle.sh)
 
 适合放：
 
@@ -76,6 +77,7 @@
 
 - [test.sh](../scripts/test/test.sh)
 - [python.sh](../scripts/test/python.sh)
+- [skills.sh](../scripts/test/skills.sh)
 - [shell-integration.sh](../scripts/test/shell-integration.sh)
 
 适合放：
@@ -88,7 +90,6 @@
 公共函数库：
 
 - [common.sh](../scripts/lib/common.sh)
-- [checks.sh](../scripts/lib/checks.sh)
 - [install-state.sh](../scripts/lib/install-state.sh)
 
 原则：
@@ -165,11 +166,11 @@
 
 ```text
 scripts/install/install.sh
-  -> scripts/install/reset-install-state.sh
+  -> install.sh 内直接 reset install state
   -> repo bin/super-stack-browser*
-  -> scripts/install/sync-to-claude.sh / scripts/install/sync-to-codex.sh
+  -> scripts/install/install-claude.sh / scripts/install/install-codex.sh
        -> scripts/lib/install-state.sh
-       -> scripts/install/merge-claude-hooks.sh / scripts/install/merge-codex-hooks.sh
+       -> host-specific managed block merge within install-*.sh
 ```
 
 ### 3.2 测试链路
@@ -185,7 +186,7 @@ scripts/test/test.sh
 ### 3.3 浏览器抽取链路
 
 ```text
-scripts/smoke/browser-extraction.sh
+scripts/smoke/browser/browser-extraction.sh
   -> scripts/browser/extractors/<adapter>.js
   -> scripts/browser/extractors/<adapter>-open-gallery.js
   -> scripts/browser/renderers/decode_browser_eval.py

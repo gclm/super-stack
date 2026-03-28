@@ -14,6 +14,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
 - `AGENTS.md`
 - `.planning/STATE.md` if it exists
 - `references/skill-authoring-checklist.md`
+- `scripts/check/validate-skills.py`
 
 ## Goals
 
@@ -50,6 +51,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
    - direct references to any new `references/`
    - no obvious duplication with nearby skills
    - output/report shape matches the intended workflow
+   - run `python3 scripts/check/validate-skills.py` when the repository skill set was changed
 6. Update `.planning/STATE.md` when the change materially affects workflow behavior or maintenance conventions.
 
 ## Output

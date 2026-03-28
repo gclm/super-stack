@@ -7,8 +7,6 @@ SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 source "${SCRIPT_DIR}/../lib/common.sh"
 # shellcheck source=../lib/install-state.sh
 source "${SCRIPT_DIR}/../lib/install-state.sh"
-# shellcheck source=../lib/checks.sh
-source "${SCRIPT_DIR}/../lib/checks.sh"
 
 CODEX_HOME="${HOME}/.codex"
 CLAUDE_HOME="${HOME}/.claude"
@@ -24,9 +22,6 @@ RUNTIME_AGENTS="${RUNTIME_ROOT}/AGENTS.md"
 CODEX_AGENTS_FILE="${CODEX_HOME}/AGENTS.md"
 CODEX_CONFIG_FILE="${CODEX_HOME}/config.toml"
 USER_SKILLS_DIR="${USER_AGENTS_HOME}/skills"
-GLOBAL_BROWSER_BIN="${RUNTIME_ROOT}/bin/super-stack-browser"
-GLOBAL_BROWSER_HEALTH_BIN="${RUNTIME_ROOT}/bin/super-stack-browser-health"
-GLOBAL_BROWSER_RESET_BIN="${RUNTIME_ROOT}/bin/super-stack-browser-reset"
 CLAUDE_FILE="${CLAUDE_HOME}/CLAUDE.md"
 CLAUDE_SKILLS_DIR="${CLAUDE_HOME}/skills"
 CLAUDE_SETTINGS_FILE="${CLAUDE_HOME}/settings.json"
@@ -34,6 +29,9 @@ REPO_AGENTS_FILE="${REPO_ROOT}/AGENTS.md"
 REPO_SKILLS_DIR="${REPO_ROOT}/.agents/skills"
 
 WARNINGS=0
+EXPECTED_SKILL_COUNT=""
+EXPECTED_CODEX_AGENTS=""
+EXPECTED_CLAUDE_ROUTER=""
 
 check_exact_content() {
   local path="$1"
@@ -111,95 +109,189 @@ count_matching_skill_names() {
   printf '%s' "$count"
 }
 
-printf '== super-stack 全局安装检查 ==\n'
-printf '仓库: %s\n' "${REPO_ROOT}"
-printf 'HOME: %s\n' "${HOME}"
-printf '\n'
+managed_target_file() {
+  managed_config_target_file "$1"
+}
 
-EXPECTED_SKILL_COUNT="$(count_expected_skill_names)"
+check_managed_block_presence() {
+  local block="$1"
+  local label="$2"
+  local target_file
+  target_file="$(managed_target_file "$block")"
 
-EXPECTED_CODEX_AGENTS=$(cat <<EOF
-# Super Stack Global Router
+  if [[ -z "$target_file" ]]; then
+    warn "${label}: 未声明 target_file"
+    return
+  fi
 
-Use \`${RUNTIME_ROOT}/AGENTS.md\` as the global workflow source.
+  check_file "$target_file" "${label} 目标文件"
 
-- This is the default global workflow router for Codex.
-- This repository is the single global workflow source managed by super-stack.
-- Global super-stack skills are installed to \`${USER_SKILLS_DIR}\`.
-- Treat global super-stack as the canonical system configuration.
-EOF
-)
+  while IFS= read -r marker; do
+    [[ -n "$marker" ]] || continue
+    check_contains "$target_file" "$marker" "${label} 受管标记：${marker}"
+  done < <(managed_config_lines "$block" markers)
+}
 
-EXPECTED_CLAUDE_ROUTER=$(cat <<EOF
-# Super Stack Global Router
+check_managed_contains() {
+  local block="$1"
+  local label="$2"
+  local target_file
+  target_file="$(managed_target_file "$block")"
 
-Use \`${RUNTIME_ROOT}/AGENTS.md\` as the shared global workflow source.
+  while IFS= read -r item; do
+    [[ -n "$item" ]] || continue
+    check_contains "$target_file" "$item" "${label} 关键字段：${item}"
+  done < <(managed_config_lines "$block" contains)
+}
 
-- This is the default global workflow router for Claude.
-- This repository is the single global workflow source managed by super-stack.
-- Global Claude-facing skills are mirrored into \`${CLAUDE_SKILLS_DIR}\`.
-- Treat global super-stack as the canonical system configuration.
-EOF
-)
+check_managed_registered_entries() {
+  local block="$1"
+  local label="$2"
+  local target_file
+  target_file="$(managed_target_file "$block")"
 
-printf '== Runtime ==\n'
-check_file "$SOURCE_REPO_FILE" "源仓路径记录文件"
-check_file "$RUNTIME_AGENTS" "共享运行仓库 AGENTS"
-check_same_content "$RUNTIME_AGENTS" "$REPO_AGENTS_FILE" "共享运行仓库 AGENTS 与仓库一致"
-check_dir "$STATE_ROOT" "安装状态目录"
-check_file "$STATE_MANIFEST" "安装状态清单"
-check_dir "$BACKUP_ROOT" "统一备份根目录"
-check_file "${RUNTIME_ROOT}/.codex/hooks/super_stack_state.py" "运行仓库 Codex hook 脚本"
-check_not_exists "${RUNTIME_ROOT}/.git" "运行仓库不包含 Git 元数据"
-check_not_exists "${RUNTIME_ROOT}/.github" "运行仓库不包含 GitHub 配置"
-check_not_exists "${RUNTIME_ROOT}/.idea" "运行仓库不包含 IDE 配置"
-check_not_exists "${RUNTIME_ROOT}/.planning" "运行仓库不包含 planning 状态"
-check_not_exists "${RUNTIME_ROOT}/docs" "运行仓库不包含 source docs"
-check_not_exists "${RUNTIME_ROOT}/tests" "运行仓库不包含 source tests"
-check_not_exists "${RUNTIME_ROOT}/.agents" "运行仓库不包含 source skills 真源"
-check_not_exists "${RUNTIME_ROOT}/.claude" "运行仓库不包含 Claude source adapter"
-check_not_exists "${RUNTIME_ROOT}/.codex/agents" "运行仓库不包含 Codex source agents"
-printf '\n'
+  while IFS= read -r entry; do
+    [[ -n "$entry" ]] || continue
+    check_contains "$target_file" "$entry" "${label} 已注册：${entry}"
+  done < <(managed_config_lines "$block" registered_entries)
+}
 
-printf '== Codex ==\n'
-check_file "$CODEX_AGENTS_FILE" "Codex 全局 AGENTS"
-check_file "$CODEX_CONFIG_FILE" "Codex 配置文件"
-check_dir "$USER_SKILLS_DIR" "用户 skills 目录"
-check_exact_content "$CODEX_AGENTS_FILE" "$EXPECTED_CODEX_AGENTS" "Codex 全局路由内容符合预期"
-check_contains "$CODEX_CONFIG_FILE" "super_stack_state.py" "Codex hooks 已合并"
-check_contains "$CODEX_CONFIG_FILE" "readonly_command_guard.py" "Codex 只读自动放行 hook 已合并"
-printf 'Codex 用户可见 skills 总数: %s\n' "$(count_skill_entries "$USER_SKILLS_DIR")"
-printf 'Codex 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$USER_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
-printf '\n'
+check_managed_files_exist() {
+  local block="$1"
+  local label="$2"
 
-printf '== Claude ==\n'
-check_file "$CLAUDE_FILE" "Claude 全局 CLAUDE.md"
-check_dir "$CLAUDE_SKILLS_DIR" "Claude 全局 skills 目录"
-check_file "$CLAUDE_SETTINGS_FILE" "Claude settings"
-check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_ROUTER" "Claude 全局路由内容符合预期"
-check_contains "$CLAUDE_SETTINGS_FILE" "[super-stack] resuming from .planning/STATE.md" "Claude SessionStart hook 已合并"
-check_contains "$CLAUDE_SETTINGS_FILE" "readonly_command_guard.py" "Claude 只读自动放行 hook 已合并"
-check_contains "$CLAUDE_SETTINGS_FILE" "[super-stack] remember to leave STATE.md current" "Claude Stop hook 已合并"
-printf 'Claude 镜像 skills 总数: %s\n' "$(count_skill_entries "$CLAUDE_SKILLS_DIR")"
-printf 'Claude 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$CLAUDE_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
-printf '\n'
+  while IFS= read -r managed_file; do
+    [[ -n "$managed_file" ]] || continue
+    check_file "$managed_file" "${label} 受管文件：${managed_file}"
+  done < <(managed_config_lines "$block" managed_files)
+}
 
-printf '== Browser ==\n'
-check_file "$GLOBAL_BROWSER_BIN" "稳定浏览器入口"
-check_file "$GLOBAL_BROWSER_HEALTH_BIN" "浏览器健康检查入口"
-check_file "$GLOBAL_BROWSER_RESET_BIN" "浏览器会话重置入口"
-printf '\n'
+check_managed_commands() {
+  local block="$1"
+  local label="$2"
+  local target_file
+  target_file="$(managed_target_file "$block")"
 
-printf '== 策略 ==\n'
-printf '当前记录的 source repo: %s\n' "$(cat "$SOURCE_REPO_FILE" 2>/dev/null || true)"
-check_contains "$CODEX_AGENTS_FILE" "single global workflow source managed by super-stack" "Codex 已使用仅全局路由"
-check_contains "$CLAUDE_FILE" "single global workflow source managed by super-stack" "Claude 已使用仅全局路由"
-printf '\n'
+  while IFS= read -r command; do
+    [[ -n "$command" ]] || continue
+    check_contains "$target_file" "$command" "${label} 已合并：${command}"
+  done < <(managed_config_lines "$block" commands)
+}
 
-if [[ "$WARNINGS" -eq 0 ]]; then
-  printf '结果：通过\n'
-  printf 'super-stack 仅全局模式安装看起来正常。\n'
-else
-  printf '结果：警告（%s 个问题）\n' "$WARNINGS"
-  printf '请检查上面的警告；如有需要，重新执行 ./scripts/install/install.sh --host all。\n'
-fi
+init_expected_values() {
+  EXPECTED_SKILL_COUNT="$(count_expected_skill_names)"
+  EXPECTED_CODEX_AGENTS="$(render_global_router_text "global workflow source" "Codex" "Global super-stack skills are installed to \`${USER_SKILLS_DIR}\`.")"
+  EXPECTED_CLAUDE_ROUTER="$(render_global_router_text "shared global workflow source" "Claude" "Global Claude-facing skills are mirrored into \`${CLAUDE_SKILLS_DIR}\`.")"
+}
+
+print_header() {
+  printf '== super-stack 全局安装检查 ==\n'
+  printf '仓库: %s\n' "${REPO_ROOT}"
+  printf 'HOME: %s\n' "${HOME}"
+  printf '\n'
+}
+
+check_runtime_section() {
+  printf '== Runtime ==\n'
+  check_file "$SOURCE_REPO_FILE" "源仓路径记录文件"
+  check_file "$RUNTIME_AGENTS" "共享运行仓库 AGENTS"
+  check_same_content "$RUNTIME_AGENTS" "$REPO_AGENTS_FILE" "共享运行仓库 AGENTS 与仓库一致"
+  check_dir "$STATE_ROOT" "安装状态目录"
+  check_file "$STATE_MANIFEST" "安装状态清单"
+  check_dir "$BACKUP_ROOT" "统一备份根目录"
+  check_file "${RUNTIME_ROOT}/.codex/hooks/super_stack_state.py" "运行仓库 Codex hook 脚本"
+  check_not_exists "${RUNTIME_ROOT}/.git" "运行仓库不包含 Git 元数据"
+  check_not_exists "${RUNTIME_ROOT}/.github" "运行仓库不包含 GitHub 配置"
+  check_not_exists "${RUNTIME_ROOT}/.idea" "运行仓库不包含 IDE 配置"
+  check_not_exists "${RUNTIME_ROOT}/.planning" "运行仓库不包含 planning 状态"
+  check_not_exists "${RUNTIME_ROOT}/docs" "运行仓库不包含 source docs"
+  check_not_exists "${RUNTIME_ROOT}/tests" "运行仓库不包含 source tests"
+  check_not_exists "${RUNTIME_ROOT}/.agents" "运行仓库不包含 source skills 真源"
+  check_not_exists "${RUNTIME_ROOT}/.claude" "运行仓库不包含 Claude source adapter"
+  check_not_exists "${RUNTIME_ROOT}/.codex/agents" "运行仓库不包含 Codex source agents"
+  printf '\n'
+}
+
+check_codex_section() {
+  printf '== Codex ==\n'
+  check_file "$CODEX_AGENTS_FILE" "Codex 全局 AGENTS"
+  check_file "$CODEX_CONFIG_FILE" "Codex 配置文件"
+  check_dir "$USER_SKILLS_DIR" "用户 skills 目录"
+  check_exact_content "$CODEX_AGENTS_FILE" "$EXPECTED_CODEX_AGENTS" "Codex 全局路由内容符合预期"
+  check_managed_block_presence "codex_agents" "Codex agents"
+  check_managed_contains "codex_agents" "Codex agents"
+  check_managed_registered_entries "codex_agents" "Codex agent"
+  check_managed_files_exist "codex_agents" "Codex agent"
+  check_managed_block_presence "codex_hooks" "Codex hooks"
+  check_managed_commands "codex_hooks" "Codex hook"
+  printf 'Codex 用户可见 skills 总数: %s\n' "$(count_skill_entries "$USER_SKILLS_DIR")"
+  printf 'Codex 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$USER_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
+  printf '\n'
+}
+
+check_claude_section() {
+  printf '== Claude ==\n'
+  check_file "$CLAUDE_FILE" "Claude 全局 CLAUDE.md"
+  check_dir "$CLAUDE_SKILLS_DIR" "Claude 全局 skills 目录"
+  check_file "$CLAUDE_SETTINGS_FILE" "Claude settings"
+  check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_ROUTER" "Claude 全局路由内容符合预期"
+  check_managed_block_presence "claude_hooks" "Claude hooks"
+  check_managed_commands "claude_hooks" "Claude hook"
+  printf 'Claude 镜像 skills 总数: %s\n' "$(count_skill_entries "$CLAUDE_SKILLS_DIR")"
+  printf 'Claude 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$CLAUDE_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
+  printf '\n'
+}
+
+check_browser_section() {
+  local wrapper_name
+  printf '== Browser ==\n'
+  while IFS= read -r wrapper_name; do
+    [[ -n "${wrapper_name}" ]] || continue
+    case "${wrapper_name}" in
+      super-stack-browser)
+        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "稳定浏览器入口"
+        ;;
+      super-stack-browser-health)
+        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "浏览器健康检查入口"
+        ;;
+      super-stack-browser-reset)
+        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "浏览器会话重置入口"
+        ;;
+      *)
+        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "浏览器 wrapper"
+        ;;
+    esac
+  done < <(browser_wrapper_names)
+  printf '\n'
+}
+
+check_policy_section() {
+  printf '== 策略 ==\n'
+  printf '当前记录的 source repo: %s\n' "$(cat "$SOURCE_REPO_FILE" 2>/dev/null || true)"
+  check_contains "$CODEX_AGENTS_FILE" "single global workflow source managed by super-stack" "Codex 已使用仅全局路由"
+  check_contains "$CLAUDE_FILE" "single global workflow source managed by super-stack" "Claude 已使用仅全局路由"
+  printf '\n'
+}
+
+print_result() {
+  if [[ "$WARNINGS" -eq 0 ]]; then
+    printf '结果：通过\n'
+    printf 'super-stack 仅全局模式安装看起来正常。\n'
+  else
+    printf '结果：警告（%s 个问题）\n' "$WARNINGS"
+    printf '请检查上面的警告；如有需要，重新执行 ./scripts/install/install.sh --host all。\n'
+  fi
+}
+
+main() {
+  init_expected_values
+  print_header
+  check_runtime_section
+  check_codex_section
+  check_claude_section
+  check_browser_section
+  check_policy_section
+  print_result
+}
+
+main "$@"

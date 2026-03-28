@@ -44,12 +44,16 @@ printf '#:schema https://developers.openai.com/codex/config-schema.json\n\n' > "
 
 bash "${REPO_ROOT}/scripts/install/install.sh" --host codex >/dev/null
 
-for name in super-stack-browser super-stack-browser-health super-stack-browser-reset; do
+# shellcheck source=../../scripts/lib/common.sh
+source "${REPO_ROOT}/scripts/lib/common.sh"
+
+while IFS= read -r name; do
+  [[ -n "${name}" ]] || continue
   target="${HOME}/.super-stack/runtime/bin/${name}"
   source_file="${REPO_ROOT}/bin/${name}"
   assert_file "${target}"
   assert_executable "${target}"
   assert_same_content "${source_file}" "${target}"
-done
+done < <(browser_wrapper_names)
 
 printf '[测试通过] install browser wrappers\n'

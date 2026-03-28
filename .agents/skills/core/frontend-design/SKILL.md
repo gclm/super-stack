@@ -13,7 +13,7 @@ Use this skill when the task is not just frontend cleanup, but choosing or execu
 - `.planning/CONVENTIONS.md` if it exists
 - the closest UI files, design notes, screenshots, or reference examples
 - `references/frontend-task-shaping.md` when the task could drift between marketing, product-flow, redesign, or prototype work
-- `references/reference-reuse-boundary.md` when the task involves borrowing from another product
+- `.agents/skills/planning/brainstorm/references/reference-reuse-boundary.md` when the task involves borrowing from another product
 
 ## Goals
 

@@ -11,6 +11,8 @@ Check the strongest available sources first:
   - supports `--project-path-alias` for migrated or historically moved repositories
 - `scripts/extract_codex_session_timeline.py`
   - repository-managed session timeline extractor for turning raw JSONL traces into readable user / assistant / tool chronology
+- `scripts/slice_codex_session.py`
+  - repository-managed session slicer for cases where one long session contains multiple distinct user tasks or sub-conversations
 - `~/.codex/history.jsonl`
   - broad message-level history
 - `~/.codex/session_index.jsonl`
@@ -31,6 +33,7 @@ Prefer narrowing by:
 - nearby timestamps
 - session ids appearing in both index and history
 - explicit mentions of repository name, module name, or task terms
+- slice boundaries when one session is clearly carrying multiple tasks
 
 Do not start with a global dump unless path-based filtering clearly fails.
 Do not assume the current live session is already indexed into these sources.
@@ -47,6 +50,10 @@ Be explicit about what each source can and cannot prove:
   - best second step after candidate session ids are known
   - extracts user messages, assistant messages, tool calls, tool outputs, and key events into a readable timeline
   - reduces manual second-pass reading, but still does not replace human judgment about route quality or semantic drift
+- `scripts/slice_codex_session.py`
+  - best when one session is too broad to treat as one retrospective unit
+  - uses time gaps, user boundary hints, and cwd changes to derive task-like slices
+  - should be treated as heuristic support, not ground truth
 - `history.jsonl`
   - good for prompts, replies, and repeated problem wording
   - weaker for exact file mutations
@@ -89,3 +96,14 @@ Do not feed back:
 - one-off project messiness
 - missing business requirements specific to a single project
 - isolated user preference that already exists in shared conventions
+
+## Session Slice Rule
+
+Do not assume one session equals one task.
+
+If a single session contains multiple clearly different user asks, especially over a long time range, prefer:
+
+1. path-correlation first
+2. timeline extraction second
+3. session slicing third
+4. lesson extraction from the relevant slice, not from the entire session blob

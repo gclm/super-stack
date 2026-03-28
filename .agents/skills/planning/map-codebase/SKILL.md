@@ -12,8 +12,8 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 - root `AGENTS.md`
 - nearby docs such as `README*`, `docs/`, architecture notes, and config files
 - `.planning/CONVENTIONS.md` if it exists
-- `templates/planning/codebase/` for output structure
 - `references/layered-entry.md`
+- `references/output-shape.md`
 - `references/runtime-footprint.md` when important evidence may live outside the repository
 
 ## Goals
@@ -37,21 +37,6 @@ Use this rule:
 The confirmation should be short and concrete, for example:
 
 - `这个仓库看起来是多模块的，你这次想先聚焦哪个模块？`
-
-## Output Location
-
-Write findings under `.planning/codebase/` in the target project, using these files:
-
-- `STACK.md`
-- `STRUCTURE.md`
-- `ARCHITECTURE.md`
-- `CONVENTIONS.md`
-- `INTEGRATIONS.md`
-- `TESTING.md`
-- `CONCERNS.md`
-- `SUMMARY.md`
-
-If `.planning/` does not exist, initialize it first from `templates/planning/`.
 
 ## Investigation Order
 
@@ -85,82 +70,6 @@ When the baseline is already clear, do not keep broadening the scan beyond the t
 - if something is unknown, say it is unknown
 - distinguish repository evidence from host-runtime evidence such as local config, logs, launch agents, or running processes
 - when docs or planning files disagree with the repository, record that drift explicitly instead of smoothing it over
-
-## File Expectations
-
-### `STACK.md`
-
-Capture:
-
-- languages
-- frameworks
-- package managers
-- test tools
-- deployment/runtime clues
-
-### `STRUCTURE.md`
-
-Capture:
-
-- top-level directories
-- where product code lives
-- where tests live
-- where infra or tooling lives
-
-### `ARCHITECTURE.md`
-
-Capture:
-
-- major modules or services
-- request or data flow
-- persistence boundaries
-- background jobs, workers, or queues
-
-### `CONVENTIONS.md`
-
-Capture:
-
-- naming conventions
-- file organization patterns
-- code style habits
-- branching or release conventions if visible
-- documentation language and commit conventions if visible
-
-### `INTEGRATIONS.md`
-
-Capture:
-
-- third-party APIs
-- auth providers
-- databases or caches
-- webhooks, messaging, analytics, storage
-
-### `TESTING.md`
-
-Capture:
-
-- test frameworks
-- test directories
-- common test commands
-- obvious coverage gaps
-
-### `CONCERNS.md`
-
-Capture:
-
-- fragile areas
-- risky dependencies
-- stale or confusing sections
-- missing docs or verification weak spots
-- documented-vs-actual mismatches in entrypoints, directory structure, or test commands
-
-### `SUMMARY.md`
-
-Capture:
-
-- one-paragraph summary
-- likely best entry points for future work
-- questions to resolve before major changes
 
 ## State Updates
 

@@ -16,10 +16,10 @@ BROWSER_DIR="${SCRIPT_DIR}/../browser"
 usage() {
   cat <<'EOF'
 用法：
-  scripts/smoke/browser-extraction.sh --url URL [--adapter auto|wechat-article|xiaohongshu-note|douyin-content|juejin-article|generic-page] [--output PATH]
+  scripts/smoke/browser/browser-extraction.sh --url URL [--adapter auto|wechat-article|xiaohongshu-note|douyin-content|juejin-article|generic-page] [--output PATH]
 
 示例：
-  scripts/smoke/browser-extraction.sh \
+  bash scripts/smoke/browser/browser-extraction.sh \
     --url "https://www.xiaohongshu.com/explore/..." \
     --output artifacts/xiaohongshu-note.md
 EOF

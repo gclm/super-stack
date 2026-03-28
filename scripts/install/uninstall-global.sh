@@ -14,6 +14,7 @@ RUNTIME_ROOT="${SUPER_STACK_RUNTIME_ROOT}"
 USER_AGENTS_HOME="${HOME}/.agents"
 TIMESTAMP="$(date +%Y%m%d-%H%M%S)"
 BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}/uninstall-${TIMESTAMP}"
+MANAGED_CHECK_SCRIPT="${REPO_ROOT}/scripts/config/check_managed_config.py"
 
 backup_if_exists() {
   local path="$1"
@@ -58,12 +59,10 @@ while IFS= read -r skill_dir; do
   remove_if_exists "${CLAUDE_HOME}/skills/${skill_name}"
 done < <(find "${REPO_ROOT}/.agents/skills" -maxdepth 2 -mindepth 2 -type d | sort)
 
-for agent_file in \
-  "${CODEX_HOME}/agents/super-stack-explorer.toml" \
-  "${CODEX_HOME}/agents/super-stack-planner.toml" \
-  "${CODEX_HOME}/agents/super-stack-reviewer.toml"; do
-  remove_if_exists "$agent_file"
-done
+while IFS= read -r managed_file; do
+  [[ -n "$managed_file" ]] || continue
+  remove_if_exists "$managed_file"
+done < <(managed_config_lines codex_agents managed_files)
 
 if [[ -n "${TEMP_STATE_ROOT}" ]]; then
   SUPER_STACK_STATE_ROOT="${TEMP_STATE_ROOT}/state"

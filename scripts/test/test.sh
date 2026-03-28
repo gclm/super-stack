@@ -26,6 +26,7 @@ EOF
 
 run_unit() {
   bash "${SCRIPT_DIR}/python.sh"
+  bash "${SCRIPT_DIR}/skills.sh"
 }
 
 run_integration() {
@@ -33,7 +34,7 @@ run_integration() {
 }
 
 run_smoke() {
-  bash "${SCRIPT_DIR}/../smoke/readonly-hook.sh"
+  bash "${SCRIPT_DIR}/../smoke/hooks/readonly-hook.sh"
 }
 
 LAYER="default"

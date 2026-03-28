@@ -1,17 +1,18 @@
 ---
 name: codex-record-retrospective
-description: Review Codex local records for a specific project path, reconstruct what happened, and extract workflow or skill improvements worth feeding back into super-stack.
+description: Review Codex local records for a specific project path, reconstruct what happened, and generate reusable retrospective or skill-evolution recommendations for super-stack.
 ---
 
 # Codex Record Retrospective
 
-Use this skill when the user wants to review or 复盘某个项目里的 Codex 实战记录，并希望把经验反哺到 workflow、skills、prompts 或治理规则中。
+Use this skill when the user wants to review or 复盘某个项目里的 Codex 实战记录，并把经验反哺到 workflow、skills、prompts 或治理规则。
 
 Prefer this skill when:
 
 - the user gives a concrete project path
 - the user mentions Codex records, history, sessions, archived sessions, or local conversation traces
 - the goal is not just to inspect the target codebase, but to inspect how Codex behaved while working in that codebase
+- the user wants structured retrospective or recommendation artifacts
 
 If the project path is missing, ask the user for it in one short sentence:
 
@@ -22,15 +23,22 @@ If the project path is missing, ask the user for it in one short sentence:
 - `AGENTS.md`
 - `.planning/STATE.md` if it exists
 - `references/record-sources.md`
+- `references/auto-evolution-loop.md`
+- `references/artifact-schemas.md`
+- `references/long-running-agent-patterns.md`
+- `references/lesson-target-map.json`
 - `scripts/find_codex_project_records.py`
 - `scripts/extract_codex_session_timeline.py`
+- `scripts/slice_codex_session.py`
+- `scripts/process_retrospective.py`
 
 ## Goals
 
 - locate the Codex records most likely tied to the target project path
 - reconstruct the real workflow that happened instead of relying on memory
 - distinguish product/code problems from workflow/prompt/routing problems
-- extract reusable improvements for super-stack rules, skills, or references
+- normalize reusable lessons into stable categories when possible
+- generate reusable retrospective or recommendation artifacts
 - avoid mutating user records while analyzing them
 
 ## Rules
@@ -39,56 +47,57 @@ If the project path is missing, ask the user for it in one short sentence:
 - prefer project-path filtering over broad global history summaries
 - do not assume the current or very recent live session has already been indexed into local record stores
 - distinguish confirmed evidence from inference when records are partial
-- focus on repeated failure patterns, route misses, scope drift, verification gaps, and communication friction
-- separate “this project was unusually messy” from “super-stack rule design is weak”
-- when proposing repository changes, name the exact file or skill that should absorb the lesson
-- when the lesson implies a skill change, recommend the source-repository skill path rather than a host-installed runtime copy
-- do not rely on broad global history summarizers as the default or only evidence path; start from path-correlated sources first
-- do not stop after a single weak source; if path correlation is missing, continue through the next record source or explicitly report the evidence gap
+- focus on repeated route misses, scope drift, verification gaps, communication friction, and long-running execution issues
+- do not assume one session equals one task; when a long session contains multiple asks, slice first and extract lessons from the relevant slice
+- separate project messiness from shared workflow weakness
+- prefer exact source-repo target files when proposing reusable changes
+- use `report -> recommendation -> approval` as the default chain instead of jumping straight to repository edits
+- prefer updating `references/`、mapping、or scripts before bloating `SKILL.md`
 - default retrospective summaries and recommendations to Chinese
+
+For source selection, slicing heuristics, long-running patterns, and artifact fields, rely on the references above instead of expanding this entry file.
 
 ## Process
 
 1. Confirm the target project path.
-2. Run `scripts/find_codex_project_records.py --project-path <path>` first to get a path-correlated evidence scan.
-   - if the project was moved or renamed across roots, add `--project-path-alias <old-path>` for each known historical path before falling back to broader fuzzy correlation.
-3. For the strongest candidate sessions, run `scripts/extract_codex_session_timeline.py --session-id <id>` to get a readable timeline before doing manual deep reads.
-4. Use `references/record-sources.md` to locate any extra sources still needed.
-5. Start with path-correlated sources such as `session_index`, `sessions`, or `archived_sessions` before broad history summaries.
-6. Filter records by project path, cwd, session metadata, or nearby timestamps.
-7. If the most recent live session is missing from indexed records, say so explicitly and continue with the next best sources instead of pretending the evidence is complete.
-8. Reconstruct the sequence:
+2. Run `scripts/find_codex_project_records.py --project-path <path>` first.
+   - if the project moved, add `--project-path-alias <old-path>` before falling back to broader correlation
+3. For the strongest candidate sessions, run `scripts/extract_codex_session_timeline.py --session-id <id>`.
+4. If one session contains multiple tasks or long gaps, run `scripts/slice_codex_session.py` and work from the relevant slice.
+5. Use `references/record-sources.md` to continue through stronger sources before broad history summaries.
+6. If the current live session is not yet indexed, call that out explicitly and continue with the next best evidence.
+7. Reconstruct the sequence:
    - user intent
    - chosen workflow path
    - major pivots or backtracks
    - verification path
    - unresolved friction
-9. Classify issues into:
+8. Classify issues into:
    - routing problem
    - planning problem
    - implementation discipline problem
    - verification problem
    - host/runtime limitation
    - project-specific noise
-10. Extract only the lessons that generalize beyond that one project.
-11. Recommend where each lesson belongs:
-   - `AGENTS.md`
-   - `protocols/`
-   - an existing skill
-   - a new reference
-   - no repository change, just project-specific caution
-12. Update `.planning/STATE.md` when the retrospective changes repository workflow direction or maintenance priorities.
+   - long-running execution gap
+9. Normalize reusable lessons with stable ids from `references/lesson-target-map.json`; mark new ids as provisional.
+10. Produce a retrospective artifact when the work is likely to be reused.
+11. For the default post-processing path, run `scripts/process_retrospective.py` against the retrospective JSON.
+12. When recommendations or strong reusable lessons are produced, append them to the evolution ledger unless the user explicitly wants a no-file summary.
+13. Separate recommendation levels clearly:
+    - `record-only`
+    - `patch-proposed`
+    - `apply-approved`
+14. Recommend where each lesson belongs: `references/`、mapping/scripts、`protocols/`、existing skill、`AGENTS.md`，or no repository change.
+15. Update `.planning/STATE.md` when the retrospective changes repository workflow direction or maintenance priorities.
 
 ## Output
 
-Report:
+Report should include:
 
-- target project path
-- records reviewed
+- target project path and records reviewed
 - evidence gaps, especially when current-session records are not yet indexed
-- reconstructed workflow summary
-- main failure or friction patterns
-- what appears project-specific
-- what should be fed back into super-stack
-- the exact repository files or skills that should absorb the lesson
-- whether you recommend immediate repository changes or just a tracked note
+- reconstructed workflow summary and main friction patterns
+- normalized lessons, provisional ids, and project-specific noise
+- recommended super-stack targets and recommendation level
+- retrospective / recommendation artifact paths when generated

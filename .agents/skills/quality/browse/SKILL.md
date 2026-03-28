@@ -16,6 +16,7 @@ Use this skill when the task needs direct browser evidence rather than only stat
 - `references/browser-evidence-patterns.md` when you need a more concrete evidence checklist
 - `references/content-acquisition-patterns.md` when the task is really about acquiring article or post content from a live page
 - `references/frontend-debug-playbooks.md` when the task is a recurring frontend bug pattern such as white screen, API failure, layout regression, or auth loop
+- `references/session-guardrails.md` when host selection, fallback order, or browser session lifecycle matters
 
 ## Goals
 
@@ -24,33 +25,6 @@ Use this skill when the task needs direct browser evidence rather than only stat
 - distinguish DOM, style, console, and network failures
 - leave behind a clear summary of what was actually observed
 - establish `browse` as the base capability for future browser-driven automation
-
-## Modes
-
-Treat `browse` as one browser foundation with three modes:
-
-1. `content-read`
-   - acquire visible content from pages such as WeChat articles, Xiaohongshu notes, Douyin pages, and Juejin articles
-2. `content-publish`
-   - future browser-side drafting and publishing actions with external side effects
-3. `frontend-debug`
-   - inspect DOM, styles, console, network, and runtime UI behavior
-
-Current implementation priority:
-
-- `content-read` is the stable default expansion path
-- `frontend-debug` remains a core existing use case
-- `content-publish` should be treated as future capability and must keep strong confirmation boundaries
-
-## Good Triggers
-
-- UI behavior differs from expectation
-- layout, styling, or responsive issues need proof
-- console errors or failed network requests may explain a bug
-- a browser interaction must be validated before calling work done
-- screenshots or runtime evidence are more trustworthy than static review
-
-For more concrete evidence selection patterns, read `references/browser-evidence-patterns.md`.
 
 ## Strong Triggers
 
@@ -64,39 +38,6 @@ Default to `browse` when any of the following is true:
 - the request is really about extracting or viewing article/post content from a live page, not just debugging UI behavior
 
 When these conditions hold, do not begin with mirror pages, raw HTML fetching, or search snippets unless browser tooling is unavailable.
-
-## Host Guidance
-
-- Claude Code: prefer `super-stack-browser` when the host has super-stack browser capability configured
-- Codex: prefer `super-stack-browser` when the host has super-stack browser capability configured
-
-For super-stack environments, the intended default browser entry is:
-
-- `~/.super-stack/runtime/bin/super-stack-browser`
-- `~/.super-stack/runtime/bin/super-stack-browser-health`
-- `~/.super-stack/runtime/bin/super-stack-browser-reset`
-
-This wrapper exists to keep browser auto-connect and session reuse stable.
-`super-stack-browser-health` is the preflight/postflight probe for leaked headless Chrome, stale `browser_use` residue, and unexpectedly high Chrome RSS.
-`super-stack-browser-reset` is the recovery path when the stable session drifts, hangs, or accumulates too much state.
-
-If browser tooling is unavailable, say so clearly and fall back to:
-
-- screenshots
-- local preview inspection
-- logs and test output
-- code-level reasoning with explicit limits
-
-## Fallback Order
-
-When original-page browser evidence cannot be obtained, use this fallback order:
-
-1. user-provided screenshots or pasted page text
-2. trusted mirrors or reposts
-3. raw HTML or static fetch extraction
-4. search snippets or third-party summaries
-
-If anything below original-page browser evidence is used, say so explicitly in the report.
 
 ## Steps
 
@@ -135,22 +76,10 @@ For frontend bug triage, prefer a structure-first investigation:
 
 1. reproduce the symptom
 2. capture snapshot evidence
-3. inspect styles for the affected node when structure looks suspicious
+3. inspect styles when structure looks suspicious
 4. inspect console and page errors
 5. inspect network requests
 6. only then escalate to broader screenshots or flow-level QA
-
-When the affected area is known, narrow the structure evidence with a selector-scoped snapshot instead of reading the whole page first.
-When the suspected failure is data-driven, use a network filter to focus the request log before broad network inspection.
-
-## Lifecycle Rules
-
-- Default to the single stable session provided by `super-stack-browser` for serial work.
-- Do not improvise alternative browser stacks such as `browser_use` when `super-stack-browser` is available.
-- Do not let concurrent independent tasks share one live browser session; use isolation only when the host workflow explicitly requires concurrent browser tasks.
-- Treat `~/.super-stack/runtime/bin/super-stack-browser-health` as the first stop for memory-growth or leaked-process suspicion.
-- Treat `~/.super-stack/runtime/bin/super-stack-browser-reset` as the supported cleanup path instead of manual ad hoc killing.
-- For `content-publish`, do not treat “draft filled” and “publish clicked” as the same action. Final publish actions require explicit confirmation.
 
 ## Output
 

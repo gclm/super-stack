@@ -30,11 +30,19 @@ mkdir -p "${HOME}/.super-stack/runtime/.codex/hooks" "${HOME}/.super-stack/runti
 cp "${REPO_ROOT}/.codex/hooks/super_stack_state.py" "${HOME}/.super-stack/runtime/.codex/hooks/super_stack_state.py"
 cp "${REPO_ROOT}/scripts/hooks/readonly_command_guard.py" "${HOME}/.super-stack/runtime/scripts/hooks/readonly_command_guard.py"
 
-bash "${REPO_ROOT}/scripts/install/merge-codex-hooks.sh"
-bash "${REPO_ROOT}/scripts/install/merge-codex-hooks.sh"
-bash "${REPO_ROOT}/scripts/install/merge-claude-hooks.sh"
-bash "${REPO_ROOT}/scripts/install/merge-claude-hooks.sh"
+python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block codex_agents >/dev/null
+python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block codex_hooks --runtime-root "${HOME}/.super-stack/runtime" --config-file "${HOME}/.codex/config.toml" >/dev/null
+python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block claude_hooks --runtime-root "${HOME}/.super-stack/runtime" >/dev/null
 
+bash "${REPO_ROOT}/scripts/install/install-codex.sh"
+bash "${REPO_ROOT}/scripts/install/install-codex.sh"
+bash "${REPO_ROOT}/scripts/install/install-claude.sh"
+bash "${REPO_ROOT}/scripts/install/install-claude.sh"
+
+assert_count 1 "# BEGIN SUPER-STACK AGENTS" "${HOME}/.codex/config.toml"
+assert_count 1 "[agents.super_stack_explorer]" "${HOME}/.codex/config.toml"
+assert_count 1 "[agents.super_stack_reviewer]" "${HOME}/.codex/config.toml"
+assert_count 1 "[agents.super_stack_planner]" "${HOME}/.codex/config.toml"
 assert_count 1 "# BEGIN SUPER-STACK HOOKS" "${HOME}/.codex/config.toml"
 assert_count 1 "[[hooks.session_start]]" "${HOME}/.codex/config.toml"
 assert_count 1 "[[hooks.pre_tool_use]]" "${HOME}/.codex/config.toml"

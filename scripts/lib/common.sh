@@ -8,6 +8,12 @@ SUPER_STACK_HOME="${HOME}/.super-stack"
 SUPER_STACK_RUNTIME_ROOT="${SUPER_STACK_HOME}/runtime"
 SUPER_STACK_STATE_BASE="${SUPER_STACK_HOME}/state"
 SUPER_STACK_BACKUP_ROOT="${SUPER_STACK_HOME}/backup"
+SUPER_STACK_MANAGED_CHECK_SCRIPT="${REPO_ROOT}/scripts/config/check_managed_config.py"
+BROWSER_WRAPPER_NAMES=(
+  "super-stack-browser"
+  "super-stack-browser-health"
+  "super-stack-browser-reset"
+)
 
 log() {
   printf '[super-stack] %s\n' "$*"
@@ -164,6 +170,70 @@ copy_dir_if_missing() {
   cp -R "$src" "$dest"
 }
 
+browser_wrapper_names() {
+  printf '%s\n' "${BROWSER_WRAPPER_NAMES[@]}"
+}
+
+mirror_repo_skills() {
+  local dest_root="$1"
+  local skill_dir
+
+  ensure_dir "$dest_root"
+
+  for skill_dir in "${REPO_ROOT}"/.agents/skills/*/*; do
+    [[ -d "$skill_dir" ]] || continue
+    copy_tree "$skill_dir" "${dest_root}/$(basename "$skill_dir")"
+  done
+}
+
+write_global_router_file() {
+  local dest_file="$1"
+  local source_phrase="$2"
+  local host_title="$3"
+  local skills_line="$4"
+
+  ensure_dir "$(dirname "$dest_file")"
+
+  cat > "$dest_file" <<EOF
+# Super Stack Global Router
+
+Use \`${SUPER_STACK_RUNTIME_ROOT}/AGENTS.md\` as the ${source_phrase}.
+
+- This is the default global workflow router for ${host_title}.
+- This repository is the single global workflow source managed by super-stack.
+- ${skills_line}
+- Treat global super-stack as the canonical system configuration.
+EOF
+}
+
+render_global_router_text() {
+  local source_phrase="$1"
+  local host_title="$2"
+  local skills_line="$3"
+
+  cat <<EOF
+# Super Stack Global Router
+
+Use \`${SUPER_STACK_RUNTIME_ROOT}/AGENTS.md\` as the ${source_phrase}.
+
+- This is the default global workflow router for ${host_title}.
+- This repository is the single global workflow source managed by super-stack.
+- ${skills_line}
+- Treat global super-stack as the canonical system configuration.
+EOF
+}
+
+managed_config_lines() {
+  local block="$1"
+  local field="$2"
+
+  python3 "$SUPER_STACK_MANAGED_CHECK_SCRIPT" --block "$block" --field "$field" --runtime-root "$SUPER_STACK_RUNTIME_ROOT" --home "$HOME"
+}
+
+managed_config_target_file() {
+  managed_config_lines "$1" target_file | head -n 1
+}
+
 retry_with_backoff() {
   local max_attempts="$1"
   shift
@@ -186,4 +256,59 @@ retry_with_backoff() {
     sleep "${sleep_seconds}"
     attempt=$((attempt + 1))
   done
+}
+
+ok() {
+  printf '[通过] %s\n' "$*"
+}
+
+warn() {
+  printf '[警告] %s\n' "$*"
+  WARNINGS=$((WARNINGS + 1))
+}
+
+check_file() {
+  local path="$1"
+  local label="$2"
+  if [[ -f "$path" ]]; then
+    ok "${label}: ${path}"
+  else
+    warn "${label}: 缺失（${path}）"
+  fi
+}
+
+check_dir() {
+  local path="$1"
+  local label="$2"
+  if [[ -d "$path" ]]; then
+    ok "${label}: ${path}"
+  else
+    warn "${label}: 缺失（${path}）"
+  fi
+}
+
+check_not_exists() {
+  local path="$1"
+  local label="$2"
+  if [[ -e "$path" ]]; then
+    warn "${label}: 不应存在（${path}）"
+  else
+    ok "${label}"
+  fi
+}
+
+check_contains() {
+  local path="$1"
+  local pattern="$2"
+  local label="$3"
+  if [[ ! -f "$path" ]]; then
+    warn "${label}: 文件缺失（${path}）"
+    return
+  fi
+
+  if rg -q --fixed-strings "$pattern" "$path"; then
+    ok "${label}"
+  else
+    warn "${label}: 未在 ${path} 中找到预期内容"
+  fi
 }

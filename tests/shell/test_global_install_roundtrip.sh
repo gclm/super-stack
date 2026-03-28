@@ -47,9 +47,15 @@ printf '# user config\n' > "${HOME}/.codex/config.toml"
 printf 'ORIGINAL CLAUDE ROUTER\n' > "${HOME}/.claude/CLAUDE.md"
 printf '{"foo":1}\n' > "${HOME}/.claude/settings.json"
 
-bash "${REPO_ROOT}/scripts/install/reset-install-state.sh"
-bash "${REPO_ROOT}/scripts/install/sync-to-codex.sh"
-bash "${REPO_ROOT}/scripts/install/sync-to-claude.sh"
+mkdir -p "${HOME}/bin"
+cat > "${HOME}/bin/agent-browser" <<'EOF'
+#!/usr/bin/env bash
+exit 0
+EOF
+chmod +x "${HOME}/bin/agent-browser"
+export PATH="${HOME}/bin:${PATH}"
+
+bash "${REPO_ROOT}/scripts/install/install.sh" --host all
 
 check_output="$(bash "${REPO_ROOT}/scripts/check/check-global-install.sh")"
 printf '%s\n' "$check_output" | rg -q '结果：通过' || fail "全局安装检查未通过"
@@ -79,6 +85,9 @@ assert_not_dir "${HOME}/.super-stack/runtime/.codex/agents"
 assert_contains "${HOME}/.codex/AGENTS.md" "single global workflow source managed by super-stack"
 assert_contains "${HOME}/.claude/CLAUDE.md" "single global workflow source managed by super-stack"
 assert_contains "${HOME}/.codex/config.toml" "readonly_command_guard.py"
+assert_contains "${HOME}/.codex/config.toml" "# BEGIN SUPER-STACK AGENTS"
+assert_contains "${HOME}/.codex/config.toml" "multi_agent = true"
+assert_contains "${HOME}/.codex/config.toml" "config_file = \"agents/super-stack-explorer.toml\""
 assert_contains "${HOME}/.claude/settings.json" "[super-stack] resuming from .planning/STATE.md"
 
 first_skill_name="$(find "${REPO_ROOT}/.agents/skills" -maxdepth 2 -mindepth 2 -type d | sort | head -n 1 | xargs basename)"
@@ -92,7 +101,11 @@ assert_contains "${HOME}/.codex/config.toml" "# user config"
 assert_contains "${HOME}/.claude/CLAUDE.md" "ORIGINAL CLAUDE ROUTER"
 assert_contains "${HOME}/.claude/settings.json" '{"foo":1}'
 
-assert_not_exists "${HOME}/.super-stack/runtime"
+assert_dir "${HOME}/.super-stack/runtime"
+assert_file "${HOME}/.super-stack/runtime/bin/super-stack-browser"
+assert_file "${HOME}/.super-stack/runtime/bin/super-stack-browser-health"
+assert_file "${HOME}/.super-stack/runtime/bin/super-stack-browser-reset"
+assert_not_dir "${HOME}/.super-stack/runtime/.codex"
 assert_not_exists "${HOME}/.agents/skills/${first_skill_name}"
 assert_not_exists "${HOME}/.claude/skills/${first_skill_name}"
 

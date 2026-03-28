@@ -14,9 +14,11 @@
   - 最小自动化闭环已存在：Bash 语法检查、Python unit test、shell integration test。
 
 - current risks:
+  - Codex 全局安装此前存在“agent 文件已复制但 config 未注册”的半安装态风险；本轮需要把 agent 启用配置纳入受管安装与检查闭环。
   - browser 抽取链路仍有站点耦合，`generic-page` 证据还不够强。
   - smoke 仍依赖真实 Claude / Codex / 浏览器环境，自动化程度有限。
   - 后续新增脚本或文档时，如果不遵守分层规则，结构很容易再次回退成多入口状态。
+  - 用户机器当前存在明显系统级内存压力；若把整机 Chrome 或 swap 压力误当成 super-stack 浏览器异常，仍会诱发过度 reset 建议与额外授权干扰。
 
 - last scope change:
   - 本轮继续强化 workflow 触发层，把 `bug -> debug`、`可测试行为变更 -> tdd-execution`、`审查类请求 -> review`、`完成度证明 -> verify`、`用户流验证 -> qa` 从偏建议型规则提升为更强的默认路由与 `build` 回退规则。
@@ -35,8 +37,45 @@
   - 本轮把 super-stack 自身维护的 source repo 定位规则显式写回 `AGENTS.md` 与 `protocols/workflow-governance.md`，统一要求优先读取 `~/.super-stack/state/source-repo-path.txt`，避免把 runtime 或宿主安装副本误当成 source-of-truth。
   - 本轮为 `discuss` 与 `build` 补齐方案类文档的深度识别与分层写作能力：`discuss` 负责识别 `brief / standard / deep`，`build` 负责通过独立 reference 控制金字塔结构、主文档与附录边界，以及混层漂移修复。
   - 本轮继续对上述新增规则做文案收紧，把“默认结构”与“建议分层”的表述从过硬约束收敛为默认起点和优先动作，降低未来真实项目中的机械套用风险。
+  - 本轮将 `docs/auto-retrospective-evolution.md` 从概念说明升级为技能自动更新机制设计，补齐触发条件、lesson normalization、recommendation engine、evolution ledger、审批等级与最小验证闭环。
+  - 本轮增强 `codex-record-retrospective`，使其不仅能做记录复盘，还能读取 `lesson-target-map.json` 生成候选 evolution recommendation，并新增 `auto-evolution-loop` reference 与表驱动 recommendation 脚本作为自动更新链路接点。
+  - 本轮通过浏览器原始页读取公众号文章《从 OpenAI Harness Engineering 蒸馏出四个 Skill，Agent 跑了 25 小时》，并将其中关于“薄 AGENTS 入口、进度文件即上下文、结构化证据包、机械化规则约束、长时任务运行策略”的启发补回自动更新机制文档。
+  - 本轮完成对 `MiniMax-AI/skills` 的本地 clone 与细对标，确认其核心优势在于“技能目录产品化 + 自动校验脚本 + PR review skill + 宿主安装/发现面同步”，并将这些治理点补入技能自动更新机制设计。
+  - 本轮完成对 `stellarlinkco/skills` 的本地 clone 与分析，确认其 `harness` 更适合作为“长任务运行协议”参考，而不是直接整体并入 super-stack；已将其关于进度产物、恢复规则、反思门与过早完成防护的启发补入自动更新机制与 `.planning` 方向。
+  - 本轮为 `.agents/skills/` 新增轻量校验脚本 `scripts/check/validate-skills.py`，覆盖技能结构、frontmatter、引用路径与薄入口告警，并将其接入 `skill-maintenance` 与脚本架构文档。
+  - 本轮将 `validate-skills.py` 接入 `scripts/test/test.sh` 的 unit 层与 GitHub CI，并继续对 `build / map-codebase / browse` 做瘦身，把更长的规则与输出约定下沉到 references。
+  - 本轮为自动更新链补上 `append_evolution_ledger.py` 与对应 Python 测试，使 retrospective / recommendation 结果可以稳定追加到 `artifacts/evolution/evolution-ledger.jsonl`。
+  - 本轮补齐自动更新产物 schema reference 与样例 artifact，新增 retrospective / recommendation JSON 示例，明确 daily automation、recommendation 与 ledger 之间的字段对齐关系。
+  - 本轮为自动更新链新增默认后处理入口 `process_retrospective.py`，将 retrospective JSON -> recommendation JSON/Markdown -> evolution ledger append 收口成单命令流程，便于 daily automation 直接复用。
+  - 本轮补上 `render_retrospective_report.py`，使 retrospective JSON 能稳定渲染为 Markdown 报告，daily automation 的人类可读输出路径现在也有了默认入口。
+  - 本轮补上 `slice_codex_session.py`，正式把“一个长 session 可能承载多个独立回话”纳入自动复盘机制，默认口径从按 session 复盘升级为必要时按 task slice / conversation slice 复盘。
+  - 本轮继续收紧 `codex-record-retrospective` 入口，把 session source、artifact schema、auto-evolution、long-running pattern 等细则进一步下沉到 references，并明确“一个 session 多回话”时先做 path correlation、timeline extraction、再做 slice extraction 的默认处理顺序。
+  - 本轮修复 retrospective Markdown 渲染器，使 `generalized_lessons` 等对象项在 Markdown 报告里同时显示 `lesson_id` 与 `summary`，便于人工 review 和自动化产物复核。
+  - 本轮为 `docs/auto-retrospective-evolution.md` 补上“每日晨检型 inbox 输出模板”，把 daily automation 的默认摘要结构固定为结论、strongest evidence、slice decision、lessons、recommendation、evidence gaps、next action。
+  - 本轮结合 `insky-device-sdk` 的真实记录跑通一次 retrospective 示例，确认单个高命中 session 可被切成多个 task-like slices，且 recommendation 生成需要优先消费 `generalized_lessons`，避免把 patterns/classifications 重复归一化成晨检噪音。
+  - 本轮收紧 `generate_evolution_recommendations.py` 的候选项优先级：当 retrospective 已给出 `generalized_lessons` 时，不再继续把 `patterns` 与 `classifications` 自动扩成额外 recommendation。
+  - 本轮将 `session_slice_required` 正式纳入 `lesson-target-map.json`，使“一个 session 混入多个 ask 时必须 slice-first 复盘”的信号也能稳定生成表驱动 recommendation，而不再停留在人工分诊。
+  - 本轮新增一份晨检型 inbox 样例 `artifacts/evolution/examples/daily-retro-inbox-sample.md`，用于固定每日自动复盘的摘要口径和输出顺序。
+  - 本轮继续升级晨检型 inbox 模板，明确 daily automation 不能只给结论摘要，还必须显式输出输入边界、最强证据、slice 决策、候选 lesson 判断、推荐目标理由、排除噪音、证据缺口与人工决策点，降低“技能自动更新是黑盒”的使用门槛。
+  - 本轮继续补“反黑盒”字段，把晨检模板进一步扩成可审阅决策卡：新增 `why-not-other-targets` 与 `counterfactual`，要求自动化显式说明“为什么不改别处”以及“如果这次不更新，后续最可能重复踩什么坑”。
+  - 本轮继续按金字塔原则重写晨检模板与样例，把输出顺序改成“今日结论 -> 你的决策项 -> 建议修改范围 -> 修改原因 -> 不修改的后果 -> 证据摘要 -> 证据边界 -> next action”，确保用户看完后先知道该不该改、改哪里、为什么改，而不是先自己从证据里反推结论。
 
 - verification status:
+  - 本轮已继续收口 `scripts/install/` 与 `scripts/check/` 的共享逻辑：skills 镜像、全局路由写入、managed config 查询已统一下沉到 `scripts/lib/common.sh`，避免 Claude / Codex 安装链与 check/uninstall 链分别维护近似实现。
+  - 本轮已继续把 browser wrapper 列表与宿主全局路由模板收口为共享真源：`browser_wrapper_names` 与 `render_global_router_text` 现由 `scripts/lib/common.sh` 提供，`install.sh`、`check-global-install.sh` 与相关 shell 测试已共用同一实现口径。
+  - 本轮已确认 `install-state.sh` 不是重复层：当前边界稳定为“总入口 reset、宿主入口 record、卸载入口 restore”，并已通过 `test_install_state_roundtrip.sh` 持续覆盖。
+  - 本轮已确认脚本继续减重复后无行为回归：`bash -n`、`test_install_browser_wrappers.sh`、`test_global_install_roundtrip.sh`、`test_hook_merge_idempotent.sh` 与 `scripts/test/test.sh --layer integration` 均再次通过。
+  - 本轮已把 Codex agent 文件存在性检查切到 manifest 的 `managed_files`：`check-global-install.sh` 不再依赖 `config_files -> 拼路径` 的宿主拼接，主检查链进一步收缩为通用字段遍历。
+  - 本轮已把 Codex agent registration 检查表达下沉到 manifest：`check-global-install.sh` 不再在 shell 中拼接 `config_file = "..."`，而是直接消费 `registered_entries` 派生结果。
+  - 本轮已把 `check-global-install.sh` 的 block marker 与 target file 检查切到 manifest 派生结果：shell 不再直接手写 `# BEGIN SUPER-STACK ...` 或目标配置路径，检查链路进一步表驱动化。
+  - 本轮已完成配置治理第一阶段收口：`config/managed-config.json` 现已成为 Codex agents / Codex hooks / Claude hooks 的共享定义源，install / check / uninstall 三条链路都消费同一套 managed config 数据。
+  - 本轮已修复并稳定化 `scripts/config/check_managed_config.py`，当前可统一派生 `config_files`、`commands`、`managed_files`、`contains`、`target_file`，不再依赖散落的 shell 硬编码。
+  - 本轮已把 `uninstall-global.sh` 的 Codex agent 清理逻辑切到 manifest 派生受管文件列表：脚本不再手写 `super-stack-*.toml`，而是直接从共享定义求值。
+  - 本轮已确认 `.claude/hooks/hooks.json` 旧来源已移除；Claude hooks 当前仅由 `managed-config.json` + `render_managed_config.py` 生成并合并到 `~/.claude/settings.json`。
+  - 本轮已新增配置治理设计文档 `docs/config-management-design.md`，明确 fully managed / managed block / user-owned 三类归属，并把 install / check / uninstall 统一到同一套配置生命周期语义。
+  - 本轮已把 Codex agent 启用配置纳入受管安装链路：`install-codex.sh` 现在会显式合并 `# BEGIN SUPER-STACK AGENTS` 受管块，而不再只在 `config.toml` 缺失时写入模板。
+  - 本轮已加强全局安装检查：除 hooks 外，还会验证 `multi_agent = true`、`[agents.super_stack_*]` 注册段，以及 `~/.codex/agents/super-stack-*.toml` 是否实际落地。
+  - 本轮已补充 shell 回归，覆盖 Codex agent 配置合并幂等性与全局安装 roundtrip，避免未来再次出现“agent 文件存在但未启用”的半安装态。
   - 已完成本轮文本级自检：根路由、`build` 与 `debug / tdd-execution / review / verify / qa` 的边界无明显冲突。
   - 当前口径已明确：`review` 负责找风险，`verify` 负责证明结果，`qa` 负责验证真实用户流与运行态信心。
   - 质量技能入口文案已补齐“适用 / 不适用 / 下一步路由”，当前边界与根路由保持一致，暂未发现明显冲突。
@@ -57,24 +96,58 @@
   - 发布前文档链接已完成一次仓库相对路径收口，README 与 `docs/` 内不再残留旧的本地 source repo 绝对路径。
   - 已完成本轮文本级接线：`AGENTS.md` 与 `workflow-governance.md` 已补 source repo 定位顺序，`discuss` 已补方案文档深度识别，`build` 已补方案文档分层入口，并新增 `pyramid-doc-writing.md` 作为专用 reference。
   - 已完成一轮文案收紧：当前口径更强调“默认起点、优先动作、必要时显式化”，弱化了可能导致误触发的硬模板语气，`discuss / build / reference` 的职责边界仍保持清晰。
+  - 已完成本轮文本级接线：`codex-record-retrospective` 已补 `report -> recommendation -> approval` 默认链路，新增的 `auto-evolution-loop.md`、`lesson-target-map.json`、`generate_evolution_recommendations.py` 路径均已接入 skill 入口。
+  - 已完成一次公众号原始页浏览器证据获取：成功落地到原始链接并抽取到标题、作者、发布时间与正文文本；当前可确认该文强调“薄 AGENTS、仓库内进度文件、结构测试、证据包、长时运行策略”，且这些要点已回写到自动更新机制文档。
+  - 已完成 `MiniMax-AI/skills` 本地对标验证：clone 成功，`CONTRIBUTING.md`、`pr-review` skill、`validate_skills.py` 与宿主插件清单均已审阅，且官方校验脚本在本地对其 `skills/` 扫描全部通过。
+  - 已完成 `stellarlinkco/skills` 本地对标阅读：`harness/SKILL.md`、`README.md`、hooks 共享库与 `reflect-on-stop.py` 已审阅；当前结论是可吸收其“长任务协议模式”，但不直接继承阻断 stop、无限循环或自动回滚等强行为。
+  - 已完成 `validate-skills.py` fresh verification：当前全仓 `.agents/skills/` 结构校验通过，存在的 `WARN` 仅用于提示个别 `SKILL.md` 体量已逼近或超过薄入口警戒线。
+  - 已完成本轮 fresh verification：`python3 scripts/check/validate-skills.py` 当前为 0 error、0 warn；`build / map-codebase / browse` 的更长规则与输出约定已继续下沉到 references，skill 入口重新回到薄入口区间。
+  - 已完成本轮 Python fresh verification：新增 `test_skill_validation_and_evolution.py` 覆盖 skill 结构校验与 evolution ledger append 脚本，当前 unit 层通过。
+  - 已完成本轮 artifact fresh verification：schema reference、sample retrospective、sample recommendations 与 ledger append 输出字段当前保持一致，可作为后续自动化默认产物形状。
+  - 已完成默认后处理入口 fresh verification：`process_retrospective.py` 能用 sample-style retrospective 生成 recommendation JSON/Markdown 并追加 ledger，新增 Python 测试已覆盖该路径。
+  - 已完成 retrospective 渲染 fresh verification：`render_retrospective_report.py` 能从 retrospective JSON 生成 Markdown 报告，且已被 `process_retrospective.py` 默认复用。
+  - 已完成 session slicing fresh verification：新增 `test_session_slicing.py`，确认长 session 在明显时间间隔和用户边界提示下可被切成多个 slice，便于后续按 slice 提炼 lessons。
+  - 已完成本轮 fresh verification：`python3 -m unittest discover -s tests/python -p 'test_*.py' -v` 当前全绿，包含 retrospective rendering、processing、session slicing、skill validation 与 evolution ledger。
+  - 已完成本轮 fresh verification：`python3 scripts/check/validate-skills.py` 当前为 `0 error / 0 warn`；`codex-record-retrospective` 已重新压回薄入口区间。
+  - 已完成 `insky-device-sdk` retrospective 示例 fresh verification：`find_codex_project_records.py` 在当前路径与历史 alias 下共命中 37 个候选 session，主 session `019d24dc-2e85-74d3-a206-55a632505ccf` 被 `slice_codex_session.py` 切成 10 个 slices，证明“一个 session 多回话”确实需要 slice-first 口径。
+  - 已完成本轮 processing fresh verification：示例 retrospective 经过 `process_retrospective.py` 后稳定产出 retrospective Markdown、recommendation JSON/Markdown 与 3 条 ledger entry；recommendation 当前收敛为 `record_path_migration_gap`、`missing_progress_artifacts`、`session_slice_required` 三项。
+  - 已完成本轮 mapping fresh verification：`session_slice_required` 当前已命中映射表，示例 recommendation 中 `unmapped_lessons` 重新回到空列表，对应建议级别已升级为 `patch-proposed`。
+  - 已完成本轮 Python fresh verification：`python3 -m unittest tests.python.test_retrospective_processing -v` 当前通过，新增断言已覆盖“优先使用 generalized_lessons”和“session_slice_required 已被映射”两条规则。
+  - 当前晨检样例已从“简报型摘要”升级为“可审阅决策卡片”，样例中已显式区分 accepted/rejected 候选 lesson、why these targets、excluded noise 与 human decision points。
+  - 当前晨检样例已进一步补齐 `why-not-other-targets` 与 `counterfactual`，黑盒感主要收敛到“证据是否足够”而不再是“判断过程不可见”。
+  - 当前晨检样例已改成面向决策的中文版本：不再以推理卡片开头，而是先给是否建议修改、建议修改范围和不修改后果，证据部分下沉为支撑层。
+  - 已完成一轮浏览器稳定性 fresh verification：`super-stack-browser-health` 与 `check-browser-health.sh` 现在区分 `browser-session` 风险和 `system-chrome/swap` 压力，不再把单个常驻 `agent-browser` 进程误报为残留，也不再把整机 Chrome 高占用直接导向 reset。
+  - 当前机器侧 fresh evidence 显示：浏览器链路自身处于 `BROWSER_HEALTH_LEVEL=ok`，但 `SWAP_PRESSURE_LEVEL=warn`；主要内存压力来自 IntelliJ IDEA、Codex、WeChat、Google Chrome 等桌面应用叠加。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
 
 - next actions:
+  - 本轮已删除 `scripts/install/reset-install-state.sh` 与 `scripts/lib/checks.sh` 两层薄包装；后续继续避免把轻量 helper 重新拆回独立脚本。
+  - `scripts/lib/install-state.sh` 继续保留为真实共享层：总入口负责 reset，宿主安装脚本负责 record，卸载链路继续复用 restore，避免把“状态生命周期”重新散落回各入口。
+  - `scripts/smoke/` 当前已完成“只重组、不扩张”整理：`host/`、`browser/`、`hooks/` 三组职责已分开，后续新增 smoke 仅在该结构内收敛，不再回退到平铺脚本。
+  - 当前 `scripts/install/` 与 `scripts/check/` 的下一步不建议继续拆新共享文件；若后续再收口，优先考虑继续把 manifest/managed-config 派生逻辑数据化，而不是增加新的 shell 中间层。
+  - 已完成对 `check-global-install.sh` 的一轮余量审计：下一批最值得 manifest 化的点是 runtime 运行集清单、宿主路由文件模板、skills 镜像预期计数与浏览器 wrapper 列表；这些仍可继续数据化，但不应通过新增 shell 包装层来处理。
+  - 继续评估是否将 agent 注册校验等剩余宿主细节也进一步抽象到 manifest，尽量把 `check-global-install.sh` 收缩成通用遍历器。
+  - 继续观察当前 managed config schema 是否足以覆盖后续新增受管块，必要时再扩字段，而不是重新引入分散脚本真源。
   - 为 GitHub 发布补齐远端仓库、推送主分支，并继续保持当前仓库作为唯一公开源。
   - 继续观察宿主入口、skills 镜像和 hooks 在真实环境中的稳定性，确认不再回退到宿主各自复制副本的旧路径。
-  - 如后续需要进一步精简，可评估是否把 `sync-to-claude.sh` / `sync-to-codex.sh` 再往更薄的接线脚本方向收缩。
+  - 当前宿主安装入口已收口到 `install-claude.sh` / `install-codex.sh`；后续若继续精简，优先减少 block 检查声明的重复，而不是重新拆回更多薄包装脚本。
   - 继续维持安装、检查、卸载脚本围绕“source repo -> ~/.super-stack/runtime”工作，并保持状态/备份固定在同一根目录下。
   - 保持 `scripts/test/` 作为测试入口、`tests/` 作为测试用例目录，并把运行产物统一收敛到 `artifacts/`，避免第三套“像测试又不是测试”的目录口径。
   - 后续结合真实项目继续观察 `review / verify / qa` 的命中率，必要时再补触发示例或更细的边界说明。
   - 在后续真实项目中继续观察 multi-agent 的实际命中率，确认问题主要来自宿主策略、显式授权要求，还是我们自己的升级阈值仍然过高。
   - 用真实项目路径验证 `codex-record-retrospective` 是否能稳定定位到相关 session，并正确区分项目噪音与 workflow 问题。
+  - 为工作日自动 retrospective 准备固定 automation prompt，使其默认围绕“path correlation -> optional session slicing -> retrospective JSON -> `process_retrospective.py` -> inbox 摘要”运行。
+  - 用下一轮真实自动化执行观察“晨检型 inbox 模板”的可读性，确认摘要长度、slice 决策表达与 recommendation 粒度是否适合上班第一眼阅读。
+  - 如后续继续用同一 demo retrospective 反复重跑 `process_retrospective.py`，需要决定是保留 append-only ledger 作为演化记录，还是为 demo/artifact 样例提供单独 ledger 路径，避免示例重复追加影响阅读。
+  - 观察下一轮真实晨检自动化时，确认“可审阅决策卡”是否已经足够透明；若仍然过黑盒，再考虑给每条 recommendation 增加 `counterfactual / why-not-other-targets` 字段。
   - 用下一个真实 API / 鉴权 / 多租户项目任务，检验新增边界矩阵和证据分级是否能减少中途改方案与“验证过度乐观”的情况。
-  - 继续补 `scripts/smoke/browser-extraction.sh` 的通用场景验证与样例。
-  - 继续增强 `scripts/smoke/claude-global.sh` 与 `scripts/smoke/codex-regression-suite.sh` 的证据型回归。
+  - 继续补 `scripts/smoke/browser/browser-extraction.sh` 的通用场景验证与样例。
+  - 继续增强 `scripts/smoke/host/claude-global.sh` 与 `scripts/smoke/host/codex-regression-suite.sh` 的证据型回归。
   - 维持 `.planning/codebase/*`、README 与实际目录结构同步，不再让说明文件滞后。
   - 在后续真实方案文档任务中观察 `brief / standard / deep` 与主文档/附录分层规则是否足够稳定，必要时再补更细的 examples，而不是继续把细则堆回主 skill。
+  - 如后续用户仍持续反馈浏览器卡顿，优先复查 `swap` 和桌面应用聚合占用，而不是默认执行浏览器 reset；必要时再继续把健康检查的分级和恢复建议细化到 `info / warn / critical` 的宿主可读提示。
 
 - decision:
   - 结构收敛已经完成，当前不再继续扩张新的结构层次。
