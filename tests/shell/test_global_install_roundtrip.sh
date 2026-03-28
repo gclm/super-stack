@@ -88,6 +88,7 @@ assert_contains "${HOME}/.codex/config.toml" "readonly_command_guard.py"
 assert_contains "${HOME}/.codex/config.toml" "# BEGIN SUPER-STACK AGENTS"
 assert_contains "${HOME}/.codex/config.toml" "multi_agent = true"
 assert_contains "${HOME}/.codex/config.toml" "config_file = \"agents/super-stack-explorer.toml\""
+assert_contains "${HOME}/.codex/config.toml" "config_file = \"agents/super-stack-builder.toml\""
 assert_contains "${HOME}/.claude/settings.json" "[super-stack] resuming from .planning/STATE.md"
 
 first_skill_name="$(find "${REPO_ROOT}/.agents/skills" -maxdepth 2 -mindepth 2 -type d | sort | head -n 1 | xargs basename)"

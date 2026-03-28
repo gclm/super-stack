@@ -22,3 +22,7 @@ config_file = "agents/super-stack-reviewer.toml"
 [agents.super_stack_planner]
 description = "Task decomposition and implementation planning."
 config_file = "agents/super-stack-planner.toml"
+
+[agents.super_stack_builder]
+description = "Bounded implementation with minimal diffs and explicit verification."
+config_file = "agents/super-stack-builder.toml"

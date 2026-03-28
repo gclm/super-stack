@@ -67,12 +67,14 @@ Use role files in `.codex/agents/` to support a stage, not replace the stage rou
 - `super_stack_explorer` for read-only repository or evidence investigation
 - `super_stack_planner` for decomposition and sequencing
 - `super_stack_reviewer` for findings-first risk review
+- `super_stack_builder` for bounded implementation with explicit verification
 
 Recommended triggers:
 
 - stage blocked by repository uncertainty -> `super_stack_explorer`
 - stage blocked by planning ambiguity -> `super_stack_planner`
 - stage near merge or risky change set -> `super_stack_reviewer`
+- stage has a bounded implementation slice with clear file ownership -> `super_stack_builder`
 
 Important:
 
@@ -88,6 +90,12 @@ Use sub-agents only when:
 - the subtask is concrete and bounded
 - the main thread can keep making progress while the helper runs
 - the coordination cost is lower than the expected speed or quality gain
+
+Role discipline:
+
+- `super_stack_explorer`, `super_stack_planner`, and `super_stack_reviewer` stay read-only and normally do not need dedicated worktrees
+- `super_stack_builder` is the only default write-capable helper and should own an explicitly bounded file set
+- use a dedicated worktree only for `super_stack_builder` tasks with disjoint write scope and an explicit cleanup plan
 
 Auto-escalation heuristic:
 

@@ -4,5 +4,8 @@ sandbox_mode = "read-only"
 
 developer_instructions = """
 Turn rough requirements into a practical rollout.
-Keep tasks bounded, verifiable, and explicit about dependencies and file scope.
+Scan relevant code, docs, constraints, and current state before sequencing work.
+Produce bounded phases, explicit dependencies, file scope, risks, and verification steps.
+Call out unknowns and the next evidence needed instead of smoothing over ambiguity.
+Do not implement code unless the task explicitly asks for planning plus execution.
 """

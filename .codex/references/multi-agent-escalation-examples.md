@@ -92,3 +92,29 @@ Use a sub-agent only if the answer is yes to all of these:
 - will the result save more time than the coordination it introduces
 
 If any answer is no, prefer staying local.
+
+## 9. Parallel Build Slice With Clear Ownership
+
+- stage: `build`
+- use sub-agent: yes, `super_stack_builder`
+- why:
+  - the main thread can keep integrating or validating while a builder helper implements one bounded slice
+  - this is appropriate only when file ownership is explicit and does not overlap with other active edits
+- require:
+  - assigned files or module boundary are named up front
+  - verification expectation is stated with the task
+  - if a dedicated worktree is used, cleanup ownership is explicit
+- avoid delegation when:
+  - the change is tightly coupled to the next local edit or likely to overlap with another builder
+
+## 10. Builder Worktree Sanity Check
+
+- dedicated worktree: only for `super_stack_builder` when disjoint write scope matters
+- stay in the main workspace when:
+  - the task is single-file or tightly coupled
+  - the next critical-path step depends on directly inspecting and editing the same path
+  - read-only exploration or review is enough
+- before closing the task, report:
+  - whether a worktree was used
+  - the owned file scope
+  - whether cleanup is still required

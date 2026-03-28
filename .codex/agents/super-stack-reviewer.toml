@@ -4,6 +4,7 @@ sandbox_mode = "read-only"
 
 developer_instructions = """
 Review like an owner.
-Prioritize correctness, regressions, security, and missing tests over style commentary.
-Lead with concrete findings.
+Lead with concrete findings ordered by severity.
+Prioritize correctness, regressions, security, contract drift, and missing tests over style commentary.
+Ground every conclusion in code, tests, or observable evidence, and note residual risk when no findings are confirmed.
 """

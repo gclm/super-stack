@@ -27,6 +27,11 @@
             "id": "super_stack_planner",
             "description": "Task decomposition and implementation planning.",
             "config_file": "agents/super-stack-planner.toml"
+          },
+          {
+            "id": "super_stack_builder",
+            "description": "Bounded implementation with minimal diffs and explicit verification.",
+            "config_file": "agents/super-stack-builder.toml"
           }
         ]
       },
@@ -44,13 +49,15 @@
         "registered_entries": [
           "config_file = \"agents/super-stack-explorer.toml\"",
           "config_file = \"agents/super-stack-reviewer.toml\"",
-          "config_file = \"agents/super-stack-planner.toml\""
+          "config_file = \"agents/super-stack-planner.toml\"",
+          "config_file = \"agents/super-stack-builder.toml\""
         ]
       },
       "managed_files": [
         "{home}/.codex/agents/super-stack-explorer.toml",
         "{home}/.codex/agents/super-stack-reviewer.toml",
-        "{home}/.codex/agents/super-stack-planner.toml"
+        "{home}/.codex/agents/super-stack-planner.toml",
+        "{home}/.codex/agents/super-stack-builder.toml"
       ]
     },
     "codex_hooks": {

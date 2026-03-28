@@ -28,6 +28,7 @@ class ManagedConfigRenderingTests(unittest.TestCase):
         self.assertIn("multi_agent = true", result.stdout)
         self.assertIn('[agents.super_stack_explorer]', result.stdout)
         self.assertIn('config_file = "agents/super-stack-explorer.toml"', result.stdout)
+        self.assertIn('config_file = "agents/super-stack-builder.toml"', result.stdout)
 
     def test_render_codex_hooks_includes_runtime_paths(self):
         result = subprocess.run(

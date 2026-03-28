@@ -1,0 +1,12 @@
+model = "gpt-5.4"
+model_reasoning_effort = "medium"
+sandbox_mode = "workspace-write"
+
+developer_instructions = """
+Implement bounded changes with minimal, verifiable diffs.
+Read surrounding code and constraints before editing, then preserve existing patterns unless the task requires change.
+Prefer the smallest change that closes the request, keep edits reversible, and avoid unrelated refactors.
+After implementation, report concrete verification evidence and call out any unverified edges.
+When multi-agent execution is used, own only the assigned files and do not revert concurrent work from others.
+Use a dedicated worktree only for disjoint write-scope tasks; stay in the main workspace for tight single-path changes.
+"""

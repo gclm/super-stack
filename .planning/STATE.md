@@ -23,6 +23,7 @@
 - last scope change:
   - 本轮继续强化 workflow 触发层，把 `bug -> debug`、`可测试行为变更 -> tdd-execution`、`审查类请求 -> review`、`完成度证明 -> verify`、`用户流验证 -> qa` 从偏建议型规则提升为更强的默认路由与 `build` 回退规则。
   - 本轮结合 `super-stack`、`woniu`、`clawhub`、`insky-device-sdk` 四个项目的昨日真实记录做交叉复盘，确认“方案类请求未先对齐交付形态”“具体 URL 未稳定优先走 browse”“自动 retrospective 产物边界不够显式”已不再是单项目噪音，而是共享 workflow 的重复信号。
+  - 本轮将 Codex agent 体系继续收敛到 `explorer / planner / reviewer / builder` 四角色：补齐 `super_stack_builder`，并把旧 `builder / investigator / planner / reviewer` 方案中的高价值指令吸收进当前角色，同时明确只有 `builder` 默认允许写入与受控 worktree 使用。
   - 本轮新增阶段边界提交默认规则：当 `discuss / plan / build / verify` 形成有验证的可回退检查点时，workflow 应优先提示形成小而清晰的 checkpoint commit，避免把多个阶段长期堆在单个未提交工作区中。
 
 - last architecture change:

@@ -20,6 +20,7 @@ class ManagedConfigCheckTests(unittest.TestCase):
         self.assertIn("agents/super-stack-explorer.toml", result.stdout)
         self.assertIn("agents/super-stack-reviewer.toml", result.stdout)
         self.assertIn("agents/super-stack-planner.toml", result.stdout)
+        self.assertIn("agents/super-stack-builder.toml", result.stdout)
 
     def test_codex_agent_verify_metadata_is_available(self):
         result = subprocess.run(
@@ -42,6 +43,7 @@ class ManagedConfigCheckTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('config_file = "agents/super-stack-explorer.toml"', result.stdout)
         self.assertIn('config_file = "agents/super-stack-reviewer.toml"', result.stdout)
+        self.assertIn('config_file = "agents/super-stack-builder.toml"', result.stdout)
 
     def test_codex_agent_managed_files_are_rendered_with_home(self):
         result = subprocess.run(
@@ -53,6 +55,7 @@ class ManagedConfigCheckTests(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn("/tmp/home/.codex/agents/super-stack-explorer.toml", result.stdout)
         self.assertIn("/tmp/home/.codex/agents/super-stack-reviewer.toml", result.stdout)
+        self.assertIn("/tmp/home/.codex/agents/super-stack-builder.toml", result.stdout)
 
     def test_codex_hook_commands_include_runtime_root(self):
         result = subprocess.run(
