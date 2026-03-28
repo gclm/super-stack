@@ -138,3 +138,37 @@ Before `content-publish` is introduced as a default capability, these rules shou
 - draft fill may be automated
 - preview is required
 - final publish click requires explicit confirmation
+
+## Original-Page First Rule
+
+When the user gives a concrete URL and asks for page or article analysis, treat original-page browser evidence as the default path, not a best-effort enhancement.
+
+Apply this order:
+
+1. preflight browser health when the task is not a trivial one-shot read
+2. open the original page in browser tooling
+3. capture title, landed URL, author, publish time, and the strongest rendered content root
+4. only if original-page evidence is blocked, state the blocker explicitly and then use a fallback source
+
+Do not do this silently:
+
+- start with `curl`, `requests`, mirror pages, or search summaries while browser tooling is available
+- quote mirror or raw HTML content as if it came from the original page
+- omit the fact that the original page was verification-gated or login-gated
+
+## Misuse Example
+
+Weak path:
+
+- user gives a WeChat article URL
+- agent tries `curl` or `requests` first
+- raw HTML or mirror content becomes the main evidence
+- browser is only used after the user corrects the route
+
+Preferred path:
+
+- user gives a WeChat article URL
+- agent routes to `browse`
+- browser preflight runs when appropriate
+- the original page is opened first and the rendered article container is extracted
+- if the page is blocked by verification, the report says so explicitly before falling back

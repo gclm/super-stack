@@ -54,6 +54,7 @@ If the project path is missing, ask the user for it in one short sentence:
 - use `report -> recommendation -> approval` as the default chain instead of jumping straight to repository edits
 - prefer updating `references/`、mapping、or scripts before bloating `SKILL.md`
 - default retrospective summaries and recommendations to Chinese
+- when the retrospective is triggered by automation or a scheduled run, default artifacts to the automation-owned output directory instead of the source repository unless the user explicitly asks for repository artifacts
 
 For source selection, slicing heuristics, long-running patterns, and artifact fields, rely on the references above instead of expanding this entry file.
 
@@ -82,6 +83,7 @@ For source selection, slicing heuristics, long-running patterns, and artifact fi
    - long-running execution gap
 9. Normalize reusable lessons with stable ids from `references/lesson-target-map.json`; mark new ids as provisional.
 10. Produce a retrospective artifact when the work is likely to be reused.
+    - for automation or scheduled runs, prefer an automation-scoped artifact path first and treat repository artifacts as opt-in
 11. For the default post-processing path, run `scripts/process_retrospective.py` against the retrospective JSON.
 12. When recommendations or strong reusable lessons are produced, append them to the evolution ledger unless the user explicitly wants a no-file summary.
 13. Separate recommendation levels clearly:

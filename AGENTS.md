@@ -83,9 +83,11 @@ When a request arrives, decide the current stage before taking action.
 2. If the request is a bug, failing test, flaky behavior, incorrect output, or unexplained runtime issue and the cause is not yet confirmed, start at `debug`.
 3. If the request is a behavior change or bugfix with a practical automated test path, prefer `tdd-execution` before broad `build`.
 4. If the user is comparing approaches or asking "what is the best way", start at `brainstorm`.
+4.1. If the request asks for a proposal, mechanism design, architecture note, or repository-governance change and the intended deliverable could reasonably be either discussion-only or direct repository edits, start at `discuss` and make the expected deliverable explicit before `build`.
 5. If the repository is unfamiliar or the task depends on understanding existing structure, start at `map-codebase`.
    When doing so, use a layered entry strategy: establish project baseline first, then nearby design, then the user-targeted module or flow.
 6. If the user provides a concrete URL and the answer depends on the page's actual rendered content, start at `browse`.
+   Do not stay on text fetches, mirrors, or search snippets as the primary path while browser evidence is available.
 7. If scope is already clear but task breakdown is missing, start at `plan`.
 8. If there is a current task with enough context to implement safely, go to `build`.
 9. If the user asks for audit, PR review, merge readiness, bug/risk scan, regression review, or "帮我看看哪里有问题", go to `review`.
@@ -101,6 +103,7 @@ Use these checks before entering a stage:
 
 - `discuss`
   - no stable requirements exist yet, or the user outcome is still fuzzy
+  - the delivery shape is still ambiguous, such as "just analyze" versus "analyze and directly patch"
 - `brainstorm`
   - there is a real decision to compare, not just an implementation task
 - `map-codebase`
@@ -173,6 +176,7 @@ Use supporting skills when the problem shape requires them:
 - `browse`
   - the task needs browser-side evidence such as DOM state, styles, console errors, network requests, or runtime UI behavior
   - the task points at a concrete webpage, article, post, or document URL and the answer depends on the original page content rather than a secondary summary
+  - when a concrete URL is present and browser tooling is available, original-page browser evidence is the default path rather than an optional enhancement
 
 If a stage precondition is not met, route backward explicitly instead of improvising.
 
@@ -230,6 +234,10 @@ See `protocols/workflow-governance.md` for documentation language defaults, stat
 
 If the project already has explicit commit rules, follow the project rule instead of this default.
 
+When a repository follows super-stack defaults and the user is iterating phase by phase, prefer a small rollback-safe commit at each meaningful stage boundary instead of accumulating multiple unfinished stages into one large working tree.
+
+When a repository follows super-stack defaults and the user is iterating phase by phase, prefer a small rollback-safe commit at each meaningful stage boundary instead of accumulating multiple unfinished stages into one large working tree.
+
 ## Reference Reuse Boundary
 
 See `protocols/workflow-governance.md` for the default interpretation of reference reuse.
@@ -275,10 +283,13 @@ Do not claim a later stage is complete while its exit criteria are still missing
 - Route to `qa` when confidence depends on user-facing flow validation, runtime interaction, smoke checks, or release-candidate behavior.
 - When a behavior change or bugfix has a practical automated test path, route to `tdd-execution` before ad hoc implementation unless you can clearly justify why RED is impractical.
 - When release confidence is the real question, use `release-check` before optimistic handoff.
+- When a request mixes design/proposal language with "顺手完善" or similar implementation wording, explicitly state whether this turn is discussion-only or will apply repository changes before entering `build`.
 - If a later-stage request lacks prerequisites, state the missing prerequisite and route to the right earlier stage.
 - Keep workflow transitions explicit in user-facing updates.
 - When a task spans multiple stages in one turn, announce the transition briefly instead of blending them invisibly.
 - Prefer preserving stage outputs in files when they are likely to matter beyond the current turn.
+- When a meaningful stage boundary is complete and locally verified, prefer asking for or preparing a commit-ready checkpoint so recovery does not depend on conversation memory or a giant uncommitted diff.
+- When a meaningful stage boundary is complete and locally verified, prefer asking for or preparing a commit-ready checkpoint so recovery does not depend on conversation memory or a giant uncommitted diff.
 
 ## Multi-Agent Guidance
 

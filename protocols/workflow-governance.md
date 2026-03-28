@@ -34,6 +34,34 @@ When making commits for a project that adopts super-stack defaults, use Angular 
   - `docs(plan): 补充阶段决策记录`
   - `refactor(frontend): 拆分运行时页面结构`
 
+Commit cadence defaults:
+
+- prefer one commit per meaningful stage checkpoint rather than one commit after several stages have drifted together
+- good checkpoint examples: `discuss` results written to `.planning/`, a stable `plan`, a bounded `build` that passes its nearest checks, or a verified refactor slice
+- do not wait for the whole project to feel "done" before creating the first recoverable checkpoint on a new or unstable repository
+- when the tree is still intentionally partial, the commit message should say so explicitly instead of pretending the phase is complete
+- if the user is exploring a risky direction, a small checkpoint commit is preferred before the next structural step so rollback stays cheap
+
+Reasoning:
+
+- stage-boundary commits reduce recovery cost when direction changes
+- they make review, reset, cherry-pick, and branch comparisons practical
+- they prevent large pre-commit working trees from becoming the only source of truth
+
+Commit cadence defaults:
+
+- prefer one commit per meaningful stage checkpoint rather than one commit after several stages have drifted together
+- good checkpoint examples: `discuss` results written to `.planning/`, a stable `plan`, a bounded `build` that passes its nearest checks, or a verified refactor slice
+- do not wait for the whole project to feel "done" before creating the first recoverable checkpoint on a new or unstable repository
+- when the tree is still intentionally partial, the commit message should say so explicitly instead of pretending the phase is complete
+- if the user is exploring a risky direction, a small checkpoint commit is preferred before the next structural step so rollback stays cheap
+
+Reasoning:
+
+- stage-boundary commits reduce recovery cost when direction changes
+- they make review, reset, cherry-pick, and branch comparisons practical
+- they prevent large pre-commit working trees from becoming the only source of truth
+
 ## Shared Operating Guards
 
 - When maintaining super-stack itself, prefer the repository path recorded in `~/.super-stack/state/source-repo-path.txt` over directory guessing.
@@ -55,6 +83,18 @@ Apply these rules:
 - if browser evidence cannot be obtained because of login, verification, network, or host limits, say so explicitly before using a fallback source
 - do not present mirror content, raw HTML extraction, or search summaries as if they came from the original page
 - treat staying on text-only fetch for concrete page analysis, while browser tooling is available, as a workflow error unless the user explicitly asked to avoid browser inspection
+
+## Delivery Shape Alignment
+
+When a request is design-heavy, proposal-oriented, or governance-related, do not assume the user wants direct repository edits just because the scope is concrete.
+
+Apply these rules:
+
+- if the expected deliverable could reasonably be either discussion-only or direct patching, make that choice explicit before `build`
+- treat phrases such as "分析一下", "设计方案", "帮我评估", or "完善一下" as potentially ambiguous about edit authority when they appear together
+- if the user clearly asked for implementation, say so and proceed; otherwise default to a short alignment statement that names the chosen delivery shape
+- when the delivery shape changes midstream, update `STATE.md` and name the backtrack explicitly
+
 
 ## Transient Network Defaults
 
@@ -81,6 +121,9 @@ Do not classify a dependency as permanently unavailable after a single flaky net
 - If the user changes product entry shape, current-phase scope, architecture direction, database strategy, or reference-reuse boundary, explicitly backtrack to `plan` before more implementation.
 - Distinguish missing tools from shell initialization failures before concluding an environment cannot support verification.
 - Run the smallest real build/check path early on new scaffolds or unstable environments instead of delaying all validation until after broad implementation.
+- When a repository is still at scaffold, empty-directory, or pre-first-commit stage, prefer early state capture and route framing before broad implementation so later recovery does not depend on conversation memory alone.
+- When a repository is still at scaffold, empty-directory, or pre-first-commit stage, try to create the first rollback-safe checkpoint as soon as planning or the first bounded slice is real, rather than leaving the entire project in one long uncommitted state.
+- When a repository is still at scaffold, empty-directory, or pre-first-commit stage, try to create the first rollback-safe checkpoint as soon as planning or the first bounded slice is real, rather than leaving the entire project in one long uncommitted state.
 - For design or prototype tasks, identify the artifact type before producing UI output; do not default to a marketing homepage when the real target is an existing product flow.
 - For fork-based product redesign, define upstream-merge boundaries before broad UI rewrites so design exploration does not hide long-term maintenance risk.
 - For `map-codebase` on clearly multi-module repositories, confirm the target module with the user before broad deep reads unless the user explicitly asked for a full-repository map.

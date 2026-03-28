@@ -51,6 +51,7 @@ Use this skill when the project has a current task ready for execution.
 - keep the main document decision-oriented; move implementation-heavy detail to appendix or implementation notes when possible
 - avoid letting a single proposal document silently become a mixed review doc, design doc, and implementation manual
 - if a document starts carrying decision, design, and implementation layers together, prefer splitting or regrouping before continuing to expand it in place
+- when a bounded build slice reaches a real rollback-safe checkpoint, prefer ending the turn with commit-readiness made explicit instead of silently carrying more unrelated work in the same uncommitted diff
 
 ## Steps
 
@@ -62,6 +63,7 @@ Use this skill when the project has a current task ready for execution.
 6. Implement the smallest sufficient change.
 7. Run relevant verification, including the nearest real runtime path when practical.
 8. Update `.planning/STATE.md` with progress, blockers, environment findings, and temporary-versus-final decisions.
+9. If the slice is at a meaningful checkpoint, state whether it is commit-ready now or what is still blocking a clean checkpoint.
 
 ## Output
 
@@ -73,4 +75,5 @@ Tell the user:
 - whether any explicit backtrack to `plan`, `discuss`, `debug`, `tdd-execution`, `review`, `verify`, or `qa` was required
 - what document depth and structure were used when the task produced a proposal or design document, when relevant
 - what was verified
+- whether the current slice is at a rollback-safe commit checkpoint
 - whether the next step is another `build`, `review`, `verify`, `qa`, or `ship`

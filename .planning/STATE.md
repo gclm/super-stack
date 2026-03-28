@@ -22,6 +22,8 @@
 
 - last scope change:
   - 本轮继续强化 workflow 触发层，把 `bug -> debug`、`可测试行为变更 -> tdd-execution`、`审查类请求 -> review`、`完成度证明 -> verify`、`用户流验证 -> qa` 从偏建议型规则提升为更强的默认路由与 `build` 回退规则。
+  - 本轮结合 `super-stack`、`woniu`、`clawhub`、`insky-device-sdk` 四个项目的昨日真实记录做交叉复盘，确认“方案类请求未先对齐交付形态”“具体 URL 未稳定优先走 browse”“自动 retrospective 产物边界不够显式”已不再是单项目噪音，而是共享 workflow 的重复信号。
+  - 本轮新增阶段边界提交默认规则：当 `discuss / plan / build / verify` 形成有验证的可回退检查点时，workflow 应优先提示形成小而清晰的 checkpoint commit，避免把多个阶段长期堆在单个未提交工作区中。
 
 - last architecture change:
   - 本轮继续对 `AGENTS.md`、`build`、`discuss`、`plan` 做瘦身，把共性细则下沉到 `protocols/workflow-governance.md` 和各自 reference，保持主文件更偏入口与路由；同时补齐质量链路的路由边界，明确 `review / verify / qa` 的分工，并补充“多 agent 已配置不等于应自动触发”的宿主约束说明、Codex 侧自动升级启发式，以及一份独立的多 agent 场景示例 reference。
@@ -59,6 +61,7 @@
   - 本轮继续升级晨检型 inbox 模板，明确 daily automation 不能只给结论摘要，还必须显式输出输入边界、最强证据、slice 决策、候选 lesson 判断、推荐目标理由、排除噪音、证据缺口与人工决策点，降低“技能自动更新是黑盒”的使用门槛。
   - 本轮继续补“反黑盒”字段，把晨检模板进一步扩成可审阅决策卡：新增 `why-not-other-targets` 与 `counterfactual`，要求自动化显式说明“为什么不改别处”以及“如果这次不更新，后续最可能重复踩什么坑”。
   - 本轮继续按金字塔原则重写晨检模板与样例，把输出顺序改成“今日结论 -> 你的决策项 -> 建议修改范围 -> 修改原因 -> 不修改的后果 -> 证据摘要 -> 证据边界 -> next action”，确保用户看完后先知道该不该改、改哪里、为什么改，而不是先自己从证据里反推结论。
+  - 本轮基于跨项目 retrospective 继续补共享规则：把“设计/方案类请求需先显式对齐是 discussion-only 还是 direct patching”写回根路由与 `discuss`，把“具体 URL 分析时 browse 是默认主路径而非可选增强”写回根路由与 workflow governance，并把 retrospective automation 的默认产物边界补回 skill 入口。
 
 - verification status:
   - 本轮已继续收口 `scripts/install/` 与 `scripts/check/` 的共享逻辑：skills 镜像、全局路由写入、managed config 查询已统一下沉到 `scripts/lib/common.sh`，避免 Claude / Codex 安装链与 check/uninstall 链分别维护近似实现。
@@ -118,11 +121,14 @@
   - 当前晨检样例已改成面向决策的中文版本：不再以推理卡片开头，而是先给是否建议修改、建议修改范围和不修改后果，证据部分下沉为支撑层。
   - 已完成一轮浏览器稳定性 fresh verification：`super-stack-browser-health` 与 `check-browser-health.sh` 现在区分 `browser-session` 风险和 `system-chrome/swap` 压力，不再把单个常驻 `agent-browser` 进程误报为残留，也不再把整机 Chrome 高占用直接导向 reset。
   - 当前机器侧 fresh evidence 显示：浏览器链路自身处于 `BROWSER_HEALTH_LEVEL=ok`，但 `SWAP_PRESSURE_LEVEL=warn`；主要内存压力来自 IntelliJ IDEA、Codex、WeChat、Google Chrome 等桌面应用叠加。
+  - 本轮交叉复盘 fresh evidence 已确认：`super-stack` 和 `woniu` 都出现了“方案分析类请求若不先对齐交付形态，容易直接滑入 build”的问题；`super-stack` 的微信文章场景再次证明具体 URL 的内容分析必须优先走 `browse`；`clawhub` 与 `insky-device-sdk` 则继续证明“新项目/复杂项目应更早把状态与验证边界落到 durable artifacts”，不宜只留在对话里。
 
 - temporary unblock decisions:
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
 
 - next actions:
+  - 当前已确认更稳的推进路径是：保持旧 `woniu` 仓库作为问题样本与资产来源，不在其上继续主线开发；先把已提交的 `super-stack` 基线推远端并更新到全局，再新建干净目录按 `discuss -> plan` 重新启动 `woniu`，把旧仓库仅作为参考输入。
+  - 当前已从跨项目泛化调整回 `woniu` 个案治理，新增 `artifacts/retrospectives/2026-03-28-woniu-asset-classification.md` 作为第一份资产分级决策稿；下一步应基于该分级继续产出“重构回正方案”，而不是恢复在 `woniu` 当前仓库上直接扩写功能。
   - 本轮已删除 `scripts/install/reset-install-state.sh` 与 `scripts/lib/checks.sh` 两层薄包装；后续继续避免把轻量 helper 重新拆回独立脚本。
   - `scripts/lib/install-state.sh` 继续保留为真实共享层：总入口负责 reset，宿主安装脚本负责 record，卸载链路继续复用 restore，避免把“状态生命周期”重新散落回各入口。
   - `scripts/smoke/` 当前已完成“只重组、不扩张”整理：`host/`、`browser/`、`hooks/` 三组职责已分开，后续新增 smoke 仅在该结构内收敛，不再回退到平铺脚本。

@@ -136,3 +136,41 @@ After approved changes are applied, do a text-level validation pass:
 - related routing or state files stay aligned
 
 If the change materially alters repository workflow behavior, update `.planning/STATE.md`.
+
+## Automation Output Boundary
+
+When retrospective work is triggered by automation, cron, or a scheduled morning check, default the generated artifacts to the automation-owned output directory first.
+
+Preferred order:
+
+1. automation-owned artifact directory
+2. temporary review artifact directory
+3. source repository artifacts only when the user explicitly wants repository-visible outputs
+
+Reasoning:
+
+- scheduled runs are runtime evidence, not source-of-truth by default
+- append-only review output should not silently pollute the source repository
+- daily runs may repeat often, so repository artifacts should stay opt-in
+
+Recommended shapes for automation runs:
+
+- retrospective JSON
+- retrospective Markdown
+- recommendation JSON or Markdown when useful
+- inbox-style human summary
+
+## Automation Example
+
+Preferred path:
+
+- automation scans yesterday's project sessions
+- retrospective JSON and Markdown are written to the automation artifact directory
+- recommendation output stays `record-only` or `patch-proposed`
+- repository edits happen only after user review or explicit approval
+
+Avoid this path:
+
+- scheduled retrospective writes directly into the source repository by default
+- generated reports accumulate in versioned paths without explicit user intent
+- automation implicitly treats report generation as approval to patch shared workflow files

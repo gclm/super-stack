@@ -31,7 +31,8 @@ Use this skill when implementation is complete enough to prepare a handoff, PR, 
 3. Check whether the delivered work still matches the originally intended scope.
 4. Use `references/handoff-checks.md` to confirm the handoff includes completed scope, verification evidence, behavior constraints, and intentionally deferred items.
 5. Note release blockers, docs drift, commit-readiness, or rollback concerns.
-6. Produce a concise release summary.
+6. If the work is not being merged immediately, say whether the current state should be captured as a stage-boundary checkpoint commit.
+7. Produce a concise release summary.
 
 ## Output
 
@@ -44,4 +45,5 @@ Include:
 - intentionally not included or follow-up items
 - outstanding blockers, if any
 - scope alignment
+- whether the work should be committed now as a recoverable checkpoint
 - recommended next action such as commit, PR, deploy, or follow-up fix
