@@ -167,17 +167,37 @@ copy_dir_if_missing() {
   cp -R "$src" "$dest"
 }
 
+collect_skill_dirs() {
+  local root="$1"
+
+  if [[ ! -d "$root" ]]; then
+    return 0
+  fi
+
+  find "$root" -mindepth 1 -maxdepth 5 -type f -name 'SKILL.md' -print     | while IFS= read -r skill_file; do
+        dirname "$skill_file"
+      done     | sort -u
+}
+
+iterate_managed_skill_dirs() {
+  collect_skill_dirs "${REPO_ROOT}/.agents/skills"
+
+  collect_skill_dirs "${REPO_ROOT}/external-skills/openspace/openspace/host_skills"
+  collect_skill_dirs "${REPO_ROOT}/external-skills/contextweaver/skills"
+  collect_skill_dirs "${REPO_ROOT}/external-skills/obsidian-skills/skills"
+}
+
 mirror_repo_skills() {
   local dest_root="$1"
   local skill_dir
 
   ensure_dir "$dest_root"
 
-  for skill_dir in "${REPO_ROOT}"/.agents/skills/*/*; do
+  while IFS= read -r skill_dir; do
     [[ -d "$skill_dir" ]] || continue
     [[ -f "${skill_dir}/SKILL.md" ]] || continue
     copy_tree "$skill_dir" "${dest_root}/$(basename "$skill_dir")"
-  done
+  done < <(iterate_managed_skill_dirs)
 }
 
 write_global_router_file() {

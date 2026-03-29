@@ -12,7 +12,7 @@ from pathlib import Path
 from typing import Dict, Iterable, List, Set, Tuple
 
 IGNORED_NAMES = {".DS_Store"}
-IGNORED_PARTS = {"__pycache__"}
+IGNORED_PARTS = {"__pycache__", ".git"}
 
 
 @dataclass
@@ -41,16 +41,56 @@ def sha1(path: Path) -> str:
     return digest.hexdigest()
 
 
-def collect_repo_skills(repo_root: Path) -> Dict[str, Tuple[Path, str]]:
-    skills_root = repo_root / ".agents" / "skills"
+def collect_skills_from_root(skills_root: Path) -> Dict[str, Tuple[Path, str]]:
     records: Dict[str, Tuple[Path, str]] = {}
     for file_path in iter_files(skills_root):
         rel = file_path.relative_to(skills_root)
         parts = rel.parts
-        if len(parts) < 3:
+        if len(parts) < 2:
             continue
-        normalized = Path(parts[1], *parts[2:]).as_posix()
+        normalized = Path(parts[0], *parts[1:]).as_posix()
         records[normalized] = (file_path, sha1(file_path))
+    return records
+
+
+def merge_records(
+    target: Dict[str, Tuple[Path, str]],
+    incoming: Dict[str, Tuple[Path, str]],
+    *,
+    source_label: str,
+) -> None:
+    for key, value in incoming.items():
+        if key in target and target[key][1] != value[1]:
+            raise SystemExit(f"冲突：技能 `{key}` 在多个来源中内容不一致（来源：{source_label}）")
+        target[key] = value
+
+
+def collect_repo_skills(repo_root: Path) -> Dict[str, Tuple[Path, str]]:
+    records: Dict[str, Tuple[Path, str]] = {}
+
+    local_root = repo_root / ".agents" / "skills"
+    if local_root.exists():
+        local_records: Dict[str, Tuple[Path, str]] = {}
+        for file_path in iter_files(local_root):
+            rel = file_path.relative_to(local_root)
+            parts = rel.parts
+            if len(parts) < 3:
+                continue
+            normalized = Path(parts[1], *parts[2:]).as_posix()
+            local_records[normalized] = (file_path, sha1(file_path))
+        merge_records(records, local_records, source_label=".agents/skills")
+
+    external_roots = [
+        repo_root / "external-skills" / "openspace" / "openspace" / "host_skills",
+        repo_root / "external-skills" / "contextweaver" / "skills",
+        repo_root / "external-skills" / "obsidian-skills" / "skills",
+    ]
+    for external_root in external_roots:
+        if not external_root.exists():
+            continue
+        external_records = collect_skills_from_root(external_root)
+        merge_records(records, external_records, source_label=str(external_root))
+
     return records
 
 

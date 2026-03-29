@@ -57,7 +57,7 @@ while IFS= read -r skill_dir; do
   remove_if_exists "${USER_AGENTS_HOME}/skills/${skill_name}"
   remove_if_exists "${CODEX_HOME}/skills/${skill_name}"
   remove_if_exists "${CLAUDE_HOME}/skills/${skill_name}"
-done < <(find "${REPO_ROOT}/.agents/skills" -maxdepth 2 -mindepth 2 -type d | sort)
+done < <(iterate_managed_skill_dirs)
 
 while IFS= read -r managed_file; do
   [[ -n "$managed_file" ]] || continue

@@ -1,0 +1,12 @@
+[submodule "external-skills/openspace"]
+	path = external-skills/openspace
+	url = https://github.com/HKUDS/OpenSpace.git
+	branch = main
+[submodule "external-skills/contextweaver"]
+	path = external-skills/contextweaver
+	url = https://github.com/GowayLee/ContextWeaver.git
+	branch = main
+[submodule "external-skills/obsidian-skills"]
+	path = external-skills/obsidian-skills
+	url = https://github.com/kepano/obsidian-skills.git
+	branch = main

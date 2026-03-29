@@ -211,15 +211,6 @@
     }
   },
   "skill_validation": {
-    "ignore_warnings": [
-      {
-        "path_glob": ".agents/skills/openspace/*",
-        "codes": [
-          "thin_lines",
-          "thin_words"
-        ],
-        "reason": "upstream verbatim import from OpenSpace"
-      }
-    ]
+    "ignore_warnings": []
   }
 }

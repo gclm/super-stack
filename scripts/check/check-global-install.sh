@@ -26,7 +26,6 @@ CLAUDE_FILE="${CLAUDE_HOME}/CLAUDE.md"
 CLAUDE_SKILLS_DIR="${CLAUDE_HOME}/skills"
 CLAUDE_SETTINGS_FILE="${CLAUDE_HOME}/settings.json"
 REPO_AGENTS_FILE="${REPO_ROOT}/AGENTS.md"
-REPO_SKILLS_DIR="${REPO_ROOT}/.agents/skills"
 
 WARNINGS=0
 EXPECTED_SKILL_COUNT=""
@@ -85,7 +84,7 @@ count_skill_entries() {
 }
 
 count_expected_skill_names() {
-  find "${REPO_SKILLS_DIR}" -maxdepth 2 -mindepth 2 -type d | wc -l | tr -d ' '
+  iterate_managed_skill_dirs | while IFS= read -r skill_dir; do basename "$skill_dir"; done | sort -u | wc -l | tr -d ' '
 }
 
 count_matching_skill_names() {
@@ -98,13 +97,11 @@ count_matching_skill_names() {
     return
   fi
 
-  while IFS= read -r skill_dir; do
-    local skill_name
-    skill_name="$(basename "$skill_dir")"
+  while IFS= read -r skill_name; do
     if [[ -f "${dest_root}/${skill_name}/SKILL.md" ]]; then
       count=$((count + 1))
     fi
-  done < <(find "${REPO_SKILLS_DIR}" -maxdepth 2 -mindepth 2 -type d | sort)
+  done < <(iterate_managed_skill_dirs | while IFS= read -r skill_dir; do basename "$skill_dir"; done | sort -u)
 
   printf '%s' "$count"
 }

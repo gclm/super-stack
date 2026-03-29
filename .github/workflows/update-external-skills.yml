@@ -1,0 +1,43 @@
+name: Update External Skills Submodules
+
+on:
+  schedule:
+    - cron: "17 3 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-submodules:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Update submodules to latest upstream
+        run: |
+          set -euo pipefail
+          git submodule sync --recursive
+          git submodule update --init --remote --recursive
+
+      - name: Create Pull Request if changed
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update external skills submodules"
+          title: "chore: update external skills submodules"
+          body: |
+            Automated submodule refresh for external skills.
+
+            Updated sources:
+            - `external-skills/openspace` (source: `openspace/host_skills`)
+            - `external-skills/contextweaver` (source: `skills`)
+            - `external-skills/obsidian-skills`
+
+            This PR was created automatically by GitHub Actions.
+          branch: "chore/update-external-skills-submodules"
+          delete-branch: true
