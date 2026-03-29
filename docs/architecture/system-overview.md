@@ -3,13 +3,13 @@
 ## 核心模块
 - source repo：
   - `AGENTS.md`
-  - `.agents/skills/`
+  - `skills/`
   - `protocols/`
   - `templates/generated-project/`
   - `scripts/install|check|smoke|generate|runtime`
 - host adapters：
-  - `.codex/`
-  - `.claude/`
+  - `codex/`
+  - `claude/`
 - runtime：
   - `~/.super-stack/runtime`
 - host memory backend：

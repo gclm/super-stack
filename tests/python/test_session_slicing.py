@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SLICE_SCRIPT = REPO_ROOT / ".agents" / "skills" / "planning" / "codex-record-retrospective" / "scripts" / "slice_codex_session.py"
+SLICE_SCRIPT = REPO_ROOT / "skills" / "planning" / "codex-record-retrospective" / "scripts" / "slice_codex_session.py"
 
 
 class SessionSlicingTests(unittest.TestCase):

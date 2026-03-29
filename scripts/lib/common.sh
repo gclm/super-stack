@@ -102,7 +102,7 @@ copy_runtime_tree() {
   copy_path_into_dir "${REPO_ROOT}/protocols" "$dest_root" "protocols"
   copy_path_into_dir "${REPO_ROOT}/scripts" "$dest_root" "scripts"
   copy_path_into_dir "${REPO_ROOT}/templates" "$dest_root" "templates"
-  copy_path_into_dir "${REPO_ROOT}/.codex/hooks" "$dest_root" ".codex/hooks"
+  copy_path_into_dir "${REPO_ROOT}/codex/hooks" "$dest_root" ".codex/hooks"
 }
 
 remove_managed_block() {
@@ -180,7 +180,7 @@ collect_skill_dirs() {
 }
 
 iterate_managed_skill_dirs() {
-  collect_skill_dirs "${REPO_ROOT}/.agents/skills"
+  collect_skill_dirs "${REPO_ROOT}/skills"
 
   collect_skill_dirs "${REPO_ROOT}/external-skills/openspace/openspace/host_skills"
   collect_skill_dirs "${REPO_ROOT}/external-skills/contextweaver/skills"

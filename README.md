@@ -10,9 +10,9 @@
 `super-stack` 的目标很明确：
 
 - 用根 [AGENTS.md](AGENTS.md) 提供稳定阶段路由
-- 用 [`.agents/skills/`](.agents/skills) 承载可复用技能
+- 用 [`skills/`](skills) 承载可复用技能
 - 用 [`docs/`](docs) + [`harness/`](harness) 与 [`templates/generated-project/`](templates/generated-project) 沉淀目标项目骨架与状态约定
-- 用 [`.claude/`](.claude) / [`.codex/`](.codex) 做宿主适配
+- 用 [`claude/`](claude) / [`codex/`](codex) 做宿主适配
 - 用 [`scripts/`](scripts) 提供安装、检查、回归与测试闭环
 
 当前边界也很明确：

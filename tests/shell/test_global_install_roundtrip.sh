@@ -101,7 +101,7 @@ assert_contains "${HOME}/.claude/settings.json" "[super-stack] resuming from har
 assert_contains "${HOME}/.claude/settings.json" "\"mcpServers\""
 assert_contains "${HOME}/.claude/settings.json" "\"chrome-devtools-mcp\""
 
-first_skill_name="$(find "${REPO_ROOT}/.agents/skills" -maxdepth 2 -mindepth 2 -type d | sort | head -n 1 | xargs basename)"
+first_skill_name="$(find "${REPO_ROOT}/skills" -maxdepth 2 -mindepth 2 -type d | sort | head -n 1 | xargs basename)"
 assert_dir "${HOME}/.agents/skills/${first_skill_name}"
 assert_dir "${HOME}/.claude/skills/${first_skill_name}"
 assert_not_exists "${HOME}/.agents/skills/references"

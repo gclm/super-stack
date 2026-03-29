@@ -2,7 +2,7 @@
   "module_scope_ambiguity": {
     "problem_type": "planning problem",
     "target_files": [
-      ".agents/skills/planning/map-codebase/SKILL.md",
+      "skills/planning/map-codebase/SKILL.md",
       "protocols/workflow-governance.md"
     ],
     "change_kind": "tighten scope-entry guidance",
@@ -13,7 +13,7 @@
   "verify_overclaim": {
     "problem_type": "verification problem",
     "target_files": [
-      ".agents/skills/quality/verify/SKILL.md",
+      "skills/quality/verify/SKILL.md",
       "protocols/verify.md"
     ],
     "change_kind": "strengthen evidence wording",
@@ -35,9 +35,9 @@
   "record_path_migration_gap": {
     "problem_type": "host/runtime limitation",
     "target_files": [
-      ".agents/skills/planning/codex-record-retrospective/SKILL.md",
-      ".agents/skills/planning/codex-record-retrospective/references/record-sources.md",
-      ".agents/skills/planning/codex-record-retrospective/scripts/find_codex_project_records.py"
+      "skills/planning/codex-record-retrospective/SKILL.md",
+      "skills/planning/codex-record-retrospective/references/record-sources.md",
+      "skills/planning/codex-record-retrospective/scripts/find_codex_project_records.py"
     ],
     "change_kind": "improve path correlation coverage",
     "default_confidence": 0.88,
@@ -47,7 +47,7 @@
   "host_limitation_not_explained": {
     "problem_type": "host/runtime limitation",
     "target_files": [
-      ".codex/AGENTS.md",
+      "codex/AGENTS.md",
       "AGENTS.md"
     ],
     "change_kind": "clarify host constraint reporting",
@@ -58,8 +58,8 @@
   "skill_entry_bloat": {
     "problem_type": "implementation discipline problem",
     "target_files": [
-      ".agents/skills/core/skill-maintenance/SKILL.md",
-      ".agents/skills/core/skill-maintenance/references/skill-authoring-checklist.md"
+      "skills/core/skill-maintenance/SKILL.md",
+      "skills/core/skill-maintenance/references/skill-authoring-checklist.md"
     ],
     "change_kind": "move detail from entry file to references",
     "default_confidence": 0.76,
@@ -69,9 +69,9 @@
   "evidence_gap_not_called_out": {
     "problem_type": "verification problem",
     "target_files": [
-      ".agents/skills/quality/verify/SKILL.md",
+      "skills/quality/verify/SKILL.md",
       "protocols/verify.md",
-      ".agents/skills/planning/codex-record-retrospective/SKILL.md"
+      "skills/planning/codex-record-retrospective/SKILL.md"
     ],
     "change_kind": "require explicit evidence-gap reporting",
     "default_confidence": 0.84,
@@ -81,8 +81,8 @@
   "premature_completion": {
     "problem_type": "long-running execution gap",
     "target_files": [
-      ".agents/skills/quality/verify/SKILL.md",
-      ".agents/skills/ship/ship/SKILL.md",
+      "skills/quality/verify/SKILL.md",
+      "skills/ship/ship/SKILL.md",
       "protocols/verify.md"
     ],
     "change_kind": "strengthen completion gate before stop",
@@ -93,9 +93,9 @@
   "missing_progress_artifacts": {
     "problem_type": "long-running execution gap",
     "target_files": [
-      ".agents/skills/planning/plan/SKILL.md",
+      "skills/planning/plan/SKILL.md",
       "docs/overview/roadmap.md",
-      ".agents/skills/planning/codex-record-retrospective/references/long-running-agent-patterns.md"
+      "skills/planning/codex-record-retrospective/references/long-running-agent-patterns.md"
     ],
     "change_kind": "introduce durable progress artifact guidance",
     "default_confidence": 0.79,
@@ -105,8 +105,8 @@
   "session_slice_required": {
     "problem_type": "long-running execution gap",
     "target_files": [
-      ".agents/skills/planning/codex-record-retrospective/SKILL.md",
-      ".agents/skills/planning/codex-record-retrospective/references/record-sources.md",
+      "skills/planning/codex-record-retrospective/SKILL.md",
+      "skills/planning/codex-record-retrospective/references/record-sources.md",
       "docs/auto-retrospective-evolution.md"
     ],
     "change_kind": "require slice-first retrospective boundary for mixed sessions",

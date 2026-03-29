@@ -34,7 +34,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
 - avoid auxiliary files such as README, CHANGELOG, or installation notes inside a skill folder
 - when a skill changes repository-wide behavior expectations, update `AGENTS.md` or `harness/state.md` if that context would otherwise drift
 - when a skill changes repository-wide behavior expectations in a durable way, append a concise entry to `harness/history.md`
-- when host-installed skill copies also exist, treat the repository skill under `.agents/skills/` as the source of truth and avoid making the runtime copy the only edited location
+- when host-installed skill copies also exist, treat the repository skill under `skills/` as the source of truth and avoid making the runtime copy the only edited location
 - default user-facing examples, summaries, and prompts to Chinese unless the repository or external interface requires English
 
 ## Process

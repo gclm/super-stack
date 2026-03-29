@@ -84,8 +84,8 @@ needs_unit=0
 for path in "${INPUT_PATHS[@]}"; do
   if [[ "${path}" == "AGENTS.md" ]] \
     || [[ "${path}" == protocols/* ]] \
-    || [[ "${path}" == .codex/* ]] \
-    || [[ "${path}" == .claude/* ]] \
+    || [[ "${path}" == codex/* ]] \
+    || [[ "${path}" == claude/* ]] \
     || [[ "${path}" == scripts/install/* ]] \
     || [[ "${path}" == scripts/check/* ]] \
     || [[ "${path}" == scripts/config/* ]] \
@@ -97,7 +97,7 @@ for path in "${INPUT_PATHS[@]}"; do
     break
   fi
 
-  if [[ "${path}" == .agents/skills/* ]] \
+  if [[ "${path}" == skills/* ]] \
     || [[ "${path}" == templates/* ]] \
     || [[ "${path}" == scripts/workflow/* ]] \
     || [[ "${path}" == tests/* ]]; then

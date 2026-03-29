@@ -9,8 +9,8 @@ Use when a task is at risk of drifting across architecture, migration, API, or s
 
 ## Read First
 
-- `.agents/skills/harness/architecture-guardrails/references/scope-drift-signals.md`
-- `.agents/skills/harness/architecture-guardrails/references/human-escalation-gates.md`
+- `skills/harness/architecture-guardrails/references/scope-drift-signals.md`
+- `skills/harness/architecture-guardrails/references/human-escalation-gates.md`
 - `docs/architecture/decisions/runtime-promotion-gates.md`
 
 ## Goals

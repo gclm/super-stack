@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-SCRIPT_PATH = REPO_ROOT / ".codex" / "hooks" / "super_stack_state.py"
+SCRIPT_PATH = REPO_ROOT / "codex" / "hooks" / "super_stack_state.py"
 
 
 class SuperStackStateHookTests(unittest.TestCase):

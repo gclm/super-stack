@@ -12,7 +12,7 @@ from fnmatch import fnmatch
 from pathlib import Path
 from typing import Iterable
 
-DEFAULT_ROOT = Path(".agents/skills")
+DEFAULT_ROOT = Path("skills")
 DEFAULT_MANIFEST = Path("config/manifest.json")
 THIN_LINES_WARN = 120
 THIN_WORDS_WARN = 900
@@ -88,7 +88,7 @@ def extract_path_candidates(text: str) -> Iterable[str]:
                 candidate = candidate.strip()
                 if not candidate or candidate in seen:
                     continue
-                if candidate.startswith(("http://", "https://", "/Users/", "file://")):
+                if candidate.startswith(("http://", "https://", "/Users/", "file://", "~/")):
                     continue
                 if any(ch.isspace() for ch in candidate):
                     continue
@@ -114,8 +114,7 @@ def resolve_candidate(repo_root: Path, skill_dir: Path, candidate: str) -> Path 
         return repo_root / normalized
     if normalized.startswith(("assets/", "hooks/", "design/", "techniques/", "reference/")):
         return skill_dir / normalized
-    if normalized.startswith((".agents/", "protocols/", "docs/", "scripts/", "tests/", "bin/")):
-        return repo_root / normalized
+    if normalized.startswith(("skills/", "protocols/", "docs/", "scripts/", "tests/", "bin/")):
         return repo_root / normalized
     if normalized == "AGENTS.md":
         return repo_root / normalized
@@ -252,7 +251,7 @@ def validate_skill(repo_root: Path, skill_dir: Path) -> tuple[list[str], list[tu
 
 def main() -> int:
     parser = argparse.ArgumentParser(description="校验 super-stack skills 的轻量结构约束")
-    parser.add_argument("--path", default=str(DEFAULT_ROOT), help="技能根目录，默认 .agents/skills")
+    parser.add_argument("--path", default=str(DEFAULT_ROOT), help="技能根目录，默认 skills")
     args = parser.parse_args()
 
     repo_root = Path.cwd().resolve()

@@ -9,9 +9,9 @@ Use when the task is long enough that checkpointing, resuming, and escalation ru
 
 ## Read First
 
-- `.agents/skills/harness/harness-marathon/references/progress-and-checkpoint-rules.md`
-- `.agents/skills/harness/harness-marathon/references/human-escalation-gates.md`
-- `.agents/skills/harness/harness-marathon/assets/task-progress.md`
+- `skills/harness/harness-marathon/references/progress-and-checkpoint-rules.md`
+- `skills/harness/harness-marathon/references/human-escalation-gates.md`
+- `skills/harness/harness-marathon/assets/task-progress.md`
 
 ## Goals
 

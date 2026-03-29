@@ -89,7 +89,7 @@ mcps=codex:chrome-devtools-mcp
 
 - `browse` skill 继续保留，而且更明确依赖真实 browser tooling
 - `check-browser-capability.sh` 继续保留，但改成识别宿主 MCP / plugin，而不是 repo-local wrapper
-- `protocols/workflow-governance.md`、`.codex/AGENTS.md`、`browse` references 继续强调 original-page browser evidence 优先
+- `protocols/workflow-governance.md`、`codex/AGENTS.md`、`browse` references 继续强调 original-page browser evidence 优先
 
 ## 6. 后续优化方向
 

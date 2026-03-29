@@ -9,13 +9,13 @@ Use when the work should be anchored in `harness/tasks/<task-id>/` instead of on
 
 ## Read First
 
-- `.agents/skills/harness/task-harness/references/task-artifact-contract.md`
-- `.agents/skills/harness/task-harness/references/progress-and-checkpoint-rules.md`
-- `.agents/skills/harness/task-harness/assets/task-brief.md`
-- `.agents/skills/harness/task-harness/assets/task-progress.md`
-- `.agents/skills/harness/task-harness/assets/task-decisions.md`
-- `.agents/skills/harness/task-harness/assets/evidence-index.json`
-- `.agents/skills/harness/task-harness/assets/verdict.json`
+- `skills/harness/task-harness/references/task-artifact-contract.md`
+- `skills/harness/task-harness/references/progress-and-checkpoint-rules.md`
+- `skills/harness/task-harness/assets/task-brief.md`
+- `skills/harness/task-harness/assets/task-progress.md`
+- `skills/harness/task-harness/assets/task-decisions.md`
+- `skills/harness/task-harness/assets/evidence-index.json`
+- `skills/harness/task-harness/assets/verdict.json`
 
 ## Goals
 

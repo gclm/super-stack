@@ -39,7 +39,7 @@ EOF
 chmod +x "${HOME}/bin/openspace-mcp"
 export PATH="${HOME}/bin:${PATH}"
 mkdir -p "${HOME}/.super-stack/runtime/.codex/hooks" "${HOME}/.super-stack/runtime/scripts/hooks"
-cp "${REPO_ROOT}/.codex/hooks/super_stack_state.py" "${HOME}/.super-stack/runtime/.codex/hooks/super_stack_state.py"
+cp "${REPO_ROOT}/codex/hooks/super_stack_state.py" "${HOME}/.super-stack/runtime/.codex/hooks/super_stack_state.py"
 cp "${REPO_ROOT}/scripts/hooks/readonly_command_guard.py" "${HOME}/.super-stack/runtime/scripts/hooks/readonly_command_guard.py"
 
 python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block codex_agents >/dev/null

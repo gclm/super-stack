@@ -96,7 +96,7 @@
 | 对象 | 优先测试层 | 原因 |
 |------|------------|------|
 | `scripts/hooks/readonly_command_guard.py` | unit | 纯逻辑判断多，宿主依赖弱 |
-| `.codex/hooks/super_stack_state.py` | unit | 输入输出稳定，适合直接断言 JSON |
+| `codex/hooks/super_stack_state.py` | unit | 输入输出稳定，适合直接断言 JSON |
 | `scripts/lib/install-state.sh` | integration | 关键在文件恢复行为与安装前状态记录，不应被误判为多余包装层 |
 | `scripts/install/install-codex.sh` | integration | 关键在 Codex 受管块合并与幂等性 |
 | `scripts/install/install-claude.sh` | integration | 关键在 Claude hooks JSON merge 结果 |

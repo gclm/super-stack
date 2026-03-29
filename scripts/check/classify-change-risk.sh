@@ -51,8 +51,8 @@ classify_path() {
   if [[ "${path}" == "AGENTS.md" ]] \
     || [[ "${path}" == protocols/* ]] \
     || [[ "${path}" == config/* ]] \
-    || [[ "${path}" == .codex/* ]] \
-    || [[ "${path}" == .claude/* ]] \
+    || [[ "${path}" == codex/* ]] \
+    || [[ "${path}" == claude/* ]] \
     || [[ "${path}" == scripts/check/* ]] \
     || [[ "${path}" == scripts/install/* ]] \
     || [[ "${path}" == scripts/hooks/* ]] \
@@ -67,13 +67,13 @@ classify_path() {
     || [[ "${path}" == README.md ]] \
     || [[ "${path}" == .planning/* ]] \
     || [[ "${path}" == artifacts/examples/* ]] \
-    || [[ "${path}" =~ ^\.agents/skills/.+/references/ ]]; then
+    || [[ "${path}" =~ ^skills/.+/references/ ]]; then
     printf 'L1|docs-or-reference\n'
     return 0
   fi
 
-  if [[ "${path}" =~ ^\.agents/skills/.+/SKILL\.md$ ]] \
-    || [[ "${path}" =~ ^\.agents/skills/.+/(assets|scripts|agents)/ ]] \
+  if [[ "${path}" =~ ^skills/.+/SKILL\.md$ ]] \
+    || [[ "${path}" =~ ^skills/.+/(assets|scripts|agents)/ ]] \
     || [[ "${path}" == templates/* ]] \
     || [[ "${path}" == scripts/workflow/* ]] \
     || [[ "${path}" == scripts/smoke/* ]] \

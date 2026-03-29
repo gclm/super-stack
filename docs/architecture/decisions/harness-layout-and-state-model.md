@@ -180,7 +180,7 @@ OpenSpace 更适合作为这一层的 backend。
 ### 4.1 推荐长期结构
 
 ```text
-.agents/skills/
+skills/
   core/
   planning/
   quality/

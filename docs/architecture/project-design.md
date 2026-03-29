@@ -100,7 +100,7 @@ Claude Code 和 Codex 虽然都能做 agent workflow，但差异很大：
       v                                             v
 +--------------+                         +------------------+
 | Shared Route |                         | Shared Skills    |
-| AGENTS.md    |                         | .agents/skills/  |
+| AGENTS.md    |                         | skills/  |
 +--------------+                         +------------------+
       |                                             |
       +----------------------+----------------------+
@@ -116,7 +116,7 @@ Claude Code 和 Codex 虽然都能做 agent workflow，但差异很大：
           v                                     v
  +---------------------+             +----------------------+
  | Claude Adapter      |             | Codex Adapter        |
- | .claude/            |             | .codex/              |
+ | claude/            |             | codex/              |
  | hooks/settings sync |             | config/hooks sync    |
  +---------------------+             +----------------------+
           |                                     |
@@ -159,7 +159,7 @@ Claude Code 和 Codex 虽然都能做 agent workflow，但差异很大：
 
 这点非常关键。
 
-### 4.2 技能层：`.agents/skills/`
+### 4.2 技能层：`skills/`
 
 技能层负责：
 

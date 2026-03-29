@@ -5,10 +5,10 @@ Cross-host agent workflow for Claude Code and Codex.
 This repository provides a shared core:
 
 - `AGENTS.md` for cross-host operating guidance
-- `.agents/skills/` for reusable workflows
+- `skills/` for reusable workflows
 - `templates/generated-project/` for repo-local docs plus harness scaffold
 - `protocols/` for stable engineering rules
-- host adapters under `.claude/` and `.codex/`
+- host adapters under `claude/` and `codex/`
 
 ## Intent
 
@@ -16,7 +16,7 @@ Use one workflow core across multiple agent hosts without coupling the project t
 
 ## Skill Source Of Truth
 
-Skills in this repository are maintained in the source tree under `.agents/skills/`.
+Skills in this repository are maintained in the source tree under `skills/`.
 
 Treat host-installed skill directories such as `~/.agents/skills` or `~/.codex/skills` as runtime copies unless a repository explicitly says otherwise.
 When improving a reusable skill, update the source repository first and only then sync or reinstall the runtime copies.
@@ -30,7 +30,7 @@ The design principle is:
 
 ## Super-Stack Self-Maintenance
 
-When the task targets super-stack itself, such as changing `AGENTS.md`, `protocols/`, `.agents/skills/`, `templates/`, or install-state behavior, locate the source-of-truth repository before proposing or making changes.
+When the task targets super-stack itself, such as changing `AGENTS.md`, `protocols/`, `skills/`, `templates/`, or install-state behavior, locate the source-of-truth repository before proposing or making changes.
 
 Prefer `~/.super-stack/state/source-repo-path.txt` over directory guessing.
 If that file exists and points to a valid Git repository, treat it as the source repository.
@@ -45,7 +45,7 @@ The default delivery chain is:
 Treat this chain as the primary operating model across hosts.
 
 On hosts with strong native skill execution, the matching skill may be applied directly.
-On hosts where skill execution is weaker or inconsistent, follow the workflow from this file first and use `.agents/skills/` as detailed reference material.
+On hosts where skill execution is weaker or inconsistent, follow the workflow from this file first and use `skills/` as detailed reference material.
 
 Supporting skills can be used within or between stages when appropriate:
 
@@ -315,7 +315,7 @@ Recommended roles:
 - `reviewer` - inspect risks, regressions, and missing tests
 - `builder` - implement bounded changes
 
-For Codex, mirror these roles through `.codex/agents/*.toml`.
+For Codex, mirror these roles through `codex/agents/*.toml`.
 For Claude Code, keep equivalent role guidance in host instructions or skill text.
 
 ## Escalation To Supporting Roles
@@ -364,8 +364,8 @@ Always name the backtrack when it happens.
 
 ## Host Adapters
 
-- Claude Code adapter: `.claude/`
-- Codex adapter: `.codex/`
+- Claude Code adapter: `claude/`
+- Codex adapter: `codex/`
 
 Adapters should reference this root file, not replace it.
 
@@ -392,7 +392,7 @@ When running on a host where skills may not auto-expand:
 
 1. choose the stage from the routing table above
 2. state the chosen stage in your own reasoning and user update
-3. read the corresponding `.agents/skills/.../SKILL.md` only when more procedural detail is needed
+3. read the corresponding `skills/.../SKILL.md` only when more procedural detail is needed
 4. continue following `protocols/` and the `docs/ + harness/` state rules
 
 If the stage is clear and the work is straightforward, the router alone may be enough.

@@ -40,7 +40,7 @@ phase-1 不解决这些事：
 因此更合适的归属是：
 
 ```text
-.agents/skills/harness/
+skills/harness/
   task-harness/
     SKILL.md
     references/

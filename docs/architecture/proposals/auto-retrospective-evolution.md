@@ -100,7 +100,7 @@
   - 这说明我们的自动更新如果要修改 `SKILL.md`，首先应该检查有没有伤到 trigger surface，而不是只看内容是否更全。
 - 把结构校验做成脚本，而不是写成口头规范。
   - MiniMax 用校验脚本保证技能目录、frontmatter、secret 规则。
-  - `super-stack` 下一步也应该考虑为 `.agents/skills/` 增加一类轻量 validator，而不只靠人工阅读。
+  - `super-stack` 下一步也应该考虑为 `skills/` 增加一类轻量 validator，而不只靠人工阅读。
 - README 索引同步是治理的一部分。
   - 新 skill 不只是多一个目录，还要进入 README 表。
   - 对 `super-stack` 来说，对应的是：当新增 skill/reference/mapping 影响发现面时，应同步路由文档或技能列表来源。
@@ -532,7 +532,7 @@ apply 后的最小闭环建议是：
 
 默认渲染入口：
 
-- [.agents/skills/planning/codex-record-retrospective/scripts/render_retrospective_report.py](/Users/gclm/workspace/lab/ai/super-stack/.agents/skills/planning/codex-record-retrospective/scripts/render_retrospective_report.py)
+- [skills/planning/codex-record-retrospective/scripts/render_retrospective_report.py](/Users/gclm/workspace/lab/ai/super-stack/skills/planning/codex-record-retrospective/scripts/render_retrospective_report.py)
 
 ### 6.2 Recommendation Artifact
 
@@ -547,7 +547,7 @@ apply 后的最小闭环建议是：
 
 默认后处理入口：
 
-- [.agents/skills/planning/codex-record-retrospective/scripts/process_retrospective.py](/Users/gclm/workspace/lab/ai/super-stack/.agents/skills/planning/codex-record-retrospective/scripts/process_retrospective.py)
+- [skills/planning/codex-record-retrospective/scripts/process_retrospective.py](/Users/gclm/workspace/lab/ai/super-stack/skills/planning/codex-record-retrospective/scripts/process_retrospective.py)
 
 ### 6.3 Optional Patch Draft
 
@@ -563,17 +563,17 @@ apply 后的最小闭环建议是：
 
 当前已补第一版 ledger 写入工具：
 
-- [.agents/skills/planning/codex-record-retrospective/scripts/append_evolution_ledger.py](/Users/gclm/workspace/lab/ai/super-stack/.agents/skills/planning/codex-record-retrospective/scripts/append_evolution_ledger.py)
+- [skills/planning/codex-record-retrospective/scripts/append_evolution_ledger.py](/Users/gclm/workspace/lab/ai/super-stack/skills/planning/codex-record-retrospective/scripts/append_evolution_ledger.py)
 
 字段参考与样例说明：
 
-- [.agents/skills/planning/codex-record-retrospective/references/artifact-schemas.md](/Users/gclm/workspace/lab/ai/super-stack/.agents/skills/planning/codex-record-retrospective/references/artifact-schemas.md)
+- [skills/planning/codex-record-retrospective/references/artifact-schemas.md](/Users/gclm/workspace/lab/ai/super-stack/skills/planning/codex-record-retrospective/references/artifact-schemas.md)
 
 ## 7. lesson 到目标文件的映射真源
 
 建议不要把映射只写在文档里，而是维护一份仓库内可复用真源，例如：
 
-- [.agents/skills/planning/codex-record-retrospective/references/lesson-target-map.json](/Users/gclm/workspace/lab/ai/super-stack/.agents/skills/planning/codex-record-retrospective/references/lesson-target-map.json)
+- [skills/planning/codex-record-retrospective/references/lesson-target-map.json](/Users/gclm/workspace/lab/ai/super-stack/skills/planning/codex-record-retrospective/references/lesson-target-map.json)
 
 示例映射方向：
 
@@ -592,7 +592,7 @@ apply 后的最小闭环建议是：
   - -> 某 skill 的 `references/`
   - -> `skill-maintenance` reference
 - `host_limitation_not_explained`
-  - -> `.codex/AGENTS.md`
+  - -> `codex/AGENTS.md`
 
 初期建议保持简单：
 
@@ -777,7 +777,7 @@ apply 后的最小闭环建议是：
 
 当前仓库已补第一版切片工具：
 
-- [.agents/skills/planning/codex-record-retrospective/scripts/slice_codex_session.py](/Users/gclm/workspace/lab/ai/super-stack/.agents/skills/planning/codex-record-retrospective/scripts/slice_codex_session.py)
+- [skills/planning/codex-record-retrospective/scripts/slice_codex_session.py](/Users/gclm/workspace/lab/ai/super-stack/skills/planning/codex-record-retrospective/scripts/slice_codex_session.py)
 
 第一版切片启发主要看：
 

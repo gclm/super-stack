@@ -100,9 +100,9 @@
 - `protocols/`
 - `templates/`
 - `config/`
-- `.agents/`
-- `.claude/`
-- `.codex/`
+- `skills/`
+- `claude/`
+- `codex/`
 - `scripts/`
 - `tests/`
 

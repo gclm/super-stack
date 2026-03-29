@@ -68,7 +68,7 @@ def merge_records(
 def collect_repo_skills(repo_root: Path) -> Dict[str, Tuple[Path, str]]:
     records: Dict[str, Tuple[Path, str]] = {}
 
-    local_root = repo_root / ".agents" / "skills"
+    local_root = repo_root / "skills"
     if local_root.exists():
         local_records: Dict[str, Tuple[Path, str]] = {}
         for file_path in iter_files(local_root):
@@ -78,7 +78,7 @@ def collect_repo_skills(repo_root: Path) -> Dict[str, Tuple[Path, str]]:
                 continue
             normalized = Path(parts[1], *parts[2:]).as_posix()
             local_records[normalized] = (file_path, sha1(file_path))
-        merge_records(records, local_records, source_label=".agents/skills")
+        merge_records(records, local_records, source_label="skills")
 
     external_roots = [
         repo_root / "external-skills" / "openspace" / "openspace" / "host_skills",

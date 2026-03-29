@@ -96,7 +96,7 @@ source repo edit
 
 典型范围：
 
-- `.agents/skills/` 的行为文案调整
+- `skills/` 的行为文案调整
 - skill templates
 - generators
 - 部分 smoke/reference 脚本

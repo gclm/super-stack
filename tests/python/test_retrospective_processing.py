@@ -7,7 +7,7 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-PROCESS_SCRIPT = REPO_ROOT / ".agents" / "skills" / "planning" / "codex-record-retrospective" / "scripts" / "process_retrospective.py"
+PROCESS_SCRIPT = REPO_ROOT / "skills" / "planning" / "codex-record-retrospective" / "scripts" / "process_retrospective.py"
 
 
 class RetrospectiveProcessingTests(unittest.TestCase):

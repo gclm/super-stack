@@ -32,6 +32,30 @@ Next:
 
 ## 2026-03-29
 
+### Source Path Visibility Migration
+- Renamed source-repository directories from hidden host-style paths to visible names: `.agents/skills` -> `skills/`, `.codex/` -> `codex/`, `.claude/` -> `claude/`.
+- Updated install, check, smoke, test, skill, and architecture/documentation references to use visible source paths while keeping runtime/home paths unchanged (`~/.agents/skills`, `~/.codex`, `~/.claude`, and runtime `/.codex/hooks`).
+- Adjusted skill validation to treat `~/...` runtime references as external/home paths instead of broken repo-local references.
+
+Reason:
+- Repo-local hidden directories collided semantically with home/runtime hidden directories, making requests like “去 `.agents` 查一下” ambiguous.
+- The source/runtime boundary becomes clearer when only runtime stays hidden and source uses visible names.
+
+Evidence:
+- `python3 scripts/check/validate-skills.py --path skills`
+- `python3 -m unittest -v tests.python.test_super_stack_state tests.python.test_skill_validation_and_evolution tests.python.test_skill_validation_exceptions tests.python.test_retrospective_processing tests.python.test_session_slicing tests.python.test_retrospective_rendering tests.python.test_harness_scaffold tests.python.test_managed_config_rendering tests.python.test_managed_config_checks`
+- `bash tests/shell/test_hook_merge_idempotent.sh`
+- `bash tests/shell/test_global_install_roundtrip.sh`
+
+Impact:
+- The source repo no longer contains `.agents`, so future references to `.agents` can safely bias toward `~/.agents`.
+- Source and runtime paths now follow a clearer split: visible names in-repo, hidden names in home/runtime.
+
+Next:
+- Watch for downstream tools or prompts that still assume source-side hidden paths and update them in the same change-set when found.
+
+## 2026-03-29
+
 ### MCP Config Cleanup
 - Fixed `codex_mcp` rendering so server-level `env` is preserved for OpenSpace.
 - Clarified that `[projects.*].trust_level` is project trust config, not MCP config.
@@ -120,7 +144,7 @@ Next:
 
 ### Codex Runtime Skill Boundary And Parity Gate
 - Enforced Codex runtime skill boundary: `~/.codex/skills` now keeps only host/system-local `.system` entries; super-stack global skills are sourced from `~/.agents/skills`.
-- Added runtime parity checker: `scripts/check/check-skill-runtime-parity.py` to compare repo source-of-truth (`.agents/skills`) with `~/.agents/skills` using normalized paths and content hash checks.
+- Added runtime parity checker: `scripts/check/check-skill-runtime-parity.py` to compare repo source-of-truth (`skills`) with `~/.agents/skills` using normalized paths and content hash checks.
 - Wired parity checker into source checks via `scripts/check/run-source-checks.sh` with `--enforce-codex-system-only`.
 - Updated `scripts/install/install-codex.sh` to stop copying OpenSpace skills into `~/.codex/skills`.
 - Removed GitHub-hosted minimal CI workflow (`.github/workflows/ci.yml`) per current project policy.

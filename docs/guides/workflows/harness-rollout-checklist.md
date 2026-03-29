@@ -125,7 +125,7 @@ scripts/workflow/
 ### 4.1 推荐目录
 
 ```text
-.agents/skills/harness/
+skills/harness/
   task-harness/
     SKILL.md
     references/
@@ -338,7 +338,7 @@ scripts/release/
 phase-1 结束时，至少应满足：
 
 - 能生成 target project 的 `docs/ + harness/` 默认结构
-- `.agents/skills/harness/` 已存在并通过结构校验
+- `skills/harness/` 已存在并通过结构校验
 - 有最小的 source-side check 聚合入口
 - 有最小的 runtime promotion gate
 - OpenSpace 能在低风险范围内对 source repo 产出草稿改动
@@ -349,7 +349,7 @@ phase-1 结束时，至少应满足：
 如果下一步进入真正代码实现，我建议第一批只做这几件事：
 
 1. 建 `templates/generated-project/docs/` 和 `templates/generated-project/harness/`
-2. 建 `.agents/skills/harness/` 骨架，并把入口 skill 命名为 `task-harness`
+2. 建 `skills/harness/` 骨架，并把入口 skill 命名为 `task-harness`
 3. 建 `scripts/workflow/init-harness-task.*`
 4. 建 source-side check 聚合入口
 5. 建 runtime promotion wrapper 的空骨架

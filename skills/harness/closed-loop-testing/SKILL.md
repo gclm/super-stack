@@ -9,9 +9,9 @@ Use when a task needs fresh evidence before it can be treated as complete.
 
 ## Read First
 
-- `.agents/skills/harness/closed-loop-testing/references/evidence-pack-format.md`
-- `.agents/skills/harness/closed-loop-testing/assets/evidence-index.json`
-- `.agents/skills/harness/closed-loop-testing/assets/verdict.json`
+- `skills/harness/closed-loop-testing/references/evidence-pack-format.md`
+- `skills/harness/closed-loop-testing/assets/evidence-index.json`
+- `skills/harness/closed-loop-testing/assets/verdict.json`
 - `protocols/verify.md`
 
 ## Goals

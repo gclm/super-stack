@@ -62,7 +62,7 @@
 
 OpenSpace 可以在允许的路径范围内直接修改 source repo working tree，例如：
 
-- `.agents/skills/` 下的低中风险改动
+- `skills/` 下的低中风险改动
 - `docs/` 中的设计说明与 references
 - `templates/` 中的非高风险模板调整
 - 少量配套脚本

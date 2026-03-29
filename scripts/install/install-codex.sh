@@ -57,13 +57,13 @@ mirror_repo_skills "$USER_SKILLS_DEST"
 # Codex skills directory keeps only host/system-local skills.
 # Global super-stack skills are provided via ~/.agents/skills.
 
-for agent_file in "${REPO_ROOT}"/.codex/agents/*.toml; do
+for agent_file in "${REPO_ROOT}"/codex/agents/*.toml; do
   cp "$agent_file" "${AGENTS_DEST}/$(basename "$agent_file")"
 done
 
 write_global_router_file "${CODEX_HOME}/AGENTS.md" "global workflow source" "Codex" "Global super-stack skills are installed to \`${USER_SKILLS_DEST}\`."
 
-write_if_missing "${REPO_ROOT}/.codex/config.toml" "${CODEX_HOME}/config.toml"
+write_if_missing "${REPO_ROOT}/codex/config.toml" "${CODEX_HOME}/config.toml"
 merge_managed_block "codex_agents" "${CODEX_HOME}/config.toml" "# BEGIN SUPER-STACK AGENTS" "# END SUPER-STACK AGENTS"
 merge_managed_block "codex_hooks" "${CODEX_HOME}/config.toml" "# BEGIN SUPER-STACK HOOKS" "# END SUPER-STACK HOOKS"
 merge_managed_block "codex_mcp" "${CODEX_HOME}/config.toml" "# BEGIN SUPER-STACK CODEX MCP" "# END SUPER-STACK CODEX MCP"

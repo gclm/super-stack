@@ -8,7 +8,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 VALIDATE_SCRIPT = REPO_ROOT / "scripts" / "check" / "validate-skills.py"
-LEDGER_SCRIPT = REPO_ROOT / ".agents" / "skills" / "planning" / "codex-record-retrospective" / "scripts" / "append_evolution_ledger.py"
+LEDGER_SCRIPT = REPO_ROOT / "skills" / "planning" / "codex-record-retrospective" / "scripts" / "append_evolution_ledger.py"
 
 
 class ValidateSkillsTests(unittest.TestCase):
@@ -26,14 +26,14 @@ class ValidateSkillsTests(unittest.TestCase):
     def test_validate_skills_fails_for_missing_reference(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            skill_dir = root / ".agents" / "skills" / "core" / "fake-skill"
+            skill_dir = root / "skills" / "core" / "fake-skill"
             skill_dir.mkdir(parents=True)
             (skill_dir / "SKILL.md").write_text(
                 "---\nname: fake-skill\ndescription: Use when validating fake skill behavior.\n---\n\n- `references/missing.md`\n",
                 encoding="utf-8",
             )
             result = subprocess.run(
-                [sys.executable, str(VALIDATE_SCRIPT), "--path", ".agents/skills"],
+                [sys.executable, str(VALIDATE_SCRIPT), "--path", "skills"],
                 text=True,
                 capture_output=True,
                 cwd=root,
@@ -60,7 +60,7 @@ class EvolutionLedgerTests(unittest.TestCase):
                     },
                     {
                         "lesson_id": "premature_completion",
-                        "target_files": [".agents/skills/quality/verify/SKILL.md"],
+                        "target_files": ["skills/quality/verify/SKILL.md"],
                         "approval_level": "record-only",
                     },
                 ],

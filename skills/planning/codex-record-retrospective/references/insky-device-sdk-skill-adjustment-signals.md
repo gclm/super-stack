@@ -141,7 +141,7 @@
 
 优先落点：
 
-- `/.agents/skills/planning/map-codebase/SKILL.md`
+- `/skills/planning/map-codebase/SKILL.md`
 
 ### `verify`
 
@@ -161,7 +161,7 @@
 优先落点：
 
 - `/protocols/verify.md`
-- `/.agents/skills/quality/verify/SKILL.md`
+- `/skills/quality/verify/SKILL.md`
 
 ### 多 agent 升级阈值
 
@@ -198,8 +198,8 @@
 
 优先落点：
 
-- `/.agents/skills/planning/codex-record-retrospective/SKILL.md`
-- `/.agents/skills/planning/codex-record-retrospective/scripts/find_codex_project_records.py`
+- `/skills/planning/codex-record-retrospective/SKILL.md`
+- `/skills/planning/codex-record-retrospective/scripts/find_codex_project_records.py`
 
 ## 哪些不该过度泛化
 
