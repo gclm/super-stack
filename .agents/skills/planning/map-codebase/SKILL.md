@@ -17,7 +17,7 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 - `references/layered-entry.md`
 - `references/output-shape.md`
 - `references/runtime-footprint.md` when important evidence may live outside the repository
-- `./external-skills/contextweaver/skills/using-contextweaver/SKILL.md` when `ContextWeaver` is available
+- `~/.agents/skills/using-contextweaver/SKILL.md` when `ContextWeaver` is available
 
 ## Context Retrieval
 
@@ -27,7 +27,7 @@ When `ContextWeaver` is available in the environment, use it as the primary evid
 - if available, verify index scope before scanning deeply
 - use `search --format json` and `prompt-context --format json` to collect candidate files and symbols
 - prefer official distributed scripts from `contextweaver install-skills` when stable structured output is needed
-- follow the decision rules in `./external-skills/contextweaver/skills/using-contextweaver/SKILL.md` to choose `read` vs `grep` vs semantic retrieval
+- follow the decision rules in `~/.agents/skills/using-contextweaver/SKILL.md` to choose `read` vs `grep` vs semantic retrieval
 - then confirm critical claims by opening repository files directly
 - if unavailable, continue with normal repository-first scanning
 
