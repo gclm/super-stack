@@ -13,6 +13,7 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 - `docs/overview/project-overview.md` if it exists
 - `docs/reference/requirements.md` if it exists
 - `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `docs/reference/conventions.md` if it exists
 - relevant project docs or user-provided reference material
 - `references/scope-modes.md` when the project may be a validation sample, staged hybrid, or direct product path
@@ -24,6 +25,7 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 - identify scope and non-goals
 - capture constraints and acceptance signals
 - write or update `docs/overview/project-overview.md`, `docs/reference/requirements.md` when needed, and `harness/state.md`
+- append `harness/history.md` only when the discussion fixes a durable repository-level decision worth preserving beyond the current state
 - establish language, review, and confirmation conventions early when they matter
 - make the scope mode explicit when the work may be a validation sample instead of direct product delivery
 - identify the document depth when the user is asking for a proposal, design doc, architecture note, or module design
@@ -44,7 +46,8 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 9. Summarize the request as concrete requirements, scope boundaries, and non-goals.
 10. Capture project conventions that will affect follow-up stages, such as documentation language, commit rules, or review expectations.
 11. Persist the updated understanding into `docs/ + harness/`.
-12. Set `harness/state.md` focus to planning.
+12. If the turn fixed a durable repository-level decision or workflow rule, append a concise history entry to `harness/history.md`.
+13. Set `harness/state.md` focus to planning.
 
 ## Output
 

@@ -191,6 +191,18 @@ print_header() {
   printf '\n'
 }
 
+check_manifest_section() {
+  printf '== Manifest ==\n'
+  if result="$(python3 "${REPO_ROOT}/scripts/config/validate_manifest.py" 2>&1)"; then
+    ok "config/manifest.json 结构与语义校验通过"
+    printf '%s\n' "$result"
+  else
+    warn "config/manifest.json 校验失败"
+    printf '%s\n' "$result"
+  fi
+  printf '\n'
+}
+
 check_runtime_section() {
   printf '== Runtime ==\n'
   check_file "$SOURCE_REPO_FILE" "源仓路径记录文件"
@@ -292,6 +304,7 @@ print_result() {
 main() {
   init_expected_values
   print_header
+  check_manifest_section
   check_runtime_section
   check_codex_section
   check_claude_section

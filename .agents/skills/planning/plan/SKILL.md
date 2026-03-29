@@ -12,6 +12,7 @@ Use this skill after requirements are clear enough to define delivery phases.
 - `docs/overview/project-overview.md`
 - `docs/reference/requirements.md` if it exists
 - `harness/state.md`
+- `harness/history.md` if it exists
 - `docs/reference/conventions.md` if it exists
 - `protocols/tdd.md`
 - `references/planning-modes.md` when phase boundaries depend on validation-first or staged delivery
@@ -39,6 +40,7 @@ Use this skill after requirements are clear enough to define delivery phases.
 7. Define tasks with files, verification, dependencies, and environment assumptions when relevant.
 8. Update `docs/overview/roadmap.md`.
 9. Update `harness/state.md` with active phase, current focus, and the latest scope or architecture change when applicable.
+10. If planning changes repository-level direction, phase model, or workflow conventions, append a concise entry to `harness/history.md`.
 
 ## Task Format
 

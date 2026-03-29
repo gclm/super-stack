@@ -10,6 +10,7 @@ Use this skill when implementation is complete enough to prepare a handoff, PR, 
 ## Read First
 
 - `harness/state.md`
+- `harness/history.md` if it exists
 - `docs/overview/roadmap.md`
 - `docs/reference/conventions.md` if it exists
 - `protocols/verify.md`
@@ -33,6 +34,7 @@ Use this skill when implementation is complete enough to prepare a handoff, PR, 
 5. Note release blockers, docs drift, commit-readiness, or rollback concerns.
 6. If the work is not being merged immediately, say whether the current state should be captured as a stage-boundary checkpoint commit.
 7. Produce a concise release summary.
+8. If handoff or ship readiness changes repository-level status or future operating guidance, append a concise entry to `harness/history.md`.
 
 ## Output
 

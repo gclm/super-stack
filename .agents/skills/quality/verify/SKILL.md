@@ -17,6 +17,7 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 
 - `docs/reference/requirements.md` if it exists
 - `harness/state.md`
+- `harness/history.md` if it exists
 - `docs/reference/conventions.md` if it exists
 - `protocols/verify.md`
 - `references/scope-alignment.md` when the work may have drifted beyond the original intent
@@ -76,6 +77,7 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
    - `未验证`
    - `缺口`
 10. If the request is really asking “是否已经做到/做到哪一步了”, make sure the answer distinguishes implementation progress from proof strength instead of returning a single blended confidence statement.
+11. If verification materially changes repository-level confidence, release posture, or workflow direction, append a concise entry to `harness/history.md`.
 
 ## Output
 

@@ -10,6 +10,7 @@ Use this skill near the end of delivery when the question is not "did we change 
 ## Read First
 
 - `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `docs/overview/roadmap.md` if it exists
 - `docs/reference/conventions.md` if it exists
 - recent verification or QA evidence
@@ -31,6 +32,7 @@ Use this skill near the end of delivery when the question is not "did we change 
 5. Check whether default run paths, startup paths, or handoff commands still behave as expected.
 6. Capture rollback or recovery considerations when relevant.
 7. Conclude with a readiness status instead of vague optimism.
+8. If the release check changes repository-level readiness posture or highlights a durable risk decision, append a concise entry to `harness/history.md`.
 
 ## Output
 

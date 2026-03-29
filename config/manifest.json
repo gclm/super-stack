@@ -1,21 +1,28 @@
 {
-  "server_defs": {
-    "chrome-devtools-mcp": {
-      "command_env": "CHROME_DEVTOOLS_MCP_BIN",
-      "command_name": "chrome-devtools-mcp",
-      "args": [
-        "--autoConnect",
-        "-y"
-      ],
-      "enabled": true
-    },
-    "openspace": {
-      "command_env": "OPENSPACE_MCP_BIN",
-      "command_name": "openspace-mcp",
-      "enabled": true
+  "manifest_version": 1,
+  "mcp": {
+    "servers": {
+      "chrome-devtools-mcp": {
+        "command_env": "CHROME_DEVTOOLS_MCP_BIN",
+        "command_fixed_template": "{home}/.local/share/fnm/node-versions/v24.14.0/installation/bin/chrome-devtools-mcp",
+        "args": [
+          "--autoConnect",
+          "-y"
+        ],
+        "enabled": true
+      },
+      "openspace": {
+        "command_env": "OPENSPACE_MCP_BIN",
+        "command_fixed_template": "{home}/.super-stack/openspace/.conda/bin/openspace-mcp",
+        "env": {
+          "OPENSPACE_HOST_SKILL_DIRS": "{home}/.agents/skills",
+          "OPENSPACE_WORKSPACE": "{home}/.super-stack/openspace"
+        },
+        "enabled": true
+      }
     }
   },
-  "blocks": {
+  "managed_blocks": {
     "codex_agents": {
       "target_format": "toml",
       "begin_marker": "# BEGIN SUPER-STACK AGENTS",
@@ -74,7 +81,8 @@
         "{home}/.codex/agents/super-stack-reviewer.toml",
         "{home}/.codex/agents/super-stack-planner.toml",
         "{home}/.codex/agents/super-stack-builder.toml"
-      ]
+      ],
+      "kind": "agents"
     },
     "codex_hooks": {
       "target_format": "toml",
@@ -105,7 +113,8 @@
           "# BEGIN SUPER-STACK HOOKS",
           "# END SUPER-STACK HOOKS"
         ]
-      }
+      },
+      "kind": "hooks"
     },
     "codex_mcp": {
       "target_format": "toml",
@@ -129,7 +138,8 @@
           "# BEGIN SUPER-STACK CODEX MCP",
           "# END SUPER-STACK CODEX MCP"
         ]
-      }
+      },
+      "kind": "mcp"
     },
     "claude_mcp": {
       "target_format": "json",
@@ -146,7 +156,8 @@
           "\"chrome-devtools-mcp\"",
           "\"--autoConnect\""
         ]
-      }
+      },
+      "kind": "mcp"
     },
     "claude_hooks": {
       "target_format": "json",
@@ -195,7 +206,20 @@
           "\"hooks\"",
           "\"PreToolUse\""
         ]
-      }
+      },
+      "kind": "hooks"
     }
+  },
+  "skill_validation": {
+    "ignore_warnings": [
+      {
+        "path_glob": ".agents/skills/openspace/*",
+        "codes": [
+          "thin_lines",
+          "thin_words"
+        ],
+        "reason": "upstream verbatim import from OpenSpace"
+      }
+    ]
   }
 }

@@ -8,7 +8,7 @@ from pathlib import Path
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
 SCRIPT = REPO_ROOT / "scripts" / "config" / "render_managed_config.py"
-MANIFEST = REPO_ROOT / "config" / "managed-config.json"
+MANIFEST = REPO_ROOT / "config" / "manifest.json"
 SCRIPT_DIR = REPO_ROOT / "scripts" / "config"
 
 if str(SCRIPT_DIR) not in sys.path:
@@ -20,13 +20,17 @@ import managed_config_lib
 class ManagedConfigRenderingTests(unittest.TestCase):
     def test_manifest_contains_expected_blocks(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
-        self.assertIn("server_defs", manifest)
-        self.assertIn("chrome-devtools-mcp", manifest["server_defs"])
-        self.assertIn("codex_agents", manifest["blocks"])
-        self.assertIn("codex_hooks", manifest["blocks"])
-        self.assertIn("codex_mcp", manifest["blocks"])
-        self.assertIn("claude_mcp", manifest["blocks"])
-        self.assertIn("claude_hooks", manifest["blocks"])
+        self.assertEqual(manifest.get("manifest_version"), 1)
+        self.assertIn("mcp", manifest)
+        self.assertIn("servers", manifest["mcp"])
+        self.assertIn("chrome-devtools-mcp", manifest["mcp"]["servers"])
+        self.assertIn("managed_blocks", manifest)
+        self.assertIn("codex_agents", manifest["managed_blocks"])
+        self.assertIn("codex_hooks", manifest["managed_blocks"])
+        self.assertIn("codex_mcp", manifest["managed_blocks"])
+        self.assertIn("claude_mcp", manifest["managed_blocks"])
+        self.assertIn("claude_hooks", manifest["managed_blocks"])
+        self.assertIn("skill_validation", manifest)
 
     def test_render_codex_agents_contains_registered_agents(self):
         result = subprocess.run(
@@ -111,6 +115,9 @@ class ManagedConfigRenderingTests(unittest.TestCase):
         self.assertIn('[mcp_servers.chrome-devtools-mcp]', result.stdout)
         self.assertIn('[mcp_servers.openspace]', result.stdout)
         self.assertIn('command = "/tmp/bin/openspace-mcp"', result.stdout)
+        self.assertIn('[mcp_servers.openspace.env]', result.stdout)
+        self.assertIn('OPENSPACE_HOST_SKILL_DIRS = "/Users/gclm/.agents/skills"', result.stdout)
+        self.assertIn('OPENSPACE_WORKSPACE = "/Users/gclm/.super-stack/openspace"', result.stdout)
 
     def test_render_claude_mcp_keeps_json_shape(self):
         result = subprocess.run(
@@ -125,23 +132,28 @@ class ManagedConfigRenderingTests(unittest.TestCase):
         self.assertIn("mcpServers", data)
         self.assertIn("chrome-devtools-mcp", data["mcpServers"])
         self.assertEqual(data["mcpServers"]["chrome-devtools-mcp"]["command"], "/tmp/bin/chrome-devtools-mcp")
+        # openspace is not part of claude_mcp by default; ensure schema still supports optional env key
 
     def test_render_codex_mcp_supports_multiple_manifest_servers(self):
         manifest = {
-            "server_defs": {
-                "alpha-mcp": {
-                    "command_name": "alpha-mcp",
-                    "args": ["--alpha"],
-                    "enabled": True,
-                },
-                "beta-mcp": {
-                    "command_name": "beta-mcp",
-                    "args": ["--beta"],
-                    "enabled": False,
+            "mcp": {
+                "servers": {
+                    "alpha-mcp": {
+                        "command_name": "alpha-mcp",
+                        "args": ["--alpha"],
+                        "enabled": True,
+                    },
+                    "beta-mcp": {
+                        "command_name": "beta-mcp",
+                        "args": ["--beta"],
+                        "enabled": False,
+                    },
                 },
             },
-            "blocks": {
+            "managed_blocks": {
                 "codex_mcp": {
+                    "kind": "mcp",
+                    "target_format": "toml",
                     "content": {
                         "servers": ["alpha-mcp", "beta-mcp"],
                     }
@@ -161,6 +173,39 @@ class ManagedConfigRenderingTests(unittest.TestCase):
         self.assertIn('command = "/tmp/bin/alpha-mcp"', rendered)
         self.assertIn('[mcp_servers.beta-mcp]', rendered)
         self.assertIn('enabled = false', rendered)
+
+    def test_render_codex_mcp_renders_manifest_env_section(self):
+        manifest = {
+            "mcp": {
+                "servers": {
+                    "env-mcp": {
+                        "command_fixed": "/tmp/bin/env-mcp",
+                        "args": [],
+                        "enabled": True,
+                        "env": {
+                            "FOO": "bar",
+                            "ABC": "xyz",
+                        },
+                    },
+                },
+            },
+            "managed_blocks": {
+                "codex_mcp": {
+                    "kind": "mcp",
+                    "target_format": "toml",
+                    "content": {
+                        "servers": ["env-mcp"],
+                    }
+                }
+            },
+        }
+
+        with mock.patch.object(managed_config_lib, "load_manifest", return_value=manifest):
+            rendered = managed_config_lib.render_codex_mcp("codex_mcp")
+
+        self.assertIn('[mcp_servers.env-mcp.env]', rendered)
+        self.assertIn('ABC = "xyz"', rendered)
+        self.assertIn('FOO = "bar"', rendered)
 
 
 if __name__ == "__main__":

@@ -28,7 +28,7 @@
 
 - 需要用户确认的文档是否默认中文：
 - `docs/` / `harness/` 状态文件是否能持续更新：
-- 规则是否写入 `docs/reference/conventions.md`、`harness/state.md` 或等价文档：
+- 规则是否写入 `docs/reference/conventions.md`、`harness/state.md`、`harness/history.md` 或等价文档：
 
 ### 4. 交付体验
 

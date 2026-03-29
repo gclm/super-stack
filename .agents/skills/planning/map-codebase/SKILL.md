@@ -13,9 +13,23 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 - nearby docs such as `README*`, `docs/`, architecture notes, and config files
 - `docs/reference/conventions.md` if it exists
 - `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `references/layered-entry.md`
 - `references/output-shape.md`
 - `references/runtime-footprint.md` when important evidence may live outside the repository
+- `references/contextweaver-playbook.md` when `ContextWeaver` is available
+
+## Context Retrieval
+
+When `ContextWeaver` is available in the environment, use it as the primary evidence accelerator, not as a replacement for architectural judgment.
+
+- first check whether `contextweaver` (or `cw`) is available
+- if available, verify index scope before scanning deeply
+- use `search --format json` and `prompt-context --format json` to collect candidate files and symbols
+- prefer official distributed scripts from `contextweaver install-skills` when stable structured output is needed
+- follow the decision rules in `references/contextweaver-playbook.md` to choose `read` vs `grep` vs semantic retrieval
+- then confirm critical claims by opening repository files directly
+- if unavailable, continue with normal repository-first scanning
 
 ## Goals
 
@@ -80,6 +94,8 @@ If `harness/state.md` exists, update it with:
 - current focus: codebase map completed
 - decision entry summarizing the repository scan
 
+If the mapping reveals durable repository-level drift, structural mismatch, or workflow implications worth preserving, append a concise entry to `harness/history.md`.
+
 ## Output
 
 Tell the user:
@@ -88,3 +104,8 @@ Tell the user:
 - the main architectural shape
 - the top concerns
 - the best next step, usually `brainstorm` or `plan`
+
+Choose output depth using `references/output-shape.md`:
+
+- default to `minimal` output (`summary.md` + `concerns.md`)
+- use `full` output only when repository-level onboarding or handoff needs a full map pack

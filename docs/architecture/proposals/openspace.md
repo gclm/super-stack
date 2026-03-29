@@ -251,7 +251,7 @@ OpenSpace 负责：
 
 当前 `super-stack` 的最小实现口径是：
 
-- `config/managed-config.json` 已内置 `openspace` server 定义
+- `config/manifest.json` 已内置 `openspace` server 定义
 - `codex_mcp` 已默认消费该 server
 - 当宿主存在 `openspace-mcp` 或设置 `OPENSPACE_MCP_BIN` 时，`scripts/install/install.sh --host codex` 会自动把它写入 `~/.codex/config.toml`
 
@@ -272,10 +272,10 @@ OpenSpace 负责：
 当前机器上的实际接线方式是：
 
 - `~/.codex/config.toml` 已存在 `[mcp_servers.openspace]`
-- `command` 指向 `~/.super-stack/openspace/bin/openspace-mcp-codex`
+- `command` 指向 `~/.super-stack/openspace/.conda/bin/openspace-mcp`
 - wrapper 负责补齐：
   - `OPENSPACE_HOST_SKILL_DIRS=~/.agents/skills`
-  - `OPENSPACE_WORKSPACE=~/.super-stack/openspace/workspace`
+  - `OPENSPACE_WORKSPACE=~/.super-stack/openspace`
 - OpenSpace host skills 已镜像到：
   - `~/.agents/skills/delegate-task`
   - `~/.agents/skills/skill-discovery`
@@ -386,7 +386,7 @@ OpenSpace 负责：
 当前机器上的最小已验证值是：
 
 - `OPENSPACE_HOST_SKILL_DIRS=~/.agents/skills`
-- `OPENSPACE_WORKSPACE=~/.super-stack/openspace/workspace`
+- `OPENSPACE_WORKSPACE=~/.super-stack/openspace`
 
 ## 11. Dashboard 怎么用
 

@@ -11,7 +11,24 @@ If `docs/reference/codebase/` does not exist yet:
 - create that directory when the repository already uses the standard `docs/ + harness/` layout
 - otherwise route through `repo-bootstrap` or the repository's own documentation bootstrap path first
 
-Default files:
+## Output Modes
+
+### `minimal` (default)
+
+Create:
+
+- `summary.md`
+- `concerns.md`
+
+Use this mode for:
+
+- targeted module work
+- repositories that already have mature architecture docs
+- post-migration projects where full map packs quickly go stale
+
+### `full` (on demand)
+
+Create:
 
 - `stack.md`
 - `structure.md`
@@ -21,6 +38,22 @@ Default files:
 - `testing.md`
 - `concerns.md`
 - `summary.md`
+
+Use this mode for:
+
+- first-time onboarding to an unfamiliar repository
+- explicit handoff or audit requests
+- repository-level mapping where broad visibility is needed
+
+## Escalation Rule
+
+Start with `minimal`.
+
+Escalate to `full` only when:
+
+- the user explicitly asks for full repository documentation
+- onboarding evidence is still insufficient after `minimal`
+- verification/review stages repeatedly fail due to missing baseline map details
 
 ## File Expectations
 

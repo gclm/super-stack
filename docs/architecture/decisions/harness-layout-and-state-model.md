@@ -374,7 +374,21 @@ docs/architecture/decisions/
 - requirements 总库
 - roadmap 总库
 
-### 5.4.2 `harness/tasks/<task-id>/`
+### 5.4.2 `harness/history.md`
+
+`harness/history.md` 保存仓库级历史变更流水，例如：
+
+- 关键架构调整
+- 重要验证结果
+- workflow / config 治理收口记录
+
+它应遵守：
+
+- append-first
+- 仅在修正事实错误时回写旧条目
+- 不替代 `harness/state.md` 的当前态职责
+
+### 5.4.3 `harness/tasks/<task-id>/`
 
 每个长任务一个目录：
 

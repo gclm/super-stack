@@ -2,7 +2,12 @@
 
 这个目录保留 `map-codebase` 产出的仓库结构化扫描结果。
 
-推荐文件：
+默认最小产出（`minimal`）：
+
+- `summary.md`
+- `concerns.md`
+
+按需完整产出（`full`）：
 
 - `stack.md`
 - `structure.md`
@@ -10,5 +15,3 @@
 - `conventions.md`
 - `integrations.md`
 - `testing.md`
-- `concerns.md`
-- `summary.md`

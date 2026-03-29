@@ -13,6 +13,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
 - nearby `references/` files if they exist
 - `AGENTS.md`
 - `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `references/skill-authoring-checklist.md`
 - `scripts/check/validate-skills.py`
 
@@ -32,6 +33,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
 - move long checklists, variant handling, and detailed heuristics into `references/`
 - avoid auxiliary files such as README, CHANGELOG, or installation notes inside a skill folder
 - when a skill changes repository-wide behavior expectations, update `AGENTS.md` or `harness/state.md` if that context would otherwise drift
+- when a skill changes repository-wide behavior expectations in a durable way, append a concise entry to `harness/history.md`
 - when host-installed skill copies also exist, treat the repository skill under `.agents/skills/` as the source of truth and avoid making the runtime copy the only edited location
 - default user-facing examples, summaries, and prompts to Chinese unless the repository or external interface requires English
 
@@ -52,7 +54,8 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
    - no obvious duplication with nearby skills
    - output/report shape matches the intended workflow
    - run `python3 scripts/check/validate-skills.py` when the repository skill set was changed
-6. Update `harness/state.md` when the change materially affects workflow behavior or maintenance conventions.
+6. Update `harness/state.md` when the change materially affects current workflow behavior or maintenance conventions.
+7. Append `harness/history.md` when the change materially affects repository-wide workflow behavior or maintenance conventions beyond the current state snapshot.
 
 ## Output
 

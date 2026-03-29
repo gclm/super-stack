@@ -22,6 +22,7 @@ If the project path is missing, ask the user for it in one short sentence:
 
 - `AGENTS.md`
 - `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `references/record-sources.md`
 - `references/auto-evolution-loop.md`
 - `references/artifact-schemas.md`
@@ -91,7 +92,8 @@ For source selection, slicing heuristics, long-running patterns, and artifact fi
     - `patch-proposed`
     - `apply-approved`
 14. Recommend where each lesson belongs: `references/`、mapping/scripts、`protocols/`、existing skill、`AGENTS.md`，or no repository change.
-15. Update `harness/state.md` when the retrospective changes repository workflow direction or maintenance priorities.
+15. Update `harness/state.md` when the retrospective changes the current repository workflow direction or maintenance priorities.
+16. Append `harness/history.md` when the retrospective produces a durable repository-level lesson, workflow change, or validation milestone worth preserving.
 
 ## Output
 

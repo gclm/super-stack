@@ -9,7 +9,7 @@ import shutil
 from typing import Any
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-MANIFEST_PATH = REPO_ROOT / "config" / "managed-config.json"
+MANIFEST_PATH = REPO_ROOT / "config" / "manifest.json"
 
 
 def load_manifest() -> dict[str, Any]:
@@ -18,9 +18,12 @@ def load_manifest() -> dict[str, Any]:
 
 def get_server_catalog() -> dict[str, dict[str, Any]]:
     manifest = load_manifest()
-    catalog = manifest.get("server_defs", {})
+    mcp = manifest.get("mcp", {})
+    if not isinstance(mcp, dict):
+        raise SystemExit("manifest.json must define a top-level mcp object")
+    catalog = mcp.get("servers", {})
     if not isinstance(catalog, dict):
-        raise SystemExit("managed-config.json must define a top-level server_defs object")
+        raise SystemExit("manifest.json must define mcp.servers as an object")
     return catalog
 
 
@@ -53,7 +56,7 @@ def normalize_mcp_server_entry(entry: Any, catalog: dict[str, dict[str, Any]]) -
     if not isinstance(definition, dict):
         raise SystemExit(f"unknown MCP server definition: {server_id}")
 
-    merged = dict(definition)
+    merged = render_templates(dict(definition), home=str(Path.home()))
     merged.update(overrides)
     merged["id"] = server_id
     return merged
@@ -65,6 +68,14 @@ def resolve_mcp_server_command(server: dict[str, Any]) -> str:
         command = os.environ.get(env_name, "")
         if command:
             return command
+
+    fixed_template = server.get("command_fixed_template", "")
+    if fixed_template:
+        return fixed_template
+
+    fixed_command = server.get("command_fixed", "")
+    if fixed_command:
+        return fixed_command
 
     command_name = server.get("command_name", "")
     if command_name:
@@ -82,7 +93,7 @@ def resolve_mcp_servers_for_block(block_name: str, runtime_root: str = "", home:
     catalog = get_server_catalog()
     resolved: list[dict[str, Any]] = []
     for entry in servers:
-        server = normalize_mcp_server_entry(entry, catalog)
+        server = render_templates(normalize_mcp_server_entry(entry, catalog), runtime_root=runtime_root, home=home)
         command = resolve_mcp_server_command(server)
         if not command:
             continue
@@ -93,6 +104,7 @@ def resolve_mcp_servers_for_block(block_name: str, runtime_root: str = "", home:
                 "command": command,
                 "args": list(server.get("args", [])),
                 "enabled": bool(server.get("enabled", True)),
+                "env": dict(server.get("env", {})),
             }
         )
     return resolved
@@ -108,8 +120,11 @@ def json_string_escape(value: str) -> str:
 
 def get_block(block_name: str) -> dict[str, Any]:
     manifest = load_manifest()
+    blocks = manifest.get("managed_blocks", {})
+    if not isinstance(blocks, dict):
+        raise SystemExit("manifest.json must define a top-level managed_blocks object")
     try:
-        return manifest["blocks"][block_name]
+        return blocks[block_name]
     except KeyError as exc:
         raise SystemExit(f"unknown block: {block_name}") from exc
 
@@ -159,12 +174,14 @@ def get_contains(block_name: str, runtime_root: str = "", home: str = "") -> lis
     contains = list(verify.get("contains", []))
     if verify.get("include_resolved_server_markers"):
         resolved_servers = resolve_mcp_servers_for_block(block_name, runtime_root=runtime_root, home=home)
-        if block_name == "codex_mcp":
+        block = get_block(block_name)
+        target_format = block.get("target_format")
+        if target_format == "toml":
             contains.extend(f"[mcp_servers.{server['id']}]" for server in resolved_servers)
-        elif block_name == "claude_mcp":
+        elif target_format == "json":
             contains.extend(json.dumps(server["id"], ensure_ascii=False) for server in resolved_servers)
         else:
-            raise SystemExit(f"include_resolved_server_markers is unsupported for block: {block_name}")
+            raise SystemExit(f"include_resolved_server_markers is unsupported for block format: {target_format}")
     return contains
 
 
@@ -249,6 +266,12 @@ def render_codex_mcp(block_name: str) -> str:
                 f'enabled = {str(server["enabled"]).lower()}',
             ]
         )
+        env = server.get("env", {})
+        if env:
+            lines.append("")
+            lines.append(f'[mcp_servers.{server["id"]}.env]')
+            for key in sorted(env):
+                lines.append(f'{key} = "{toml_escape(str(env[key]))}"')
     return "\n".join(lines)
 
 
@@ -259,14 +282,17 @@ def render_claude_hooks(block_name: str, runtime_root: str) -> str:
 
 def render_claude_mcp(block_name: str) -> str:
     resolved = resolve_mcp_servers_for_block(block_name)
-    rendered = {
-        "mcpServers": {
-            server["id"]: {
-                "command": server["command"],
-                "args": server["args"],
-                "enabled": server["enabled"],
-            }
-            for server in resolved
+    rendered_servers: dict[str, dict[str, Any]] = {}
+    for server in resolved:
+        entry: dict[str, Any] = {
+            "command": server["command"],
+            "args": server["args"],
+            "enabled": server["enabled"],
         }
-    }
+        env = server.get("env", {})
+        if env:
+            entry["env"] = env
+        rendered_servers[server["id"]] = entry
+
+    rendered = {"mcpServers": rendered_servers}
     return json.dumps(rendered, ensure_ascii=False, indent=2) + "\n"

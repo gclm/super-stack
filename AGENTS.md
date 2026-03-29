@@ -192,6 +192,7 @@ Project docs and execution state live under `docs/` and `harness/` in the target
 - `docs/reference/requirements.md` - optional numbered requirements and acceptance notes when a dedicated file is useful
 - `docs/reference/codebase/*` - optional codebase maps when `map-codebase` is active
 - `harness/state.md` - current status, active phase, blockers, and decisions
+- `harness/history.md` - append-first repository change history and validation milestones
 - `harness/tasks/<task-id>/...` - durable task packs for long-running work
 
 If the project does not yet have this scaffold, initialize it via `repo-bootstrap` or `templates/generated-project/`.

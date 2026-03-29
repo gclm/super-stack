@@ -20,7 +20,7 @@
 - 只维护全局配置底座
 - 不再维护项目级安装分支
 - 浏览器默认主链路改为宿主侧 browser MCP / browser plugin；对 Codex 当前优先 `chrome-devtools-mcp`
-- 宿主 MCP 受管配置按 `codex_mcp` / `claude_mcp` 两个 host block 维护；后续新增 MCP server 默认只改 `config/managed-config.json` 里的共享 `server_defs`
+- 宿主 MCP 受管配置按 `codex_mcp` / `claude_mcp` 两个 host block 维护；后续新增 MCP server 默认只改 `config/manifest.json` 里的共享 `mcp.servers`；受管块与 skill 校验例外也统一放在同一份 manifest
 - `~/.super-stack/runtime` 是纯运行仓库，不是重新安装用的完整 source repo 副本
 
 ## 仓库关系
@@ -77,7 +77,7 @@
 
 - `super-stack` 不再安装或维护 `agent-browser` wrapper
 - 浏览器能力由宿主配置决定
-- `config/managed-config.json` 的顶层 `server_defs` 是当前受管 MCP server 真源
+- `config/manifest.json` 的 `mcp.servers` 是当前受管 MCP server 真源
 - Codex 当前应优先使用已配置的 `chrome-devtools-mcp`
 - OpenSpace 当前已纳入 `codex_mcp` 的受管 server 列表；当宿主存在 `openspace-mcp` 或设置 `OPENSPACE_MCP_BIN` 时会自动写入 Codex 配置
 - Claude Code 当前应优先使用已配置的 browser MCP 或 browser plugin

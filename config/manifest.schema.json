@@ -1,0 +1,164 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://super-stack.local/config/manifest.schema.json",
+  "title": "super-stack config manifest",
+  "type": "object",
+  "required": ["manifest_version", "mcp", "managed_blocks", "skill_validation"],
+  "additionalProperties": false,
+  "properties": {
+    "manifest_version": {"type": "integer", "const": 1},
+    "mcp": {
+      "type": "object",
+      "required": ["servers"],
+      "additionalProperties": false,
+      "properties": {
+        "servers": {
+          "type": "object",
+          "minProperties": 1,
+          "additionalProperties": {"$ref": "#/$defs/server"}
+        }
+      }
+    },
+    "managed_blocks": {
+      "type": "object",
+      "minProperties": 1,
+      "additionalProperties": {"$ref": "#/$defs/managed_block"}
+    },
+    "skill_validation": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "ignore_warnings": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/ignore_warning_rule"}
+        }
+      },
+      "required": ["ignore_warnings"]
+    }
+  },
+  "$defs": {
+    "string_map": {
+      "type": "object",
+      "additionalProperties": {"type": "string"}
+    },
+    "server": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "command_env": {"type": "string", "minLength": 1},
+        "command_fixed": {"type": "string", "minLength": 1},
+        "command_fixed_template": {"type": "string", "minLength": 1},
+        "command_name": {"type": "string", "minLength": 1},
+        "args": {
+          "type": "array",
+          "items": {"type": "string"}
+        },
+        "env": {"$ref": "#/$defs/string_map"},
+        "enabled": {"type": "boolean"}
+      }
+    },
+    "verify": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "contains": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "markers": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "registered_entries": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        },
+        "agent_config_files_field": {"type": "string", "minLength": 1},
+        "commands_field": {"type": "string", "minLength": 1},
+        "include_resolved_server_markers": {"type": "boolean"}
+      }
+    },
+    "agent_def": {
+      "type": "object",
+      "required": ["id", "description", "config_file"],
+      "additionalProperties": false,
+      "properties": {
+        "id": {"type": "string", "minLength": 1},
+        "description": {"type": "string", "minLength": 1},
+        "config_file": {"type": "string", "minLength": 1}
+      }
+    },
+    "hook_def": {
+      "type": "object",
+      "required": ["event"],
+      "additionalProperties": true,
+      "properties": {
+        "event": {"type": "string", "minLength": 1},
+        "command": {"type": "string", "minLength": 1},
+        "command_template": {"type": "string", "minLength": 1}
+      }
+    },
+    "mcp_server_ref": {
+      "oneOf": [
+        {"type": "string", "minLength": 1},
+        {
+          "type": "object",
+          "required": ["id"],
+          "additionalProperties": true,
+          "properties": {
+            "id": {"type": "string", "minLength": 1}
+          }
+        }
+      ]
+    },
+    "managed_block": {
+      "type": "object",
+      "required": ["kind", "target_format", "content"],
+      "additionalProperties": false,
+      "properties": {
+        "kind": {"type": "string", "enum": ["agents", "hooks", "mcp"]},
+        "target_format": {"type": "string", "enum": ["toml", "json"]},
+        "begin_marker": {"type": "string", "minLength": 1},
+        "end_marker": {"type": "string", "minLength": 1},
+        "target_file_template": {"type": "string", "minLength": 1},
+        "ownership": {"type": "string", "minLength": 1},
+        "content": {
+          "type": "object",
+          "additionalProperties": true,
+          "properties": {
+            "servers": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/mcp_server_ref"}
+            },
+            "hooks": {},
+            "features": {"type": "object"},
+            "agents": {"type": "object"},
+            "agent_defs": {
+              "type": "array",
+              "items": {"$ref": "#/$defs/agent_def"}
+            }
+          }
+        },
+        "verify": {"$ref": "#/$defs/verify"},
+        "managed_files": {
+          "type": "array",
+          "items": {"type": "string", "minLength": 1}
+        }
+      }
+    },
+    "ignore_warning_rule": {
+      "type": "object",
+      "required": ["path_glob", "codes"],
+      "additionalProperties": false,
+      "properties": {
+        "path_glob": {"type": "string", "minLength": 1},
+        "codes": {
+          "type": "array",
+          "minItems": 1,
+          "items": {"type": "string", "minLength": 1}
+        },
+        "reason": {"type": "string"}
+      }
+    }
+  }
+}

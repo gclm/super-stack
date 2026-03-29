@@ -1,36 +1,59 @@
-# Hook 风险分级回归矩阵
+# Hook Risk Regression Matrix
 
-用于记录 readonly hook 的 `allow / ask / deny` 判定是否稳定。
+Records the readonly hook allow / ask verdicts for stability checks.
 
-## 基本信息
+## Strategy
 
-- 验证日期：
-- 宿主：
-- Hook 脚本版本：
-- super-stack 版本或提交：
+Two tiers only (no deny):
 
-## 场景矩阵
+- `allow`: whitelisted read-only commands auto-approved
+- `ask`: everything else falls through to host default confirmation
 
-| 编号 | 命令 | 预期 verdict | 风险等级 | 证据 | 结果 | 备注 |
-|------|------|---------------|----------|------|------|------|
-| H1 | `pwd` | `allow` | `low` | | | |
-| H2 | `git status` | `allow` | `low` | | | |
-| H3 | `pwd && rg TODO README.md` | `allow` | `low` | | | |
-| H4 | `echo hi > out.txt` | `ask` | `medium` | | | |
-| H5 | `mkdir tmp-build` | `ask` | `medium` | | | |
-| H6 | `git add README.md` | `ask` | `medium` | | | |
-| H7 | `rm -rf tmp-build` | `deny` | `high` | | | |
-| H8 | `git reset --hard` | `deny` | `high` | | | |
+See docs/architecture/decisions/readonly-command-hook.md for full design.
 
-## 需要重点记录的证据
+## Basic Info
 
-- hook 输出 JSON
+- Verification date:
+- Host:
+- Hook script version:
+- super-stack version or commit:
+
+## Scenario Matrix
+
+| ID | Command | Expected | Risk | Evidence | Result | Notes |
+|----|---------|----------|------|----------|--------|-------|
+| H1 | `pwd` | allow | low | | | |
+| H2 | `git status` | allow | low | | | |
+| H3 | `pwd && rg TODO README.md` | allow | low | | | |
+| H4 | `sed -n '1,100p' file.txt` | allow | low | | | |
+| H5 | `sed -n ... && printf '\n---\n' && sed -n ...` | allow | low | | | |
+| H6 | `cat file.txt 2>/dev/null` | allow | low | | | |
+| H7 | `rg --files docs | sort` | allow | low | | | |
+| H8 | `nl -ba file.txt | sed -n '1,120p'` | allow | low | | | |
+| H9 | `printf 'hello'` | allow | low | | | |
+| H10 | `git branch -d old-branch` | ask | medium | | | |
+| H11 | `git branch -D old-branch` | ask | medium | | | |
+| H12 | `echo hi > out.txt` | ask | medium | | | |
+| H13 | `mkdir tmp-build` | ask | medium | | | |
+| H14 | `git add README.md` | ask | medium | | | |
+| H15 | `rm -rf tmp-build` | ask | medium | | | |
+| H16 | `git reset --hard` | ask | medium | | | |
+| H17 | `git clean -fdx` | ask | medium | | | |
+| H18 | `dd if=/dev/zero of=test.img bs=1M` | ask | medium | | | |
+| H19 | `shutdown -h now` | ask | medium | | | |
+| H20 | `open https://example.com` | ask | medium | | | |
+| H21 | `curl https://example.com` | ask | medium | | | |
+| H22 | `for f in *.txt; do echo "$f"; done` | ask | medium | | | |
+
+## Evidence Checklist
+
+- hook output JSON
 - `harness/.runtime/super-stack-readonly-hook.log`
-- 宿主是否正确执行 allow / deny
-- ask 是否仍回到默认确认流
+- host correctly executes allow
+- ask correctly falls through to host default
 
-## 结论
+## Conclusion
 
-- 总体结果：
-- 主要风险漂移：
-- 建议补规则：
+- Overall result:
+- Risk drift found:
+- Rules to add:

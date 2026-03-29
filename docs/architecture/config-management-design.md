@@ -197,7 +197,7 @@
 职责：
 
 - 在顶层 `mcpServers` 下登记 super-stack 当前要启用的宿主 MCP server
-- 与 Codex 侧复用同一份共享 `server_defs`
+- 与 Codex 侧复用同一份共享 `mcp.servers`
 - 保持 future MCP 扩展仍然是 manifest 驱动，而不是 shell 逻辑驱动
 
 边界：
@@ -320,24 +320,18 @@ uninstall 应遵循：
 
 ### 8.2 下一阶段
 
-引入一个轻量的 managed config manifest，作为 install / check / uninstall 的共享定义源。
+维持当前单一 `config/manifest.json`，作为 install / check / uninstall / validation 的共享定义源。
 
-manifest 至少应能表达：
+当前 `manifest.json` 至少应能表达：
 
-- block id
-- target file
-- markers
-- content source
-- expected references
-- uninstall semantics
+- `manifest_version`
+- `mcp.servers`
+- 带显式 `kind` 的 `managed_blocks`
+- `skill_validation.ignore_warnings`
+- target file / markers / verify rules
+- host 复用的 MCP server catalog
 
-格式可以是：
-
-- TOML
-- JSON
-- YAML
-
-在当前仓库上下文里，TOML 或 JSON 都可接受；重点不是格式，而是不要再让安装规则只存在于零散 shell 脚本中。
+当前仓库已落地为 JSON；重点仍然不是格式，而是 install / check / validation 统一消费单一 manifest，而不是把规则散落在脚本里。
 
 ## 9. 渐进迁移计划
 
@@ -354,13 +348,13 @@ manifest 至少应能表达：
 
 ### Phase 2
 
-抽取 managed config manifest 的最小定义层。
+补强单一 manifest 的显式校验与错误信息。
 
 产出：
 
-- 一个集中定义 Codex hooks / agents / MCP、Claude hooks / MCP 的 manifest
-- 一份可被多个 host block 复用的共享 `server_defs`
-- 一层最小渲染/检查辅助逻辑
+- `config/manifest.json` 统一承载 Codex hooks / agents / MCP、Claude hooks / MCP 与 skill validation exception
+- 一份可被多个 host block 复用的共享 `mcp.servers`
+- 一层最小渲染/检查/manifest schema 校验逻辑
 
 ### Phase 3
 
@@ -399,8 +393,8 @@ manifest 至少应能表达：
 
 控制方式：
 
-- 下一阶段引入共享 manifest
-- 让 install / check 消费同一份定义
+- 当前已引入共享 manifest
+- install / check / validation 已消费同一份定义，且通过 schema + semantic validation 双层校验防止配置漂移
 
 ### 10.3 风险：卸载预期与真实 install-state 不一致
 
