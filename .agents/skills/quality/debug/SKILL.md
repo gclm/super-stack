@@ -10,8 +10,9 @@ Use this skill when the problem is a bug, failing test, flaky behavior, incorrec
 ## Read First
 
 - `protocols/debug.md`
-- `.planning/STATE.md` if it exists
-- `.planning/CONVENTIONS.md` if it exists
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - the closest failing test, log, stack trace, or reproduction steps
 
 ## Goals

@@ -16,7 +16,7 @@ fail() {
 assert_contains() {
   local path="$1"
   local text="$2"
-  rg -q --fixed-strings "$text" "$path" || fail "未在 ${path} 中找到：${text}"
+  rg -q --fixed-strings -- "$text" "$path" || fail "未在 ${path} 中找到：${text}"
 }
 
 TMP_HOME="$(mktemp -d)"

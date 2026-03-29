@@ -1,0 +1,9 @@
+{
+  "task_id": "{{TASK_ID}}",
+  "updated_at": "{{DATE}}",
+  "status": "planned",
+  "implemented": [],
+  "verified": [],
+  "unverified": [],
+  "risks": []
+}

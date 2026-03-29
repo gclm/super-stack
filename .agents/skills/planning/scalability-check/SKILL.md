@@ -12,8 +12,8 @@ Use this skill when a feature or architecture decision may be constrained by loa
 - current architecture and bottlenecks
 - workload assumptions and traffic shape
 - queue, cache, database, and external dependency behavior
-- `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
-
+- `docs/reference/requirements.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - identify the first likely scale limits

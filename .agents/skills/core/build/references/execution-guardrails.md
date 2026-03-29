@@ -57,8 +57,8 @@ Route to `qa` when:
 
 ## 2. State Writeback
 
-Update `.planning/STATE.md` when any of these change:
-
+Update `harness/state.md` when any of these change:
+- `harness/history.md` if it exists
 - active phase
 - current focus
 - blockers

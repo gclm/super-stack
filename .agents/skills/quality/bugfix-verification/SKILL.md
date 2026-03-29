@@ -10,7 +10,8 @@ Use this skill after a bugfix when the real question is not "did the code change
 ## Read First
 
 - the bug report, failing test, or reproduction notes
-- `.planning/STATE.md` if it exists
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - the latest fix diff or summary
 - the closest relevant verification evidence
 

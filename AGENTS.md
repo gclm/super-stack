@@ -6,7 +6,7 @@ This repository provides a shared core:
 
 - `AGENTS.md` for cross-host operating guidance
 - `.agents/skills/` for reusable workflows
-- `templates/` for project memory and planning files
+- `templates/generated-project/` for repo-local docs plus harness scaffold
 - `protocols/` for stable engineering rules
 - host adapters under `.claude/` and `.codex/`
 
@@ -51,6 +51,7 @@ Supporting skills can be used within or between stages when appropriate:
 
 - `debug` for bug diagnosis before fixing
 - `tdd-execution` for RED -> GREEN -> REFACTOR execution
+- `repo-bootstrap` for inspecting a repository and conditionally initializing the standard `docs/ + harness/` scaffold before task-level work begins
 - `skill-maintenance` for creating, refactoring, or tightening repository skills and their references
 - `release-check` for final release-readiness checks
 - `frontend-refactor` for larger UI and interaction cleanup
@@ -182,49 +183,52 @@ If a stage precondition is not met, route backward explicitly instead of improvi
 
 ## Shared State
 
-Project memory lives under `.planning/` in the target project:
+Project docs and execution state live under `docs/` and `harness/` in the target project:
 
-- `PROJECT.md` - project vision, scope, constraints
-- `REQUIREMENTS.md` - numbered requirements and acceptance notes
-- `ROADMAP.md` - phases, tasks, dependencies
-- `STATE.md` - current status, active phase, blockers, decisions
-- `CONVENTIONS.md` - language, commit, and project-specific engineering conventions
+- `docs/index.md` - documentation entrypoint and navigation
+- `docs/overview/project-overview.md` - project vision, scope, and constraints
+- `docs/overview/roadmap.md` - phases, tasks, and dependencies
+- `docs/reference/conventions.md` - language, commit, and project-specific engineering conventions
+- `docs/reference/requirements.md` - optional numbered requirements and acceptance notes when a dedicated file is useful
+- `docs/reference/codebase/*` - optional codebase maps when `map-codebase` is active
+- `harness/state.md` - current status, active phase, blockers, and decisions
+- `harness/tasks/<task-id>/...` - durable task packs for long-running work
 
-If the project does not yet have `.planning/`, initialize it from `templates/planning/`.
-Version these planning files by default so workflow state survives across turns, hosts, and collaborators.
-Only ignore host-generated or machine-local `.planning` artifacts such as hook logs.
+If the project does not yet have this scaffold, initialize it via `repo-bootstrap` or `templates/generated-project/`.
+Version these docs and harness files by default so workflow state survives across turns, hosts, and collaborators.
+Only ignore host-generated or machine-local `harness/.runtime/` artifacts such as hook logs.
 
 ## Stage State Rules
 
 Each stage should update or consume state predictably:
 
 - `discuss`
-  - read: `PROJECT.md`, `REQUIREMENTS.md`, `STATE.md` if present
-  - write: clarify `PROJECT.md`, `REQUIREMENTS.md`, `STATE.md`
+  - read: `docs/overview/project-overview.md`, `docs/reference/requirements.md`, `harness/state.md` if present
+  - write: clarify `docs/overview/project-overview.md`, `docs/reference/requirements.md`, `harness/state.md`
 - `brainstorm`
   - read: requirements, constraints, existing code context
-  - write: decision notes into `STATE.md` and requirement/project notes when helpful
+  - write: decision notes into `harness/state.md` and relevant `docs/` notes when helpful
 - `map-codebase`
   - read: local docs, manifests, source layout
-  - write: `.planning/codebase/*` and `STATE.md`
+  - write: `docs/reference/codebase/*` and `harness/state.md`
 - `plan`
-  - read: `PROJECT.md`, `REQUIREMENTS.md`, `STATE.md`
-  - write: `ROADMAP.md`, `STATE.md`
+  - read: `docs/overview/project-overview.md`, `docs/reference/requirements.md`, `harness/state.md`
+  - write: `docs/overview/roadmap.md`, `harness/state.md`
 - `build`
-  - read: `ROADMAP.md`, `STATE.md`, relevant code and tests
-  - write: code changes and progress notes in `STATE.md`
+  - read: `docs/overview/roadmap.md`, `harness/state.md`, relevant code and tests
+  - write: code changes and progress notes in `harness/state.md`
 - `review`
-  - read: diff, tests, `ROADMAP.md` or request context
+  - read: diff, tests, `docs/overview/roadmap.md` or request context
   - write: no planning file required unless review changes release confidence or reveals blockers
 - `verify`
   - read: request outcome, requirements, tests, current state
-  - write: update `STATE.md` if verification changes readiness or reveals gaps
+  - write: update `harness/state.md` if verification changes readiness or reveals gaps
 - `qa`
   - read: requirements, current state, test/preview instructions
-  - write: update `STATE.md` if QA changes confidence or identifies blockers
+  - write: update `harness/state.md` if QA changes confidence or identifies blockers
 - `ship`
-  - read: `STATE.md`, `ROADMAP.md`, diff, verification evidence
-  - write: final readiness or release notes into `STATE.md` when useful
+  - read: `harness/state.md`, `docs/overview/roadmap.md`, diff, verification evidence
+  - write: final readiness or release notes into `harness/state.md` when useful
 
 When workflow defaults such as state continuity, commit conventions, language defaults, or shared operating guards matter, use `protocols/workflow-governance.md`.
 
@@ -388,7 +392,7 @@ When running on a host where skills may not auto-expand:
 1. choose the stage from the routing table above
 2. state the chosen stage in your own reasoning and user update
 3. read the corresponding `.agents/skills/.../SKILL.md` only when more procedural detail is needed
-4. continue following `protocols/` and `.planning/` state rules
+4. continue following `protocols/` and the `docs/ + harness/` state rules
 
 If the stage is clear and the work is straightforward, the router alone may be enough.
 If the stage needs a richer checklist or output shape, expand the corresponding skill file manually.

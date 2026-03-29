@@ -12,8 +12,8 @@ Use this skill when the question is whether responsibilities sit in the right mo
 - architecture map or current module layout
 - dependency graph or import paths
 - cross-boundary calls and shared types
-- `.planning/PROJECT.md` and `.planning/STATE.md` if they exist
-
+- `docs/overview/project-overview.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - expose unclear ownership and accidental coupling

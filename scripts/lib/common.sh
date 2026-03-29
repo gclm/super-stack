@@ -9,11 +9,6 @@ SUPER_STACK_RUNTIME_ROOT="${SUPER_STACK_HOME}/runtime"
 SUPER_STACK_STATE_BASE="${SUPER_STACK_HOME}/state"
 SUPER_STACK_BACKUP_ROOT="${SUPER_STACK_HOME}/backup"
 SUPER_STACK_MANAGED_CHECK_SCRIPT="${REPO_ROOT}/scripts/config/check_managed_config.py"
-BROWSER_WRAPPER_NAMES=(
-  "super-stack-browser"
-  "super-stack-browser-health"
-  "super-stack-browser-reset"
-)
 
 log() {
   printf '[super-stack] %s\n' "$*"
@@ -101,7 +96,9 @@ copy_runtime_tree() {
 
   copy_path_into_dir "${REPO_ROOT}/AGENTS.md" "$dest_root" "AGENTS.md"
   copy_path_into_dir "${REPO_ROOT}/README.md" "$dest_root" "README.md"
-  copy_path_into_dir "${REPO_ROOT}/bin" "$dest_root" "bin"
+  if [[ -d "${REPO_ROOT}/bin" ]]; then
+    copy_path_into_dir "${REPO_ROOT}/bin" "$dest_root" "bin"
+  fi
   copy_path_into_dir "${REPO_ROOT}/protocols" "$dest_root" "protocols"
   copy_path_into_dir "${REPO_ROOT}/scripts" "$dest_root" "scripts"
   copy_path_into_dir "${REPO_ROOT}/templates" "$dest_root" "templates"
@@ -170,10 +167,6 @@ copy_dir_if_missing() {
   cp -R "$src" "$dest"
 }
 
-browser_wrapper_names() {
-  printf '%s\n' "${BROWSER_WRAPPER_NAMES[@]}"
-}
-
 mirror_repo_skills() {
   local dest_root="$1"
   local skill_dir
@@ -182,6 +175,7 @@ mirror_repo_skills() {
 
   for skill_dir in "${REPO_ROOT}"/.agents/skills/*/*; do
     [[ -d "$skill_dir" ]] || continue
+    [[ -f "${skill_dir}/SKILL.md" ]] || continue
     copy_tree "$skill_dir" "${dest_root}/$(basename "$skill_dir")"
   done
 }
@@ -306,7 +300,7 @@ check_contains() {
     return
   fi
 
-  if rg -q --fixed-strings "$pattern" "$path"; then
+  if rg -q --fixed-strings -- "$pattern" "$path"; then
     ok "${label}"
   else
     warn "${label}: 未在 ${path} 中找到预期内容"

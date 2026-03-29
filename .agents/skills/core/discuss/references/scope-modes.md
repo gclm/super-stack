@@ -19,8 +19,8 @@ Use this reference when the early conversation could drift between different del
 
 - first phase is validation or skeleton work
 - later phases may enter product delivery
-- boundaries should be explicit in `.planning/STATE.md` or `.planning/ROADMAP.md`
-
+- boundaries should be explicit in `harness/state.md` or `docs/overview/roadmap.md`
+- `harness/history.md` if it exists
 ## Capture Early
 
 When this matters, record:

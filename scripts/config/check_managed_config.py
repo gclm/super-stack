@@ -33,37 +33,65 @@ def main() -> int:
     get_block(args.block)
 
     if args.field == "config_files":
-        for item in get_config_files(args.block, runtime_root=args.runtime_root, home=args.home):
+        for item in get_config_files(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        ):
             print(item)
         return 0
 
     if args.field == "commands":
-        for item in get_commands(args.block, runtime_root=args.runtime_root, home=args.home):
+        for item in get_commands(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        ):
             print(item)
         return 0
 
     if args.field == "managed_files":
-        for item in get_managed_files(args.block, runtime_root=args.runtime_root, home=args.home):
+        for item in get_managed_files(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        ):
             print(item)
         return 0
 
     if args.field == "contains":
-        for item in get_contains(args.block, runtime_root=args.runtime_root, home=args.home):
+        for item in get_contains(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        ):
             print(item)
         return 0
 
     if args.field == "registered_entries":
-        for item in get_registered_entries(args.block, runtime_root=args.runtime_root, home=args.home):
+        for item in get_registered_entries(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        ):
             print(item)
         return 0
 
     if args.field == "markers":
-        for item in get_markers(args.block, runtime_root=args.runtime_root, home=args.home):
+        for item in get_markers(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        ):
             print(item)
         return 0
 
     if args.field == "target_file":
-        target = get_target_file(args.block, runtime_root=args.runtime_root, home=args.home)
+        target = get_target_file(
+            args.block,
+            runtime_root=args.runtime_root,
+            home=args.home,
+        )
         if target:
             print(target)
         return 0

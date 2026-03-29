@@ -9,9 +9,10 @@ Use this skill when the project has a current task ready for execution.
 
 ## Read First
 
-- `.planning/STATE.md`
-- `.planning/ROADMAP.md`
-- `.planning/CONVENTIONS.md` if it exists
+- `harness/state.md`
+- `harness/history.md` if it exists
+- `docs/overview/roadmap.md`
+- `docs/reference/conventions.md` if it exists
 - relevant code and tests
 - `protocols/tdd.md`
 - project-local rules from `AGENTS.md` and nearby skill files
@@ -62,8 +63,9 @@ Use this skill when the project has a current task ready for execution.
 5. Inspect the relevant code paths and downstream surfaces that must stay aligned.
 6. Implement the smallest sufficient change.
 7. Run relevant verification, including the nearest real runtime path when practical.
-8. Update `.planning/STATE.md` with progress, blockers, environment findings, and temporary-versus-final decisions.
-9. If the slice is at a meaningful checkpoint, state whether it is commit-ready now or what is still blocking a clean checkpoint.
+8. Update `harness/state.md` with current progress, blockers, environment findings, temporary-versus-final decisions, and related task-pack notes when harness artifacts are in use.
+9. When the build materially changes repository workflow, runtime behavior, validation posture, or future maintenance direction, append a concise entry to `harness/history.md` if it exists.
+10. If the slice is at a meaningful checkpoint, state whether it is commit-ready now or what is still blocking a clean checkpoint.
 
 ## Output
 

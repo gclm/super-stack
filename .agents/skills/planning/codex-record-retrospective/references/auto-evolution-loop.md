@@ -135,8 +135,8 @@ After approved changes are applied, do a text-level validation pass:
 - `SKILL.md` remains a thin entry file
 - related routing or state files stay aligned
 
-If the change materially alters repository workflow behavior, update `.planning/STATE.md`.
-
+If the change materially alters repository workflow behavior, update `harness/state.md`.
+- `harness/history.md` if it exists
 ## Automation Output Boundary
 
 When retrospective work is triggered by automation, cron, or a scheduled morning check, default the generated artifacts to the automation-owned output directory first.

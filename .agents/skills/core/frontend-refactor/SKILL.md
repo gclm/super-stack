@@ -9,8 +9,9 @@ Use this skill when a frontend change is larger than a simple bugfix and the rea
 
 ## Read First
 
-- `.planning/ROADMAP.md` and `.planning/STATE.md` if they exist
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/overview/roadmap.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - the closest layout, state, and routing files involved
 - any existing design or product notes that constrain the refactor
 - `references/refactor-slices.md` when the work needs safer slicing

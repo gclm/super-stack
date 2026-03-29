@@ -15,24 +15,26 @@ def main() -> int:
     event_name = str(payload.get("hook_event_name", "")).lower()
     cwd = payload.get("cwd") or os.getcwd()
     workdir = Path(cwd)
-    planning_dir = workdir / ".planning"
-    state_file = planning_dir / "STATE.md"
-    hook_log = planning_dir / ".super-stack-codex-hooks.log"
+    harness_dir = workdir / "harness"
+    state_file = harness_dir / "state.md"
+    runtime_dir = harness_dir / ".runtime"
+    hook_log = runtime_dir / "super-stack-codex-hooks.log"
 
-    if planning_dir.exists():
+    if harness_dir.exists():
+        runtime_dir.mkdir(parents=True, exist_ok=True)
         with hook_log.open("a", encoding="utf-8") as handle:
             handle.write(f"{event_name}\n")
 
     if event_name == "sessionstart" and state_file.exists():
         lines = state_file.read_text(encoding="utf-8").splitlines()[:20]
-        additional_context = "[super-stack] resuming from .planning/STATE.md\n" + "\n".join(lines)
+        additional_context = "[super-stack] resuming from harness/state.md\n" + "\n".join(lines)
         print(json.dumps({"additionalContext": additional_context}, ensure_ascii=False))
         return 0
 
     if event_name == "stop" and state_file.exists():
         print(
             json.dumps(
-                {"additionalContext": "[super-stack] remember to leave STATE.md current"},
+                {"additionalContext": "[super-stack] remember to leave harness/state.md current"},
                 ensure_ascii=False,
             )
         )

@@ -94,7 +94,7 @@
     "problem_type": "long-running execution gap",
     "target_files": [
       ".agents/skills/planning/plan/SKILL.md",
-      ".planning/ROADMAP.md",
+      "docs/overview/roadmap.md",
       ".agents/skills/planning/codex-record-retrospective/references/long-running-agent-patterns.md"
     ],
     "change_kind": "introduce durable progress artifact guidance",

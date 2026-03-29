@@ -15,9 +15,9 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 
 ## Read First
 
-- `.planning/REQUIREMENTS.md`
-- `.planning/STATE.md`
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/reference/requirements.md` if it exists
+- `harness/state.md`
+- `docs/reference/conventions.md` if it exists
 - `protocols/verify.md`
 - `references/scope-alignment.md` when the work may have drifted beyond the original intent
 
@@ -30,6 +30,7 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 - distinguish local/unit/integration proof from true host-runtime proof instead of collapsing them into one confidence statement
 - catch cases where implementation drifted from the latest approved plan or where evidence is blocked by environment setup rather than product logic
 - classify evidence strength consistently so completion claims do not outrun the real proof level
+- prefer an independent cross-check for structural or artifact-level validation instead of relying only on same-context self-confirmation
 
 ## Rules
 
@@ -42,6 +43,8 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
   - `scripted-flow`
   - `real-integration`
 - do not imply `real-integration` confidence when only `compile`, `test`, or `scripted-flow` evidence exists
+- for repository bootstrap, generated-artifact validation, migration checks, or multi-file semantic alignment, prefer an independent read-only subagent cross-check when the host supports it
+- if verification stayed in a single context because no subagent or secondary observer was available, state that limit explicitly instead of presenting the result as strong confirmation
 - if verification reveals likely defects or regressions that need findings-first treatment, route back to `review` or `build`
 - if verification reveals the missing confidence is really about user-flow or runtime behavior, route to `qa`
 - for complex or ambiguous tasks, always separate:
@@ -56,20 +59,23 @@ Do not use this skill as a substitute for findings-first review or user-flow QA:
 1. Identify the relevant requirement or user request.
 2. Confirm the intended scope boundary before checking evidence.
 3. Choose the closest proof commands or checks.
-4. Explicitly classify each proof source by evidence level:
+4. Decide whether the task needs an independent cross-check:
+   - use one by default for repo structure, generated artifacts, migration output, or multi-file semantic consistency
+   - if unavailable, keep going but mark the result as single-context verification
+5. Explicitly classify each proof source by evidence level:
    - `compile`: syntax, typecheck, build, lint, generated-client sync
    - `test`: unit, integration, contract, or focused automated tests
    - `scripted-flow`: shell script, smoke command, seeded scenario, or local end-to-end path
    - `real-integration`: real host, real login, real callback, real storage, or real external dependency path
-5. State the strongest evidence level reached and the missing next level, if any.
-6. When a check fails, distinguish missing tools from shell-init or runtime-environment issues before concluding the feature is unverified.
-7. Run them.
-8. Summarize the result using four buckets:
+6. State the strongest evidence level reached and the missing next level, if any.
+7. When a check fails, distinguish missing tools from shell-init or runtime-environment issues before concluding the feature is unverified.
+8. Run them.
+9. Summarize the result using four buckets:
    - `已实现`
    - `已验证`
    - `未验证`
    - `缺口`
-9. If the request is really asking “是否已经做到/做到哪一步了”, make sure the answer distinguishes implementation progress from proof strength instead of returning a single blended confidence statement.
+10. If the request is really asking “是否已经做到/做到哪一步了”, make sure the answer distinguishes implementation progress from proof strength instead of returning a single blended confidence statement.
 
 ## Output
 
@@ -77,6 +83,7 @@ Report:
 
 - scope alignment
 - strongest evidence level reached
+- whether an independent cross-check was used
 - 已实现
 - 已验证
 - 未验证

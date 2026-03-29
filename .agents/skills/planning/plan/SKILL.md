@@ -9,10 +9,10 @@ Use this skill after requirements are clear enough to define delivery phases.
 
 ## Read First
 
-- `.planning/PROJECT.md`
-- `.planning/REQUIREMENTS.md`
-- `.planning/STATE.md`
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/overview/project-overview.md`
+- `docs/reference/requirements.md` if it exists
+- `harness/state.md`
+- `docs/reference/conventions.md` if it exists
 - `protocols/tdd.md`
 - `references/planning-modes.md` when phase boundaries depend on validation-first or staged delivery
 - `references/scope-refresh.md` when planning is being revisited after changed assumptions or when design-heavy work needs stronger task shaping
@@ -37,8 +37,8 @@ Use this skill after requirements are clear enough to define delivery phases.
 5. Group work into phases with visible value.
 6. For any structural task, explicitly include matching doc, test, CI, and state-file updates instead of treating them as optional follow-up.
 7. Define tasks with files, verification, dependencies, and environment assumptions when relevant.
-8. Update `.planning/ROADMAP.md`.
-9. Update `.planning/STATE.md` with active phase, current focus, and the latest scope or architecture change when applicable.
+8. Update `docs/overview/roadmap.md`.
+9. Update `harness/state.md` with active phase, current focus, and the latest scope or architecture change when applicable.
 
 ## Task Format
 

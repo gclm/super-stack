@@ -1,4 +1,20 @@
 {
+  "server_defs": {
+    "chrome-devtools-mcp": {
+      "command_env": "CHROME_DEVTOOLS_MCP_BIN",
+      "command_name": "chrome-devtools-mcp",
+      "args": [
+        "--autoConnect",
+        "-y"
+      ],
+      "enabled": true
+    },
+    "openspace": {
+      "command_env": "OPENSPACE_MCP_BIN",
+      "command_name": "openspace-mcp",
+      "enabled": true
+    }
+  },
   "blocks": {
     "codex_agents": {
       "target_format": "toml",
@@ -91,6 +107,47 @@
         ]
       }
     },
+    "codex_mcp": {
+      "target_format": "toml",
+      "begin_marker": "# BEGIN SUPER-STACK CODEX MCP",
+      "end_marker": "# END SUPER-STACK CODEX MCP",
+      "content": {
+        "servers": [
+          "chrome-devtools-mcp",
+          "openspace"
+        ]
+      },
+      "target_file_template": "{home}/.codex/config.toml",
+      "ownership": "managed_block",
+      "verify": {
+        "include_resolved_server_markers": true,
+        "contains": [
+          "enabled = true",
+          "--autoConnect"
+        ],
+        "markers": [
+          "# BEGIN SUPER-STACK CODEX MCP",
+          "# END SUPER-STACK CODEX MCP"
+        ]
+      }
+    },
+    "claude_mcp": {
+      "target_format": "json",
+      "content": {
+        "servers": [
+          "chrome-devtools-mcp"
+        ]
+      },
+      "target_file_template": "{home}/.claude/settings.json",
+      "ownership": "managed_block",
+      "verify": {
+        "contains": [
+          "\"mcpServers\"",
+          "\"chrome-devtools-mcp\"",
+          "\"--autoConnect\""
+        ]
+      }
+    },
     "claude_hooks": {
       "target_format": "json",
       "content": {
@@ -101,7 +158,7 @@
               "hooks": [
                 {
                   "type": "command",
-                  "command": "if [ -f .planning/STATE.md ]; then echo '[super-stack] resuming from .planning/STATE.md'; head -20 .planning/STATE.md; fi"
+                  "command": "if [ -f harness/state.md ]; then echo '[super-stack] resuming from harness/state.md'; head -20 harness/state.md; fi"
                 }
               ]
             }
@@ -123,7 +180,7 @@
               "hooks": [
                 {
                   "type": "command",
-                  "command": "if [ -f .planning/STATE.md ]; then echo '[super-stack] remember to leave STATE.md current'; fi"
+                  "command": "if [ -f harness/state.md ]; then echo '[super-stack] remember to leave harness/state.md current'; fi"
                 }
               ]
             }

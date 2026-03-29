@@ -12,8 +12,8 @@ Use this skill when a feature, service, background job, or integration needs bet
 - current logs, metrics, traces, dashboards, or alerting setup
 - the flows or failure modes that matter most
 - on-call, debugging, and incident response expectations
-- `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
-
+- `docs/reference/requirements.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - make important system behavior visible

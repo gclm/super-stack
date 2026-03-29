@@ -12,7 +12,8 @@ Use this skill when a task changes persistence structure, query shape, indexing,
 - current schema, models, or migration files
 - query patterns and access paths
 - data integrity or retention constraints
-- `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
+- `docs/reference/requirements.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 - `references/schema-checklist.md` when you need a stronger schema checklist
 
 ## Goals

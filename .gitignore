@@ -8,3 +8,4 @@ tmp/
 /.idea/
 /.planning/.super-stack-readonly-hook.log
 /.planning/.super-stack-codex-hooks.log
+/harness/.runtime/

@@ -7,7 +7,7 @@ This file supplements the root `AGENTS.md` for Codex-specific behavior.
 Shared workflow truth lives in:
 
 - root `AGENTS.md`
-- `.planning/`
+- target-project `docs/ + harness/`
 - `protocols/`
 - `.agents/skills/`
 
@@ -23,7 +23,7 @@ Default behavior:
 1. Follow the workflow and routing rules from root `AGENTS.md`.
 2. Treat `.agents/skills/*/SKILL.md` as detailed manuals for a stage, not as the only source of behavior.
 3. When a task clearly maps to a workflow stage, you may read the corresponding skill file for more detail.
-4. Preserve project state in `.planning/` just like Claude Code.
+4. Preserve project state in `docs/ + harness/` just like Claude Code.
 5. Use `.codex/config.toml` and `.codex/agents/*.toml` for stable Codex-specific behavior.
 
 In practice, this means Codex should behave as if `AGENTS.md` is the router and `.agents/skills/` is the manual.
@@ -36,10 +36,10 @@ Only update this adapter when the change is truly Codex-specific.
 For every non-trivial request:
 
 1. Name the current stage internally before acting.
-2. Check whether `.planning/` prerequisites exist for that stage.
+2. Check whether the required `docs/` and `harness/` prerequisites exist for that stage.
 3. If prerequisites are missing, explicitly route backward to the stage that should happen first.
 4. Use `.agents/skills/` for details only after the stage has been chosen.
-5. Prefer updating `STATE.md` over keeping transient plan state only in conversation.
+5. Prefer updating `harness/state.md` over keeping transient plan state only in conversation.
 
 Treat this as a fixed procedure, not a suggestion.
 
@@ -55,7 +55,8 @@ For Codex, prefer `browse` early when a request includes a concrete URL and the 
 Use this heuristic:
 
 - if the user links a webpage, article, post, document, or authenticated product page and asks to analyze, summarize, inspect, or verify what is on that page, prefer `browse`
-- if `super-stack-browser` is available, do not stop at `curl`, `requests`, raw HTML, search snippets, or mirror pages before attempting original-page browser evidence
+- if configured browser MCP/tooling is available, do not stop at `curl`, `requests`, raw HTML, search snippets, or mirror pages before attempting original-page browser evidence
+- in this repo, prefer the configured Codex browser MCP such as `chrome-devtools-mcp` when present
 - if browser evidence still cannot be obtained, say that explicitly before continuing with fallback sources
 
 Treat this as a browse-first heuristic for URL-content analysis, not a suggestion to browse every casual link mention.
@@ -109,8 +110,8 @@ Read `.codex/references/multi-agent-escalation-examples.md` when a concrete exam
 
 For Codex, prefer these durable artifacts:
 
-- use `.planning/PROJECT.md`, `.planning/REQUIREMENTS.md`, `.planning/ROADMAP.md`, `.planning/STATE.md` for stage memory
-- use `.planning/codebase/*` when `map-codebase` is active
+- use `docs/overview/project-overview.md`, `docs/reference/requirements.md`, `docs/overview/roadmap.md`, and `harness/state.md` for stage memory
+- use `docs/reference/codebase/*` when `map-codebase` is active
 - use root `AGENTS.md` and `.codex/AGENTS.md` as the workflow contract
 - use `.agents/skills/*/SKILL.md` as optional stage manuals
 

@@ -32,16 +32,13 @@ Strongest likely signals:
 - `Network Requests`: app config, bundle, or bootstrap API failed
 - `Snapshot`: root exists but content subtree never appears
 
-Recommended command pattern:
+Recommended browser-tool pattern:
 
-```bash
-bash scripts/smoke/browser-debug-report.sh \
-  --url "http://localhost:3000" \
-  --selector "#app" \
-  --network-filter "/api/" \
-  --hint "白屏，怀疑启动异常或 bootstrap 接口失败" \
-  --output artifacts/browser-debug-white-screen.md
-```
+- open the page in the active browser tooling
+- snapshot the app root such as `#app`
+- inspect console and page errors
+- inspect network requests filtered to the bootstrap or API paths
+- write the evidence into task artifacts or the current verification note
 
 Report before root-cause claim:
 
@@ -73,16 +70,12 @@ Strongest likely signals:
 - `Console`: fetch wrapper error, response parsing error
 - `Snapshot`: loading or error state visible but no data subtree
 
-Recommended command pattern:
+Recommended browser-tool pattern:
 
-```bash
-bash scripts/smoke/browser-debug-report.sh \
-  --url "http://localhost:3000/orders" \
-  --selector ".orders-page" \
-  --network-filter "/orders" \
-  --hint "列表为空，怀疑 orders API 请求失败或未触发" \
-  --output artifacts/browser-debug-orders-api.md
-```
+- reproduce the action
+- inspect requests filtered to the likely endpoint family such as `/orders`
+- capture the affected container such as `.orders-page`
+- record the response status family and visible UI state
 
 Report before root-cause claim:
 
@@ -114,15 +107,11 @@ Strongest likely signals:
 - `Styles`: hidden, covered, zero-sized, overflow-clipped
 - `Console`: interaction handler threw before UI state changed
 
-Recommended command pattern:
+Recommended browser-tool pattern:
 
-```bash
-bash scripts/smoke/browser-debug-report.sh \
-  --url "http://localhost:3000/profile" \
-  --selector ".profile-form" \
-  --hint "保存按钮不可点击，先看结构和状态" \
-  --output artifacts/browser-debug-profile-button.md
-```
+- capture a selector-scoped snapshot around the affected component such as `.profile-form`
+- inspect visibility, enabled state, and surrounding structure
+- inspect computed styles only after structure has been checked
 
 Report before root-cause claim:
 
@@ -154,15 +143,11 @@ Strongest likely signals:
 - `Snapshot`: hierarchy mismatch causing inherited layout problems
 - `Screenshot`: confirms user-visible severity after structure/style are understood
 
-Recommended command pattern:
+Recommended browser-tool pattern:
 
-```bash
-bash scripts/smoke/browser-debug-report.sh \
-  --url "http://localhost:3000/dashboard" \
-  --selector ".dashboard-grid" \
-  --hint "卡片布局错位，优先排查 grid/flex 和容器层级" \
-  --output artifacts/browser-debug-dashboard-layout.md
-```
+- capture the affected area such as `.dashboard-grid`
+- inspect computed styles for the target node and parent container
+- add a screenshot only after the structure/style diagnosis is clear
 
 Report before root-cause claim:
 
@@ -192,16 +177,12 @@ Strongest likely signals:
 - `Snapshot`: auth gate visible but protected content never mounts
 - `Console`: token parsing or state store exceptions
 
-Recommended command pattern:
+Recommended browser-tool pattern:
 
-```bash
-bash scripts/smoke/browser-debug-report.sh \
-  --url "http://localhost:3000/app" \
-  --selector "#app" \
-  --network-filter "/auth" \
-  --hint "登录后仍跳转，怀疑 session 刷新或鉴权守卫循环" \
-  --output artifacts/browser-debug-auth-loop.md
-```
+- inspect the landed URL over time
+- inspect requests filtered to auth/session endpoints such as `/auth`
+- capture the auth gate or protected app root such as `#app`
+- record whether protected content ever mounts
 
 Report before root-cause claim:
 

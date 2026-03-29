@@ -12,6 +12,7 @@ Verification must distinguish implementation state from proof state.
 - build output
 - screenshots or browser checks
 - diff inspection
+- independent read-only subagent cross-check when the task is structural, migration-heavy, or artifact-oriented
 
 ## Evidence Status
 
@@ -36,3 +37,5 @@ If only implementation evidence exists, say so directly instead of implying comp
 3. Report partial verification honestly.
 4. If verification could not run, explain why and what remains unverified.
 5. State the strongest evidence reached and the next missing evidence level when that gap matters to delivery confidence.
+6. When verifying repository bootstrap, generated artifacts, migration results, or multi-file semantic alignment, prefer an independent read-only subagent cross-check instead of relying only on the current context.
+7. If no subagent or secondary observer is available, say that verification stayed single-context and lower the confidence accordingly.

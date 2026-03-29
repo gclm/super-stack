@@ -11,8 +11,8 @@ Use this skill when the task involves PDF files and success depends on extractin
 
 - the target PDF files
 - `references/task-routing.md` to choose between lightweight text extraction and full rendering review
-- `.planning/STATE.md` if the task is part of an ongoing project workflow
-
+- `harness/state.md` if the task is part of an ongoing project workflow
+- `harness/history.md` if it exists
 ## Goals
 
 - choose the lightest PDF workflow that can still answer the user request

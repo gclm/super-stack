@@ -12,7 +12,8 @@ Use this skill when the task needs direct browser evidence rather than only stat
 - the target flow, page, or user action to inspect
 - any local run or preview instructions
 - relevant acceptance criteria or bug symptoms
-- `.planning/STATE.md` if it exists
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `references/browser-evidence-patterns.md` when you need a more concrete evidence checklist
 - `references/content-acquisition-patterns.md` when the task is really about acquiring article or post content from a live page
 - `references/frontend-debug-playbooks.md` when the task is a recurring frontend bug pattern such as white screen, API failure, layout regression, or auth loop
@@ -24,7 +25,7 @@ Use this skill when the task needs direct browser evidence rather than only stat
 - inspect runtime state that code reading cannot prove
 - distinguish DOM, style, console, and network failures
 - leave behind a clear summary of what was actually observed
-- establish `browse` as the base capability for future browser-driven automation
+- establish `browse` as the base capability for browser-driven verification and content acquisition
 
 ## Strong Triggers
 
@@ -42,35 +43,28 @@ When these conditions hold, do not begin with mirror pages, raw HTML fetching, o
 ## Steps
 
 1. Restate the exact browser-side question.
-2. In super-stack environments, preflight with `~/.super-stack/runtime/bin/super-stack-browser-health`.
-3. The preflight check is mandatory before browse work when any of the following is true:
-   - this host has already run browser automation earlier in the day
-   - the previous browser task ended abnormally or was interrupted
-   - the task is expected to be multi-page, authenticated, or longer than a quick spot check
-   - there has been recent memory-growth, leaked-process, or headless-Chrome suspicion
-4. If the health check shows unexpected headless Chrome residue, `browser_use` residue, or an obviously unhealthy stable session, run `~/.super-stack/runtime/bin/super-stack-browser-reset` before continuing.
-5. Open the relevant page or flow with `super-stack-browser`.
-6. Reproduce the target interaction.
-7. For page or article analysis, collect the smallest original-page evidence set first:
+2. Confirm which browser tooling is actually available on the host.
+   - Codex in this repo: prefer the configured browser MCP, currently `chrome-devtools-mcp` when present.
+   - Claude Code: prefer configured browser MCP or browser plugin.
+   - If availability is unclear, use `scripts/check/check-browser-capability.sh` as a quick capability probe.
+3. Open the relevant page or flow with the active browser tooling.
+4. Reproduce the target interaction.
+5. For page or article analysis, collect the smallest original-page evidence set first:
    - landed URL
    - page title
    - the main rendered content container when available
    - `document.body.innerText` only as a fallback when no better content container is obvious
-   - platform-specific structured fields such as author, publish time, summary, comments, and image URLs when the adapter supports them
-8. Collect only the extra evidence needed:
+   - platform-specific structured fields such as author, publish time, summary, comments, and image URLs when the page visibly exposes them
+6. Collect only the extra evidence needed:
    - DOM
    - styles
    - console
    - network
    - screenshot
-9. Tie the observation back to the claimed bug or acceptance criterion.
-10. Postflight with `~/.super-stack/runtime/bin/super-stack-browser-health` when any of the following is true:
-   - the task navigated across multiple pages or tabs
-   - the task used login state, uploads, long-lived flows, or repeated interactions
-   - console/network investigation was part of the run
-   - the session now feels slow, sticky, or suspicious
-11. If postflight still shows residue or abnormal Chrome RSS, run `~/.super-stack/runtime/bin/super-stack-browser-reset`.
-12. Report what was confirmed, what was not reproduced, and any tooling limits.
+7. Tie the observation back to the claimed bug or acceptance criterion.
+8. If browser tooling becomes unhealthy or loses context, prefer opening a fresh page/tab or restarting the host-side browser tooling cleanly instead of inventing repo-local wrapper recovery steps.
+9. If browser evidence cannot be obtained, say why before falling back.
+10. Report what was confirmed, what was not reproduced, and any tooling limits.
 
 For frontend bug triage, prefer a structure-first investigation:
 
@@ -96,4 +90,4 @@ Report:
 - confirmed observations
 - unresolved questions
 - next best step
-- whether browser health/reset steps were needed
+- whether browser tooling had to be restarted or re-opened during the run

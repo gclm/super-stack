@@ -12,8 +12,8 @@ Use this skill when connecting to another service, vendor API, queue, webhook, i
 - current integration points and adapters
 - API docs, payload examples, or event contracts
 - retry, timeout, auth, and idempotency expectations
-- `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
-
+- `docs/reference/requirements.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - make the boundary and contract explicit

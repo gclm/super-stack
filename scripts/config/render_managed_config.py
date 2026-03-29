@@ -10,7 +10,14 @@ SCRIPT_DIR = Path(__file__).resolve().parent
 if str(SCRIPT_DIR) not in sys.path:
     sys.path.insert(0, str(SCRIPT_DIR))
 
-from managed_config_lib import get_block, render_claude_hooks, render_codex_agents, render_codex_hooks
+from managed_config_lib import (
+    get_block,
+    render_claude_hooks,
+    render_claude_mcp,
+    render_codex_agents,
+    render_codex_mcp,
+    render_codex_hooks,
+)
 
 
 def main() -> int:
@@ -33,8 +40,16 @@ def main() -> int:
         print(render_codex_hooks(args.block, args.runtime_root, config_text))
         return 0
 
+    if args.block == "codex_mcp":
+        print(render_codex_mcp(args.block))
+        return 0
+
     if args.block == "claude_hooks":
         print(render_claude_hooks(args.block, args.runtime_root), end="")
+        return 0
+
+    if args.block == "claude_mcp":
+        print(render_claude_mcp(args.block), end="")
         return 0
 
     raise SystemExit(f"unsupported block: {args.block}")

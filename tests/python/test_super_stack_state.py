@@ -14,9 +14,9 @@ class SuperStackStateHookTests(unittest.TestCase):
     def test_sessionstart_reads_state_and_records_log(self):
         with tempfile.TemporaryDirectory() as tmp:
             cwd = Path(tmp)
-            planning = cwd / ".planning"
-            planning.mkdir()
-            state_file = planning / "STATE.md"
+            harness = cwd / "harness"
+            harness.mkdir()
+            state_file = harness / "state.md"
             state_file.write_text("# STATE\n- status: testing\n", encoding="utf-8")
 
             result = subprocess.run(
@@ -30,18 +30,18 @@ class SuperStackStateHookTests(unittest.TestCase):
 
             self.assertEqual(result.returncode, 0, result.stderr)
             response = json.loads(result.stdout)
-            self.assertIn("[super-stack] resuming from .planning/STATE.md", response["additionalContext"])
+            self.assertIn("[super-stack] resuming from harness/state.md", response["additionalContext"])
             self.assertIn("status: testing", response["additionalContext"])
 
-            hook_log = (planning / ".super-stack-codex-hooks.log").read_text(encoding="utf-8")
+            hook_log = (harness / ".runtime" / "super-stack-codex-hooks.log").read_text(encoding="utf-8")
             self.assertIn("sessionstart", hook_log)
 
     def test_stop_emits_reminder_when_state_exists(self):
         with tempfile.TemporaryDirectory() as tmp:
             cwd = Path(tmp)
-            planning = cwd / ".planning"
-            planning.mkdir()
-            (planning / "STATE.md").write_text("# STATE\n", encoding="utf-8")
+            harness = cwd / "harness"
+            harness.mkdir()
+            (harness / "state.md").write_text("# STATE\n", encoding="utf-8")
 
             result = subprocess.run(
                 [sys.executable, str(SCRIPT_PATH)],
@@ -56,10 +56,10 @@ class SuperStackStateHookTests(unittest.TestCase):
             response = json.loads(result.stdout)
             self.assertEqual(
                 response["additionalContext"],
-                "[super-stack] remember to leave STATE.md current",
+                "[super-stack] remember to leave harness/state.md current",
             )
 
-    def test_no_planning_directory_returns_empty_object(self):
+    def test_no_harness_directory_returns_empty_object(self):
         with tempfile.TemporaryDirectory() as tmp:
             cwd = Path(tmp)
 
@@ -78,4 +78,3 @@ class SuperStackStateHookTests(unittest.TestCase):
 
 if __name__ == "__main__":
     unittest.main()
-

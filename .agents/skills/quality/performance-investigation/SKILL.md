@@ -12,7 +12,8 @@ Use this skill when the problem is slow response time, poor throughput, memory g
 - current symptom and measured baseline
 - profiles, traces, benchmarks, or logs if available
 - the hottest path or user-visible slow flow
-- `.planning/STATE.md` if it exists
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `references/perf-evidence.md` when you need a sharper measurement workflow
 
 ## Goals

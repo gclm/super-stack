@@ -9,10 +9,11 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 
 ## Read First
 
-- `.planning/PROJECT.md` if it exists
-- `.planning/REQUIREMENTS.md` if it exists
-- `.planning/STATE.md` if it exists
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/index.md` if it exists
+- `docs/overview/project-overview.md` if it exists
+- `docs/reference/requirements.md` if it exists
+- `harness/state.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - relevant project docs or user-provided reference material
 - `references/scope-modes.md` when the project may be a validation sample, staged hybrid, or direct product path
 - `references/request-shaping.md` when hidden assumptions, design intent, artifact type, or document depth could change the path
@@ -22,7 +23,7 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 - understand the user outcome
 - identify scope and non-goals
 - capture constraints and acceptance signals
-- write or update `.planning/PROJECT.md`, `.planning/REQUIREMENTS.md`, and `.planning/STATE.md`
+- write or update `docs/overview/project-overview.md`, `docs/reference/requirements.md` when needed, and `harness/state.md`
 - establish language, review, and confirmation conventions early when they matter
 - make the scope mode explicit when the work may be a validation sample instead of direct product delivery
 - identify the document depth when the user is asking for a proposal, design doc, architecture note, or module design
@@ -32,7 +33,7 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 
 ## Steps
 
-1. Read existing `.planning/` files if they exist.
+1. Read existing `docs/` and `harness/` files if they exist.
 2. Identify whether the user is asking for product delivery, a validation sample, or an exploratory comparison.
 3. Use `references/request-shaping.md` when hidden assumptions, design intent, or artifact type could change the path.
 4. If the request is for a proposal, design document, architecture note, or module design, make the primary reader, the document purpose, and the depth mode explicit when they will materially shape the draft: `brief`, `standard`, or `deep`.
@@ -42,8 +43,8 @@ Use this skill when the request is still fuzzy, the feature shape is incomplete,
 8. Ask only the minimum clarifying questions needed to avoid risky assumptions.
 9. Summarize the request as concrete requirements, scope boundaries, and non-goals.
 10. Capture project conventions that will affect follow-up stages, such as documentation language, commit rules, or review expectations.
-11. Persist the updated understanding into planning files.
-12. Set `STATE.md` focus to planning.
+11. Persist the updated understanding into `docs/ + harness/`.
+12. Set `harness/state.md` focus to planning.
 
 ## Output
 

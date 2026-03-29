@@ -12,8 +12,8 @@ Use this skill when creating or revising an API surface such as REST endpoints, 
 - current routes, handlers, or client usage
 - request and response examples
 - validation and auth expectations
-- `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
-
+- `docs/reference/requirements.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - make the contract intuitive for callers

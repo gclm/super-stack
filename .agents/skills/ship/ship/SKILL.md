@@ -9,9 +9,9 @@ Use this skill when implementation is complete enough to prepare a handoff, PR, 
 
 ## Read First
 
-- `.planning/STATE.md`
-- `.planning/ROADMAP.md`
-- `.planning/CONVENTIONS.md` if it exists
+- `harness/state.md`
+- `docs/overview/roadmap.md`
+- `docs/reference/conventions.md` if it exists
 - `protocols/verify.md`
 - project release conventions
 - `references/handoff-checks.md` when the handoff needs a sharper completion checklist

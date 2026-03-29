@@ -4,13 +4,16 @@
 from __future__ import annotations
 
 import argparse
+import json
 import os
 import re
 import sys
+from fnmatch import fnmatch
 from pathlib import Path
 from typing import Iterable
 
 DEFAULT_ROOT = Path(".agents/skills")
+DEFAULT_MANIFEST = Path("config/manifest.json")
 THIN_LINES_WARN = 120
 THIN_WORDS_WARN = 900
 SKIP_DIRS = {"__pycache__"}
@@ -111,7 +114,8 @@ def resolve_candidate(repo_root: Path, skill_dir: Path, candidate: str) -> Path 
         return repo_root / normalized
     if normalized.startswith(("assets/", "hooks/", "design/", "techniques/", "reference/")):
         return skill_dir / normalized
-    if normalized.startswith((".planning/", ".agents/", "protocols/", "docs/", "scripts/", "tests/", "bin/")):
+    if normalized.startswith((".agents/", "protocols/", "docs/", "scripts/", "tests/", "bin/")):
+        return repo_root / normalized
         return repo_root / normalized
     if normalized == "AGENTS.md":
         return repo_root / normalized
@@ -133,11 +137,75 @@ def count_body_lines(text: str) -> int:
     return len(body.splitlines())
 
 
-def validate_skill(repo_root: Path, skill_dir: Path) -> tuple[list[str], list[str]]:
+def load_warning_exceptions(repo_root: Path) -> list[dict[str, object]]:
+    path = repo_root / DEFAULT_MANIFEST
+    if not path.exists():
+        return []
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    section = data.get("skill_validation", {})
+    if not isinstance(section, dict):
+        raise SystemExit("manifest.json 的 skill_validation 必须是对象")
+    rules = section.get("ignore_warnings", [])
+    if not isinstance(rules, list):
+        raise SystemExit("manifest.json 的 skill_validation.ignore_warnings 必须是数组")
+
+    normalized: list[dict[str, object]] = []
+    for rule in rules:
+        if not isinstance(rule, dict):
+            raise SystemExit("manifest.json 的 skill_validation.ignore_warnings 规则必须是对象")
+
+        path_glob = rule.get("path_glob")
+        codes = rule.get("codes")
+        reason = rule.get("reason", "")
+
+        if not isinstance(path_glob, str) or not path_glob:
+            raise SystemExit("manifest.json 中的 path_glob 必须是非空字符串")
+        if not isinstance(codes, list) or not all(isinstance(code, str) and code for code in codes):
+            raise SystemExit("manifest.json 中的 codes 必须是非空字符串数组")
+        if reason and not isinstance(reason, str):
+            raise SystemExit("manifest.json 中的 reason 必须是字符串")
+
+        normalized.append(
+            {
+                "path_glob": path_glob,
+                "codes": set(codes),
+                "reason": reason,
+            }
+        )
+
+    return normalized
+
+
+def split_warnings(
+    rel_skill: Path,
+    warnings: list[tuple[str, str]],
+    exception_rules: list[dict[str, object]],
+) -> tuple[list[tuple[str, str]], list[tuple[str, str, str]]]:
+    active: list[tuple[str, str]] = []
+    ignored: list[tuple[str, str, str]] = []
+    rel_str = str(rel_skill).replace(os.sep, "/")
+
+    for code, message in warnings:
+        matched_reason = ""
+        matched = False
+        for rule in exception_rules:
+            if fnmatch(rel_str, str(rule["path_glob"])) and code in rule["codes"]:
+                matched = True
+                matched_reason = str(rule.get("reason", "")).strip()
+                break
+        if matched:
+            ignored.append((code, message, matched_reason))
+        else:
+            active.append((code, message))
+
+    return active, ignored
+
+
+def validate_skill(repo_root: Path, skill_dir: Path) -> tuple[list[str], list[tuple[str, str]]]:
     errors: list[str] = []
-    warnings: list[str] = []
+    warnings: list[tuple[str, str]] = []
     skill_file = skill_dir / "SKILL.md"
-    rel_skill = skill_dir.relative_to(repo_root)
     text = skill_file.read_text(encoding="utf-8")
 
     frontmatter = extract_frontmatter(text)
@@ -160,9 +228,9 @@ def validate_skill(repo_root: Path, skill_dir: Path) -> tuple[list[str], list[st
     body_lines = count_body_lines(text)
     body_words = len(text.split())
     if body_lines > THIN_LINES_WARN:
-        warnings.append(f"SKILL.md 正文共有 {body_lines} 行，已超过薄入口警戒线 {THIN_LINES_WARN} 行")
+        warnings.append(("thin_lines", f"SKILL.md 正文共有 {body_lines} 行，已超过薄入口警戒线 {THIN_LINES_WARN} 行"))
     if body_words > THIN_WORDS_WARN:
-        warnings.append(f"SKILL.md 共有 {body_words} 个词，已超过薄入口警戒线 {THIN_WORDS_WARN} 个词")
+        warnings.append(("thin_words", f"SKILL.md 共有 {body_words} 个词，已超过薄入口警戒线 {THIN_WORDS_WARN} 个词"))
 
     for candidate in extract_path_candidates(text):
         resolved = resolve_candidate(repo_root, skill_dir, candidate)
@@ -198,32 +266,39 @@ def main() -> int:
         print("WARN: 未发现任何 skill 目录")
         return 0
 
+    exception_rules = load_warning_exceptions(repo_root)
     total_errors = 0
     total_warnings = 0
+    total_ignored = 0
     print(f"校验 {len(skill_dirs)} 个 skill...\n")
 
     for skill_dir in skill_dirs:
         rel = skill_dir.relative_to(repo_root)
         errors, warnings = validate_skill(repo_root, skill_dir)
+        active_warnings, ignored_warnings = split_warnings(rel, warnings, exception_rules)
         status = "PASS"
         if errors:
             status = "FAIL"
-        elif warnings:
+        elif active_warnings:
             status = "WARN"
 
         print(f"[{status}] {rel}")
         for message in errors:
             print(f"  ERROR  {message}")
-        for message in warnings:
+        for _, message in active_warnings:
             print(f"  WARN   {message}")
+        for code, _, reason in ignored_warnings:
+            reason_suffix = f"（{reason}）" if reason else ""
+            print(f"  INFO   已按例外规则忽略 warning: {code}{reason_suffix}")
         total_errors += len(errors)
-        total_warnings += len(warnings)
+        total_warnings += len(active_warnings)
+        total_ignored += len(ignored_warnings)
 
     print()
     if total_errors:
-        print(f"校验失败：{total_errors} 个错误，{total_warnings} 个警告")
+        print(f"校验失败：{total_errors} 个错误，{total_warnings} 个警告，{total_ignored} 个已忽略 warning")
         return 1
-    print(f"校验通过：0 个错误，{total_warnings} 个警告")
+    print(f"校验通过：0 个错误，{total_warnings} 个警告，{total_ignored} 个已忽略 warning")
     return 0
 
 

@@ -21,7 +21,7 @@ If the project path is missing, ask the user for it in one short sentence:
 ## Read First
 
 - `AGENTS.md`
-- `.planning/STATE.md` if it exists
+- `harness/state.md` if it exists
 - `references/record-sources.md`
 - `references/auto-evolution-loop.md`
 - `references/artifact-schemas.md`
@@ -91,7 +91,7 @@ For source selection, slicing heuristics, long-running patterns, and artifact fi
     - `patch-proposed`
     - `apply-approved`
 14. Recommend where each lesson belongs: `references/`、mapping/scripts、`protocols/`、existing skill、`AGENTS.md`，or no repository change.
-15. Update `.planning/STATE.md` when the retrospective changes repository workflow direction or maintenance priorities.
+15. Update `harness/state.md` when the retrospective changes repository workflow direction or maintenance priorities.
 
 ## Output
 

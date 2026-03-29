@@ -11,8 +11,8 @@ Use this skill when the task involves `.docx` files and success depends on extra
 
 - the target `.docx` files
 - `references/task-routing.md` to choose between lightweight text extraction and full rendering review
-- `.planning/STATE.md` if the task is part of an ongoing project workflow
-
+- `harness/state.md` if the task is part of an ongoing project workflow
+- `harness/history.md` if it exists
 ## Goals
 
 - choose the lightest DOCX workflow that still answers the user request correctly

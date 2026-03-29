@@ -63,7 +63,8 @@ Check whether the skill must reflect any repository-wide rules:
 
 - Chinese-first user-facing communication
 - explicit stage backtracking
-- `.planning/STATE.md` updates
+- `harness/state.md` updates
+- `harness/history.md` if it exists
 - validation evidence boundaries
 - structure/doc/test/CI sync expectations
 

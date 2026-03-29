@@ -18,7 +18,7 @@ Do not use this skill as the default path for proving completion or validating a
 - `protocols/review.md`
 - diff against the target base
 - impacted tests and relevant project docs
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - `references/review-checklist.md` when the change is broad or risky
 
 ## Goals

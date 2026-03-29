@@ -12,7 +12,8 @@ Use this skill when the problem is an outage, degraded service, production regre
 - current symptom, impact window, and affected scope
 - dashboards, alerts, logs, traces, and recent deploys
 - rollback or mitigation options already available
-- `.planning/STATE.md` if it exists
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
 - `references/incident-triage.md` when you need a tighter incident response sequence
 
 ## Goals

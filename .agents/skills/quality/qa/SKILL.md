@@ -15,9 +15,9 @@ Do not use this skill as the default path for diff audit or narrow completion pr
 
 ## Read First
 
-- `.planning/REQUIREMENTS.md` if it exists
-- `.planning/STATE.md` if it exists
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/reference/requirements.md` if it exists
+- `harness/state.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - `protocols/verify.md`
 - project docs for local run, test, and preview commands
 - `references/qa-tiers.md` when you need a clearer depth choice
@@ -96,7 +96,7 @@ For each issue include:
 
 ## State Updates
 
-If `.planning/STATE.md` exists, update current focus or add a decision note when QA changes release confidence, reveals a new blocker, or proves that a supposed product issue is actually a runtime/setup issue.
+If `harness/state.md` exists, update current focus or add a decision note when QA changes release confidence, reveals a new blocker, or proves that a supposed product issue is actually a runtime/setup issue.
 
 ## Output
 

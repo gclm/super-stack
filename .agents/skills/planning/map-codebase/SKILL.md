@@ -11,7 +11,8 @@ Use this skill when entering a brownfield project, inheriting an unfamiliar repo
 
 - root `AGENTS.md`
 - nearby docs such as `README*`, `docs/`, architecture notes, and config files
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/reference/conventions.md` if it exists
+- `harness/state.md` if it exists
 - `references/layered-entry.md`
 - `references/output-shape.md`
 - `references/runtime-footprint.md` when important evidence may live outside the repository
@@ -73,7 +74,7 @@ When the baseline is already clear, do not keep broadening the scan beyond the t
 
 ## State Updates
 
-If `.planning/STATE.md` exists, update it with:
+If `harness/state.md` exists, update it with:
 
 - status: mapped
 - current focus: codebase map completed

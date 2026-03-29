@@ -25,8 +25,8 @@ Treat these as part of the implementation surface:
 
 ## Recording Rule
 
-If preflight changes the execution path, write it into `.planning/STATE.md` instead of keeping it only in chat.
-
+If preflight changes the execution path, write it into `harness/state.md` instead of keeping it only in chat.
+- `harness/history.md` if it exists
 ## Transient Network Failures
 
 If dependency installation, package downloads, or remote fetches fail and the error looks transient rather than deterministic, do not stop at the first failure.

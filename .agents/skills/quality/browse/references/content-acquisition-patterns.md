@@ -129,7 +129,7 @@ The purpose of `content-read` is not only to fetch content now, but also to serv
 Future `content-publish` flows should reuse:
 
 - platform recognition
-- stable browser entry
+- stable browser tooling
 - structured extraction for preview validation
 - explicit pre-publish confirmation
 
@@ -145,7 +145,7 @@ When the user gives a concrete URL and asks for page or article analysis, treat 
 
 Apply this order:
 
-1. preflight browser health when the task is not a trivial one-shot read
+1. confirm browser tooling is actually available
 2. open the original page in browser tooling
 3. capture title, landed URL, author, publish time, and the strongest rendered content root
 4. only if original-page evidence is blocked, state the blocker explicitly and then use a fallback source

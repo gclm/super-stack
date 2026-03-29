@@ -89,7 +89,7 @@ check_browser_capability() {
       warn "Claude 浏览器能力：browser plugin 已安装但未启用（$(printf '%s' "$result" | sed -n '2p'))"
       ;;
     *)
-      warn "Claude 浏览器能力：未检测到已激活的本地 browse binary、browser MCP 或 browser plugin"
+      warn "Claude 浏览器能力：未检测到已激活的 browser MCP 或 browser plugin"
       ;;
   esac
 }
@@ -100,8 +100,8 @@ fi
 
 WORKDIR="${WORKDIR_BASE}-$(date +%s)"
 DEBUG_FILE="$(mktemp)"
-ensure_dir "$WORKDIR/.planning"
-cat > "$WORKDIR/.planning/STATE.md" <<'EOF'
+ensure_dir "$WORKDIR/harness"
+cat > "$WORKDIR/harness/state.md" <<'EOF'
 # STATE
 
 - current focus: smoke-test Claude global hooks
@@ -126,13 +126,13 @@ else
   warn "Claude 调试日志中未观察到全局 skills 路径"
 fi
 
-if rg -q "\\[super-stack\\] resuming from \\.planning/STATE.md" "$DEBUG_FILE"; then
+if rg -q "\\[super-stack\\] resuming from harness/state.md" "$DEBUG_FILE"; then
   ok "Claude SessionStart hook 已触发"
 else
   warn "未观察到 Claude SessionStart hook 输出"
 fi
 
-if rg -q "remember to leave STATE.md current" "$DEBUG_FILE"; then
+if rg -q "remember to leave harness/state.md current" "$DEBUG_FILE"; then
   ok "Claude Stop hook 已触发"
 else
   warn "未观察到 Claude Stop hook 输出"

@@ -12,8 +12,8 @@ Use this skill when the real question is system shape: module boundaries, servic
 - the current architecture map if it exists
 - key requirements, risks, and non-goals
 - integration boundaries and operational constraints
-- `.planning/PROJECT.md`, `.planning/REQUIREMENTS.md`, and `.planning/STATE.md` if they exist
-
+- `docs/overview/project-overview.md`, `docs/reference/requirements.md`, and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - recommend a structure that matches the problem instead of abstract purity

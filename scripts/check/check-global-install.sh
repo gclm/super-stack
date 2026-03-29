@@ -204,6 +204,7 @@ check_runtime_section() {
   check_not_exists "${RUNTIME_ROOT}/.github" "运行仓库不包含 GitHub 配置"
   check_not_exists "${RUNTIME_ROOT}/.idea" "运行仓库不包含 IDE 配置"
   check_not_exists "${RUNTIME_ROOT}/.planning" "运行仓库不包含 planning 状态"
+  check_not_exists "${RUNTIME_ROOT}/harness" "运行仓库不包含 source harness 状态"
   check_not_exists "${RUNTIME_ROOT}/docs" "运行仓库不包含 source docs"
   check_not_exists "${RUNTIME_ROOT}/tests" "运行仓库不包含 source tests"
   check_not_exists "${RUNTIME_ROOT}/.agents" "运行仓库不包含 source skills 真源"
@@ -224,6 +225,8 @@ check_codex_section() {
   check_managed_files_exist "codex_agents" "Codex agent"
   check_managed_block_presence "codex_hooks" "Codex hooks"
   check_managed_commands "codex_hooks" "Codex hook"
+  check_managed_block_presence "codex_mcp" "Codex MCP"
+  check_managed_contains "codex_mcp" "Codex MCP"
   printf 'Codex 用户可见 skills 总数: %s\n' "$(count_skill_entries "$USER_SKILLS_DIR")"
   printf 'Codex 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$USER_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
   printf '\n'
@@ -237,31 +240,34 @@ check_claude_section() {
   check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_ROUTER" "Claude 全局路由内容符合预期"
   check_managed_block_presence "claude_hooks" "Claude hooks"
   check_managed_commands "claude_hooks" "Claude hook"
+  check_managed_contains "claude_mcp" "Claude MCP"
   printf 'Claude 镜像 skills 总数: %s\n' "$(count_skill_entries "$CLAUDE_SKILLS_DIR")"
   printf 'Claude 受管 skill 匹配数: %s/%s\n' "$(count_matching_skill_names "$CLAUDE_SKILLS_DIR")" "$EXPECTED_SKILL_COUNT"
   printf '\n'
 }
 
 check_browser_section() {
-  local wrapper_name
+  local result
   printf '== Browser ==\n'
-  while IFS= read -r wrapper_name; do
-    [[ -n "${wrapper_name}" ]] || continue
-    case "${wrapper_name}" in
-      super-stack-browser)
-        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "稳定浏览器入口"
-        ;;
-      super-stack-browser-health)
-        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "浏览器健康检查入口"
-        ;;
-      super-stack-browser-reset)
-        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "浏览器会话重置入口"
-        ;;
-      *)
-        check_file "${RUNTIME_ROOT}/bin/${wrapper_name}" "浏览器 wrapper"
-        ;;
-    esac
-  done < <(browser_wrapper_names)
+
+  result="$("${SCRIPT_DIR}/check-browser-capability.sh")"
+  case "$(printf '%s' "$result" | sed -n '1p')" in
+    ACTIVE_LOCAL)
+      printf '浏览器能力：检测到本地 browser provider（%s）\n' "$(printf '%s' "$result" | tr '\n' ' ' | sed 's/  */ /g')"
+      ;;
+    ACTIVE_MCP)
+      printf '浏览器能力：检测到已激活的 browser MCP（%s）\n' "$(printf '%s' "$result" | tr '\n' ' ' | sed 's/  */ /g')"
+      ;;
+    ACTIVE_PLUGIN)
+      printf '浏览器能力：检测到已激活的 browser plugin（%s）\n' "$(printf '%s' "$result" | tr '\n' ' ' | sed 's/  */ /g')"
+      ;;
+    INSTALLED_ONLY)
+      printf '浏览器能力：browser plugin 已安装但未启用（%s）\n' "$(printf '%s' "$result" | sed -n '2p')"
+      ;;
+    *)
+      printf '浏览器能力：未检测到受管 browser provider。当前 super-stack 不再安装 agent-browser wrapper；浏览器能力由宿主 MCP 或 browser plugin 自行提供。\n'
+      ;;
+  esac
   printf '\n'
 }
 

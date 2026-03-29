@@ -10,7 +10,8 @@ Use this skill when implementing or fixing behavior that can be proven with auto
 ## Read First
 
 - `protocols/tdd.md`
-- `.planning/ROADMAP.md` and `.planning/STATE.md` if they exist
+- `docs/overview/roadmap.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 - the closest existing tests around the target behavior
 
 ## Goals

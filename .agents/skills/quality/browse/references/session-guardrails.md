@@ -4,14 +4,12 @@ Use this reference when `browse` needs host selection, fallback order, or sessio
 
 ## Host Guidance
 
-- Claude Code: prefer `super-stack-browser` when available
-- Codex: prefer `super-stack-browser` when available
+- Claude Code: prefer configured browser MCP or browser plugin when available
+- Codex: prefer configured browser MCP, currently `chrome-devtools-mcp` when available
 
-Stable browser entrypoints:
+Capability probe:
 
-- `~/.super-stack/runtime/bin/super-stack-browser`
-- `~/.super-stack/runtime/bin/super-stack-browser-health`
-- `~/.super-stack/runtime/bin/super-stack-browser-reset`
+- `scripts/check/check-browser-capability.sh`
 
 If browser tooling is unavailable, say so clearly and fall back to screenshots, local preview inspection, logs, test output, or code reasoning with explicit limits.
 
@@ -28,9 +26,9 @@ Always say explicitly when a fallback source was used.
 
 ## Lifecycle Rules
 
-- default to one stable session for serial work
-- do not improvise alternative browser stacks when `super-stack-browser` is available
-- do not let concurrent independent tasks share one live session unless the host workflow truly requires it
-- use `super-stack-browser-health` as the first stop for leaked process or memory suspicion
-- use `super-stack-browser-reset` as the supported cleanup path instead of ad hoc manual killing
+- default to one active browser tool context for serial work when the host supports it
+- do not improvise repo-local wrapper stacks when the host already has a configured browser MCP or browser plugin
+- do not let concurrent independent tasks share one live page/tab unless the host workflow truly requires it
+- when the tool context becomes unhealthy, prefer reopening the page or restarting the host-side browser tooling cleanly
+- if recovery requires a manual host action, say so explicitly instead of pretending a repo-local reset command exists
 - for `content-publish`, draft fill and final publish are different actions; final publish requires explicit confirmation

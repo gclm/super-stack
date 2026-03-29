@@ -1,7 +1,7 @@
 # STATE
 
 - status: stable_maintenance
-- current focus: 保持单一脚本入口结构稳定，并继续把 source repo 定位与方案文档分层规则收敛成不易误触发的共享 workflow
+- current focus: 保持单一脚本入口结构稳定，并推进 `super-stack-native harness` phase-1 从“骨架搭建”转入“真实任务压测”：`clawhub` 的 `reference-frontend-integration` 已完成第一轮 `app.js <-> httpapi` contract mapping 并写回 task pack；同时浏览器主链路已从 repo-local `agent-browser` wrapper 收口为宿主侧 browser MCP / plugin，Codex 当前优先 `chrome-devtools-mcp`，宿主 MCP 受管模型继续收口为通用 `codex_mcp / claude_mcp + server_defs`；legacy-state cutover 已进一步完成活跃 README / protocols / docs 收口、validation 参考迁入 `docs/reference/validation/` 并镜像到 generated-project，旧 `templates/planning` / `templates/validation` 已删除；本轮继续把已基本拍板的文档从 `architecture/proposals/` 压缩到 `decisions/` 或 `guides/`，随后准备 checkpoint commit 与全局同步
 - active phase: Maintenance - 稳定演进
 - planning mode: staged hybrid
 
@@ -11,6 +11,7 @@
   - 脚本入口已统一到 `scripts/install/`、`scripts/check/`、`scripts/smoke/`、`scripts/test/`、`scripts/lib/`。
   - README、docs、CI、tests、`.planning/codebase/*` 已切换到同一套目录口径。
   - 当前目录结构已明确收敛为：`~/.super-stack/runtime` 运行仓库、`~/.super-stack/state` 安装状态、`~/.super-stack/backup` 备份目录、`artifacts/` 运行产物目录。
+  - OpenSpace 宿主级部署已落地：上游仓库已 clone 到 `~/.super-stack/openspace`，独立 Conda 环境位于 `~/.super-stack/openspace/.conda`，Codex MCP 通过 `~/.super-stack/openspace/bin/openspace-mcp-codex` 接线，dashboard 由 PM2 管理并监听 `127.0.0.1:7788`。
   - 最小自动化闭环已存在：Bash 语法检查、Python unit test、shell integration test。
 
 - current risks:
@@ -19,14 +20,67 @@
   - smoke 仍依赖真实 Claude / Codex / 浏览器环境，自动化程度有限。
   - 后续新增脚本或文档时，如果不遵守分层规则，结构很容易再次回退成多入口状态。
   - 用户机器当前存在明显系统级内存压力；若把整机 Chrome 或 swap 压力误当成 super-stack 浏览器异常，仍会诱发过度 reset 建议与额外授权干扰。
+  - runtime gate 目前仍是 path-driven skeleton：`L2 / L3` 的 targeted smoke 映射还偏粗，L3 的人工 review 证据形状也还没沉成稳定协议。
+  - OpenSpace 上游 `.[macos]` extra 在当前环境下仍存在依赖冲突：`openspace` 需要较新的 `pyautogui`，而 `atomacos` 约束更低版本；独立 Conda 环境隔离了冲突影响，但没有从根上消除上游依赖不一致。
+  - 新纳入 source repo 的 OpenSpace upstream host skill `delegate-task` 当前触发了薄入口警告：`SKILL.md` 正文 128 行，超过当前 `validate-skills.py` 的 120 行警戒线；由于这是 upstream verbatim 导入，发布前需要决定是接受该 warning，还是在不破坏 trigger surface 的前提下做一次 super-stack 本地收口。
+  - `.planning` 退场已从“系统未切”进入“历史收口”阶段：活跃 README / protocols / docs 已切离旧模型，仓库内剩余 legacy 显式引用约 79 处，主要集中在迁移方案文档、legacy state 同步说明、runtime exclusion checks 与 validator allowlist。
 
 - last scope change:
+  - 本轮基于 OpenSpace 源码重新修正接线边界：官方 baseline 的“Host 对接”确实只需要 MCP server + `OPENSPACE_HOST_SKILL_DIRS` / `OPENSPACE_WORKSPACE` + 复制 `delegate-task` / `skill-discovery` 两个 host skills；此前方案把“宿主接线”和“retrospective 演化 adapter”贴得太近，后续文档与实施应改为“先薄对接，再做 super-stack 增强层”。
+  - 本轮已将 `.planning` 退场问题进一步收口成 source-repo 自身专用执行序列：核心顺序固定为根路由、host adapter、核心 stage skills、smoke/tests、source repo 自身状态迁移，旧独立 cutover checklist 已在后续 docs 重整时删除。
+  - 本轮已把浏览器能力的正式边界改写为“宿主侧 browser MCP / plugin”，不再把 `agent-browser + super-stack-browser` 当默认前提；对 Codex 当前明确优先 `chrome-devtools-mcp`，相关 browse skill、workflow guidance、README 和技术选型文档已同步收口。
+  - 本轮明确复杂结构、迁移、脚手架与 artifact 语义对齐类验证，不再只在当前上下文自证；后续默认优先使用独立只读子代理做交叉确认，若受宿主限制只能单上下文验证，必须显式降级信心表达。
+  - 本轮继续修正 OpenSpace 的作用对象边界：当前讨论中的“当前项目”默认指当前 source repo，而不是 `~/.super-stack/runtime` 运行副本；后续若允许 OpenSpace 直接改 skills，应优先改 source repo 工作区，再通过受管同步链把变更推广到 runtime。
+  - 本轮已显式修正作用域：上一轮讨论中把“super-stack 仓库自身目录重构”和“super-stack 在目标项目里生成什么结构”混在了一起；现在明确回退到 `discuss/plan`，以后优先设计模板/生成模型，而不是先改当前仓库自用目录。
+  - 本轮开始重新评估 host-level memory 方案：OpenSpace 更适合作为 `codex-record-retrospective` 的上位演化与宿主级记忆/skill-evolution 后端候选，而 `~/.super-stack/projects/<slug>/` 不再默认视为必选方案。
+  - 本轮完成对参考来源的进一步核对：`.planning` 这套 `PROJECT/REQUIREMENTS/ROADMAP/STATE + phases/` 的重度模型更接近 `GSD / get-shit-done`，不是 `gstack`；后续重构应以工程需求为准重新设计，而不是继续默认继承这套 spec-heavy 目录。
+  - 本轮进一步收口目录方向：4 个新能力不再分散挂在现有 `core/planning/quality` 分类下，而是作为独立的 `harness` skill 组设计，强调它们共同构成“长任务执行层”。
+  - 本轮明确 `.planning` 的主要问题不是“有状态文件”，而是“把 `PROJECT/REQUIREMENTS/ROADMAP/STATE` 变成所有任务默认必填产物”；后续应保留 `plan` 阶段，但重构 `.planning` 这套默认落盘模型。
+  - 本轮已确认可以参考公众号文章的思路，用 4 个 skills 分层落地，而不必等待作者开源；关键是复用其问题拆分方式，而不是猜测其私有实现细节。
+  - 本轮基于 OpenAI `Harness engineering` 原文与公众号文章《从 OpenAI Harness Engineering 蒸馏出四个 Skill，Agent 跑了 25 小时》重新收口目标：后续方向不是直接复制重型云端 harness，而是在当前 `super-stack` 底座上补一层 `super-stack-native harness`。
+  - 本轮把“想要作者那种长时间自动跑效果”具体化为 4 个能力层：`durable task pack`、`closed-loop verification`、`marathon runner`、`retrospective automation`，并明确先做薄执行层，再决定是否进入更重的调度与可观测性。
   - 本轮继续强化 workflow 触发层，把 `bug -> debug`、`可测试行为变更 -> tdd-execution`、`审查类请求 -> review`、`完成度证明 -> verify`、`用户流验证 -> qa` 从偏建议型规则提升为更强的默认路由与 `build` 回退规则。
   - 本轮结合 `super-stack`、`woniu`、`clawhub`、`insky-device-sdk` 四个项目的昨日真实记录做交叉复盘，确认“方案类请求未先对齐交付形态”“具体 URL 未稳定优先走 browse”“自动 retrospective 产物边界不够显式”已不再是单项目噪音，而是共享 workflow 的重复信号。
   - 本轮将 Codex agent 体系继续收敛到 `explorer / planner / reviewer / builder` 四角色：补齐 `super_stack_builder`，并把旧 `builder / investigator / planner / reviewer` 方案中的高价值指令吸收进当前角色，同时明确只有 `builder` 默认允许写入与受控 worktree 使用。
   - 本轮新增阶段边界提交默认规则：当 `discuss / plan / build / verify` 形成有验证的可回退检查点时，workflow 应优先提示形成小而清晰的 checkpoint commit，避免把多个阶段长期堆在单个未提交工作区中。
 
 - last architecture change:
+  - 本轮已完成浏览器核心切换：删除 `agent-browser` 相关 wrapper / health / reset / smoke 脚本与旧渲染测试，`scripts/install/install.sh` 不再安装浏览器 wrapper，`scripts/check/check-browser-capability.sh` 现在会直接解析 Codex `mcp_servers` 与 Claude browser plugin/MCP 配置；fresh evidence 显示当前宿主已检测到 `ACTIVE_MCP / codex:chrome-devtools-mcp`。
+  - 本轮继续把宿主 MCP 配置从窄化 browser 命名收口为通用 host block：`config/managed-config.json` 现以顶层共享 `server_defs` 作为 MCP server 真源，`codex_mcp` 与 `claude_mcp` 只声明各自消费的 server 列表；后续新增 MCP 默认只扩 manifest，不再改 install/check 渲染逻辑。
+  - 本轮已把 `openspace` 作为首个非 browser MCP server 接入 `codex_mcp`：共享 manifest 新增 `openspace -> openspace-mcp` 定义，Codex 安装链在命令存在或 `OPENSPACE_MCP_BIN` 已设置时会自动写入 `[mcp_servers.openspace]`，并将 “resolved server markers” 纳入通用 contains 校验，避免以后每加一个 MCP 还要手写新的检查规则。
+  - 本轮已完成 OpenSpace 宿主级真实部署收口：不再采用 `openspace/src + .venv` 的建议形态，而是直接以 `~/.super-stack/openspace` 作为 git clone 根目录，使用独立 `.conda` 环境，前端执行 production build 后由 backend 统一提供静态页面，并用 PM2 托管单一 `openspace-dashboard` 进程。
+  - 本轮已为 Codex MCP 增加 OpenSpace wrapper 入口：`openspace-mcp-codex` 负责补齐 `OPENSPACE_HOST_SKILL_DIRS` 与 `OPENSPACE_WORKSPACE`，避免为了注入 MCP env 再去扩一轮 managed config 渲染协议。
+  - 本轮基于源码确认 OpenSpace 的本地真实扩展面更偏向“skill dirs”而不是“workspace inbox”或“外部直写 DB”：`mcp_server` 会自动重扫 `OPENSPACE_HOST_SKILL_DIRS` 并注册到 SkillRegistry/SkillStore，因此 `codex-record-retrospective` 后续若要把结果送进 OpenSpace，优先路径应调整为“candidate skill / patch -> host skill dirs -> auto-register”，而不是先设计一套自定义 lesson ingestion backend。
+  - 本轮已完成 OpenSpace Layer-A 的前两步 source-repo 收口：将 upstream `delegate-task` 与 `skill-discovery` 从 `~/.super-stack/openspace/openspace/host_skills/` 纳入 `.agents/skills/openspace/`，并将来源仓库、上游路径、本机 checkout 路径、导入 commit 与同步策略统一收口到组级 `README.md`；同步口径已修正为“整目录导入，不按单文件复制”——虽然当前 upstream 目录只有 `SKILL.md`，但后续同步不得再假设如此；当前尚未运行 source checks，也尚未发布到全局 runtime。
+  - 本轮已按用户要求使用独立子代理在 `clawhub` 中完成第一轮 `web/public/app.js` <-> `internal/httpapi` contract mapping，并把 gap inventory 写回 `harness/tasks/reference-frontend-integration/{progress,decisions,evidence-index,verdict}`；本轮确认当前缺口主要是语义与验证边界，而不是 route/method 缺失。
+  - 本轮已新增 `repo-bootstrap` core skill，专门承接“inspect 仓库现状 -> 按条件调用 `init-generated-project.sh`”这一入口职责；这条边界现在已与 `task-harness` 分开，避免再次把项目骨架初始化和任务初始化混成一层。
+  - 本轮已完成 `repo-bootstrap` 的 fresh validation：`python3 scripts/check/validate-skills.py` 与 `bash scripts/check/run-source-checks.sh` 通过，新的 core skill 结构、reference 引用和与现有生成器脚本的接缝已被主校验链接受。
+  - 本轮已把 `clawhub` 作为 `repo-bootstrap` 的真实案例跑通：当前仓库没有 `docs/` 与 `harness/`，但已有完整 `.planning/` 且工作区不干净，因此先判定为 `legacy-planning` 迁移场景，再实际落 `docs/ + harness/` 并迁移 `PROJECT / ROADMAP / ARCHITECTURE / RELEASE / REQUIREMENTS / STATE` 的核心内容；对应经验已沉淀为 `repo-bootstrap` reference，作为“目标结构应切换，但不能按空仓库盲初始化”的标准案例。
+  - 本轮已把 `clawhub` 进一步推进到真实执行态：首个 `task-harness` 任务 `reference-frontend-integration` 已在 `harness/tasks/` 下创建并写入 brief / progress / decisions，这说明 `repo-bootstrap -> task-harness` 现在不仅在结构上成立，也已经能在真实目标仓库中承接下一轮 build 工作。
+  - 本轮已对 `clawhub` 做终端 + 独立只读子代理交叉验证：两条证据都确认 `docs/index.md`、`harness/state.md`、`harness/tasks/reference-frontend-integration/*` 已存在且语义对齐；当前仓库从 `repo-bootstrap` 角度已可视为 `ready`，但仍保留 `legacy-planning` 尾巴，因此后续重点不再是补脚手架，而是把 `reference-frontend-integration` 的 contract gap 和验证证据真正写进 task artifacts。
+  - 本轮已完成第二批实现骨架：新增 `scripts/generate/init-generated-project.sh`，把 `templates/generated-project/` 真正接到初始化命令；新增 `scripts/check/classify-change-risk.sh`、`scripts/smoke/run-targeted-smoke.sh`、`scripts/runtime/promote-to-runtime.sh`，把 runtime gate 从文档推进到可执行最小骨架；同时补充 generated-project 初始化、分级判定与 runtime promotion 的测试覆盖。
+  - 本轮补充一条新的职责边界判断：`init-generated-project.sh` 更适合作为“代码仓库入口 / bootstrap”能力的一部分，由上层 codebase-entry skill 在 inspect 项目现状后按条件触发；它不应直接并入 `task-harness`，因为 `task-harness` 的职责是任务初始化，而不是项目骨架初始化。
+  - 本轮已完成 fresh verification：`bash scripts/check/run-source-checks.sh`、`bash scripts/test/test.sh --layer unit`、`bash scripts/test/test.sh --layer integration` 全部通过；新增 `test_runtime_promotion_gate.sh` 已验证 `L1/L2/L3` 路径分级与 L1 promotion 最小链路可执行。
+  - 本轮已把 `harness` 技能组进一步收口到“组负责组织、concrete skill 自包含运行资源”的结构：入口 skill 已从 `harness` 重命名为 `task-harness`，组根共享 `references/` 与 `templates/` 已拆到各自 skill 的 `references/` / `assets/`，以对齐 Codex 官方 skill anatomy 并降低宿主侧心智偏差。
+  - 本轮已完成重构后的 fresh verification：`bash scripts/check/run-source-checks.sh`、`bash scripts/test/test.sh --layer unit`、`bash scripts/test/test.sh --layer integration` 全部通过；`validate-skills.py` 已识别新的 `task-harness` 与各自 skill 内 `references/` / `assets/` 结构，global install roundtrip 也已验证宿主侧安装的是 concrete skills，而不是组根共享目录。
+  - 本轮已落第一批实现骨架：新增 `templates/generated-project/docs/` 与 `templates/generated-project/harness/`，新增 `.agents/skills/harness/` 技能组骨架，新增 `scripts/generate/init-harness-task.sh` 与 `scripts/check/run-source-checks.sh`，把“方案”推进为可执行脚手架；同时修正 `mirror_repo_skills`，现在只镜像真正带 `SKILL.md` 的目录，避免把 `references/` 与 `templates/` 误装到宿主 skills 目录。
+  - 本轮补充对 Codex 官方 skill anatomy 的对齐判断：`harness` 作为 source repo 内的技能组组织方式可以保留，但组根下共享 `templates/` 并非最优长期结构；按官方语义，这类“供技能输出直接复用的模板文件”更接近各 concrete skill 自身的 `assets/`，后续应收口为“组只负责组织，资源尽量归 concrete skill 自包含”，避免让内部作者结构偏离宿主技能心智模型。
+  - 本轮已把 OpenSpace 的权限模型重新收口为 `source repo direct edit + runtime promotion gate`：允许其在受控范围内直接修改当前 source repo working tree，但 `~/.super-stack/runtime` 继续保持受管运行副本语义，只通过 sync / install / check / smoke 推广。
+  - 本轮已新增独立门禁方案文档 `docs/architecture/decisions/runtime-promotion-gates.md`：定义 `L1 / L2 / L3` 三档改动分级，以及 source-side check、targeted smoke、人工 review、runtime install/check/smoke 的触发矩阵。
+  - 本轮已把方案文档拆成三份：主文档 `docs/architecture/decisions/harness-layout-and-state-model.md` 负责三层架构与 cutover，`docs/architecture/proposals/openspace.md` 负责 backend 搭建与接线，`docs/architecture/decisions/harness-skill-design.md` 负责 4 个 harness skills 的边界与共享 artifact contract。
+  - 本轮明确 target project 的 `docs/` 采用 `llmdoc-inspired` 结构：`overview / architecture / guides / reference` 四层为默认知识导航，`ADR` 归入 `docs/architecture/decisions/`，不再把 `ADR` 当作与架构并列的顶层模块。
+  - 本轮明确 target project 的执行态继续保留 `harness/`，其中 `harness/state.md` 承担仓库当前态，`harness/tasks/<task-id>/` 承担 brief / progress / decisions / evidence / verdict，不再默认生成宽泛的 `artifacts/` 杂项桶。
+  - 本轮修正信息架构设计对象：`docs/`、`harness/`、`operations/` 等结构首先应作为“目标项目生成模板或约定布局”存在；当前 source repo 只需要承载这些模板、skills、references 和生成逻辑，不要求与目标项目一比一同构。
+  - 本轮新增 OpenSpace 候选架构方向：若决定引入 OpenSpace，则 `codex-record-retrospective` 可收敛为“数据采集/归因/回写 skill”，OpenSpace 承担 host-level memory、lineage、community import/export 与自动采集后端，从而替代 `~/.super-stack/projects/<slug>/` 方案的大部分职责。
+  - 本轮补充 `docs/` 结构参考判断：TokenRoll 的 `llmdoc-structure` 更适合作为 target project `docs/` 的组织原则，而不是 `super-stack` source repo 自身的顶层目录真源；target project 默认收口到 `overview / architecture / guides / reference`。
+  - 本轮补充生成物与宿主级记录边界：target project 默认不再保留宽泛的 `artifacts/` 输出桶，任务证据优先由 `harness/tasks/<task-id>/` 承接，宿主级长期记录优先由 OpenSpace 承接；若确有 repo 内样例展示需求，再缩成 `artifacts/examples/`。
+  - 本轮补充 OpenSpace 集成方向：OpenSpace 直接作为 host-level memory / lineage / optional cloud community backend，优先替代 `~/.super-stack/projects/<slug>/`；在当前 `super-stack` 仓库上，它可以作为 source repo 的受控修改执行者，但不直接把 runtime 当主要编辑面，也不绕过 sync gate 改写运行副本。
+  - 本轮基于参考仓库重新校准状态模型：`gstack` 的做法更接近“plan file 是活文档，评审结果回写到 plan file，本地长期 artifact 写入 `~/.gstack/projects/`”，而不是在仓库里维护一整套 `.planning/` 项目数据库；这更适合作为新的轻量方向参考。
+  - 本轮明确新模型应拆成 3 类产物：`repo 内可协作文档`、`repo 内运行态 task/evidence artifact`、`repo 外个人/宿主级长期 artifact`，不再把它们全部塞进 `.planning/` 一层。
+  - 本轮新增目录调整方向：新建 `.agents/skills/harness/` 作为 skill 组，内部承载 `task-harness`、`closed-loop-testing`、`architecture-guardrails`、`harness-marathon` 等 concrete skills；运行时资源优先下沉到各自 skill 的 `references/` / `assets/`，不再把这套能力硬塞进现有 stage taxonomy。
+  - 本轮新增状态模型调整方向：`plan` 仍保留为 workflow stage，但默认输出从“强制写满 `.planning/*.md`”收敛为“轻量 task/state artifact + 必要时再升级为 `docs/` 方案文档”。
+  - 本轮新增 `super-stack-native harness` 架构方向：target project 的默认状态从 `.planning/*` 收口为 `docs/ + harness/`，其中 `harness/state.md` 承担仓库当前态，`harness/tasks/<task-id>/` 承担长任务运行态，避免把运行协议重新塞回 `AGENTS.md` 或单次对话上下文。
+  - 本轮明确多 agent 仍然只是可选加速层，不作为 harness 第一阶段前提；第一阶段先保证单 agent 也能稳定恢复、验证和防止过早完成。
   - 本轮继续对 `AGENTS.md`、`build`、`discuss`、`plan` 做瘦身，把共性细则下沉到 `protocols/workflow-governance.md` 和各自 reference，保持主文件更偏入口与路由；同时补齐质量链路的路由边界，明确 `review / verify / qa` 的分工，并补充“多 agent 已配置不等于应自动触发”的宿主约束说明、Codex 侧自动升级启发式，以及一份独立的多 agent 场景示例 reference。
   - 本轮进一步收敛 `AGENTS.md` 与 `.codex/AGENTS.md` 的职责：根文件保留共享真源，Codex adapter 只保留宿主特有执行细节。
   - 本轮新增 `codex-record-retrospective` 技能，用于按项目路径复盘 Codex 本地记录，并把通用经验反哺到 super-stack。
@@ -65,6 +119,32 @@
   - 本轮基于跨项目 retrospective 继续补共享规则：把“设计/方案类请求需先显式对齐是 discussion-only 还是 direct patching”写回根路由与 `discuss`，把“具体 URL 分析时 browse 是默认主路径而非可选增强”写回根路由与 workflow governance，并把 retrospective automation 的默认产物边界补回 skill 入口。
 
 - verification status:
+  - 本轮已完成 `.planning` cutover phase3 第一批落地与 fresh verification：`map-codebase` 默认输出路径已从 `.planning/codebase/` 切到 `docs/reference/codebase/`，generated-project 模板已新增 codebase 目录占位，第二批 supporting skills 与 `codex-record-retrospective` 的 active `.planning` 引用已切换；同时新增 `config/skill-validation-exceptions.json` 与 validator 例外机制，用于忽略 OpenSpace 上游 verbatim skill 的薄入口 warning；`python3 scripts/check/validate-skills.py`、`python3 -m unittest tests.python.test_harness_scaffold tests.python.test_skill_validation_exceptions -v`、`bash scripts/check/run-source-checks.sh` 全部通过。
+  - 本轮已完成 `.planning` cutover phase1/2 第一批落地与 fresh verification：根路由、Codex adapter、Codex/Claude state hooks、readonly hook、核心 `discuss/plan/build/verify/ship` skills 已切到 `docs/ + harness/`；当前 source repo 已补齐 `docs/index.md`、`docs/overview/*`、`docs/reference/{conventions,requirements}.md` 与 `harness/state.md`；`bash scripts/check/run-source-checks.sh`、`python3 -m unittest tests.python.test_super_stack_state tests.python.test_readonly_command_guard -v`、`bash tests/shell/test_global_install_roundtrip.sh`、`bash tests/shell/test_hook_merge_idempotent.sh` 全部通过。
+  - 本轮已完成 `openspace` 的 Codex MCP 接线 fresh verification：新增 render/check Python 单测验证 `OPENSPACE_MCP_BIN` 存在时会输出 `openspace` server，shell integration 也已验证安装链会把 `[mcp_servers.openspace]` 合并到 Codex 配置，同时不影响 Claude 侧当前只保留 browser MCP 的口径。
+  - 本轮已完成 OpenSpace 宿主部署 fresh verification：`~/.super-stack/openspace/bin/openspace-mcp-codex --help` 可运行，`pm2 status openspace-dashboard` 显示在线，`curl -I http://127.0.0.1:7788` 返回 `HTTP/1.1 200 OK`，`~/.codex/config.toml` 中 `[mcp_servers.openspace]` 指向 wrapper 命令。
+  - 本轮已完成一次“无新增回滚操作”核对：尝试配置 PM2 startup 的过程中没有成功写入新的用户级 launchd 配置；现有 `~/Library/LaunchAgents/pm2.gclm.plist` 的修改时间仍为 `2026-03-12 10:45:43`，说明本轮未覆盖用户既有 PM2 自启设置。
+  - 本轮已完成一次 source/runtime 边界核对：OpenSpace 官方 host skills 当前在 source repo 中已新增 `.agents/skills/openspace/{delegate-task,skill-discovery}/`，而运行态副本仍仅存在于 `~/.agents/skills/{delegate-task,skill-discovery}`；这确认当前停在“已收口真源、未发布”状态，没有误触发全局安装链。
+  - 本轮已完成 fresh source-side checks：`bash scripts/check/run-source-checks.sh` 通过，24 个关键 Python 单元测试全绿，skill 结构校验为 `0 error / 1 warn`；唯一 warning 来自 upstream `delegate-task` 超过薄入口警戒线，当前未阻断 source checks。
+  - 本轮已完成 `.planning` cutover blocker 盘点并固化执行顺序：高风险阻塞点集中在根路由、Codex adapter、hooks、核心 stage skills、`map-codebase` 与 smoke/tests，而不是模板目录本身。
+  - 本轮已完成宿主 MCP 受管模型的 fresh verification：`managed-config.json` 已修正为合法 JSON，`codex_mcp / claude_mcp` 改为消费共享 `server_defs`，并补了多 server manifest 驱动的 Python 单测，确保后续新增 MCP 不必再改 host 安装逻辑。
+  - 本轮已完成浏览器核心切换后的 fresh verification：`python3 scripts/check/validate-skills.py`、`bash scripts/check/run-source-checks.sh`、`bash scripts/test/test.sh --layer integration` 全部通过；新增 `tests/shell/test_check_browser_capability.sh` 已验证 `check-browser-capability.sh` 能正确识别 Codex `chrome-devtools-mcp`。
+  - 本轮已完成第一批代码落地并通过本地校验：`bash scripts/check/run-source-checks.sh` 通过，新的 `harness` skill 组已纳入 `validate-skills.py` 校验且为 `0 error / 0 warn`。
+  - 本轮已新增 `tests/python/test_harness_scaffold.py`，并通过 `bash scripts/test/test.sh --layer unit` 完成 fresh verification；当前 31 个 Python/skill unit tests 全绿，覆盖 generated-project 模板存在性与 `init-harness-task.sh` 的成功/重复创建路径。
+  - 本轮已通过 `bash scripts/test/test.sh --layer integration` 完成 integration fresh verification：全局安装 roundtrip、hook merge 幂等、browser wrappers 与 install state roundtrip 全部通过，且新增 `harness` 共享目录不再被错误镜像到宿主 skills 目录。
+  - 本轮已明确新的治理边界：若 OpenSpace 参与 skills 进化，直接操作对象应优先是当前 source repo 工作区，而不是 `~/.super-stack/runtime`；runtime 继续作为受管运行副本，通过同步与检查链完成推广。
+  - 本轮已把 `docs/architecture/proposals/openspace.md` 改写成新的权限模型：明确 `Draft Edit Authority / Promotion Authority / Activation Authority` 三层控制面，并把“OpenSpace 可以直接改 source repo，但不直接改 runtime”写成主口径。
+  - 本轮已新增 `docs/architecture/decisions/runtime-promotion-gates.md`：把 runtime 推广收口为独立门禁文档，明确 `L1 / L2 / L3` 变更分级，以及 `check / smoke / review` 与 sync/install/check 的衔接规则。
+  - 本轮已新增 `docs/guides/workflows/harness-rollout-checklist.md`：把当前方案拆成可执行 workstreams，覆盖 target project 模板、生成器、`harness` skill 组骨架、runtime gate、OpenSpace 接线、retrospective adapter、`.planning` 迁移和验证矩阵。
+  - 本轮已把 `docs/architecture/decisions/harness-skill-design.md` 补齐到新边界：harness 产物继续服务于 target project 执行态与 evidence 收集，但 runtime promotion 仍由独立 gate 控制，不由 harness skills 直接接管。
+  - 本轮已把 `docs/architecture/decisions/harness-layout-and-state-model.md` 改写为“target project 三层结构 + source repo direct edit + runtime promotion gate”模型，不再把“OpenSpace 不直接改当前项目”当作前提。
+  - 本轮已把 `docs/architecture/decisions/harness-layout-and-state-model.md` 收口为可评审版本：主文档现在只保留三层决策、generated project 默认结构、`.planning` cutover 与实施顺序，不再把 OpenSpace 细节和 harness skill 细节混写在同一份提案里。
+  - 本轮已新增 `docs/architecture/proposals/openspace.md`：单独定义 OpenSpace 作为 host-level backend 的职责边界、本机部署建议、MCP/host-skills 接线、`codex-record-retrospective` adapter 关系与 source repo first 的审批边界。
+  - 本轮已新增 `docs/architecture/decisions/harness-skill-design.md`：明确 `harness`、`closed-loop-testing`、`architecture-guardrails`、`harness-marathon` 四个技能的触发条件、输入输出、非目标、shared artifact contract 与和现有 `build / review / verify / qa` 的衔接关系。
+  - 本轮已把 target project 的 `docs/` 结构正式收口到 `llmdoc-inspired` 模型：`overview / architecture / guides / reference`，并把 `ADR` 归位到 `docs/architecture/decisions/`，避免继续把架构决策记录单独当成顶层目录讨论。
+  - 本轮已将方案文档 `docs/architecture/decisions/harness-layout-and-state-model.md` 重写为三层架构：`source repo layout + generated project layout + OpenSpace backend`，并明确作用域是“super-stack 在目标项目中生成什么结构”，而不是先改 source repo 自身目录形态。
+  - 本轮已把 OpenSpace 收口为优先 backend 方向：host-level memory、skill evolution、import/export、lineage 由 OpenSpace 承担；`codex-record-retrospective` 未来收敛为 ingestion / normalization / recommendation adapter；`~/.super-stack/projects/<slug>/` 退为非默认方案。
+  - 本轮已完成 `.planning` 来源复核：确认当前重度状态模型主要继承自 `GSD / get-shit-done`，而不是 `gstack`；同时已补一份方案文档 `docs/architecture/decisions/harness-layout-and-state-model.md`，用于集中评审新的信息架构与 cutover 方案。
   - 本轮已继续收口 `scripts/install/` 与 `scripts/check/` 的共享逻辑：skills 镜像、全局路由写入、managed config 查询已统一下沉到 `scripts/lib/common.sh`，避免 Claude / Codex 安装链与 check/uninstall 链分别维护近似实现。
   - 本轮已继续把 browser wrapper 列表与宿主全局路由模板收口为共享真源：`browser_wrapper_names` 与 `render_global_router_text` 现由 `scripts/lib/common.sh` 提供，`install.sh`、`check-global-install.sh` 与相关 shell 测试已共用同一实现口径。
   - 本轮已确认 `install-state.sh` 不是重复层：当前边界稳定为“总入口 reset、宿主入口 record、卸载入口 restore”，并已通过 `test_install_state_roundtrip.sh` 持续覆盖。
@@ -128,6 +208,31 @@
   - 当前无新的临时 unblock 决策；后续若为通过构建或验证引入占位资源，必须在此显式记录其性质。
 
 - next actions:
+  - 不再继续触碰 PM2 自启配置；用户已确认现有 PM2 自启由其本人预先配置，本轮保持现状即可。
+  - 决定 OpenSpace 后续是否要接入 cloud/community 模式；当前 local-only 链路已经可用，但 cloud key、recording 和更宽权限尚未开启。
+  - 当前先只保留 OpenSpace Layer-A 官方薄对接：MCP + env + host skills；暂不继续实现 retrospective adapter、candidate skill packet、source-repo direct edit 或 runtime promotion 扩展层。
+  - 针对 `.agents/skills/openspace/delegate-task` 的薄入口 warning 做发布前决策：接受 upstream verbatim 进入全局，或在保持语义不变的前提下拆细到 `references/` 后再发布。
+  - 在用户确认后，再决定是否把 `.agents/skills/openspace/{delegate-task,skill-discovery}` 进入全局发布链。
+  - 若正式进入 `.planning` cutover，当前推荐顺序应改为：先根路由与 host adapter（`AGENTS.md`、`.codex/AGENTS.md`、hooks/config），再 core/planning/quality/ship skills，随后更新 smoke/tests，再迁当前仓库自身状态到 `docs/ + harness/`，最后删除 `templates/planning`、`templates/validation` 与其残余引用。
+  - 若下一步继续清理 `.planning` 尾巴，实现顺序以当前 `harness/state.md` 与 `docs/overview/roadmap.md` 为准，而不再按旧独立 cutover checklist 推进。
+  - 下一步先观察 OpenSpace 在当前 Codex 宿主中的真实工作方式：重点看 `delegate-task` / `skill-discovery` 的触发、dashboard 中的 skill 注册与 lineage 展示、以及 local-only 模式下的可用边界，再决定 Layer-B / Layer-C 是否值得做。
+  - 在 `clawhub` 的 `harness/tasks/reference-frontend-integration/` 中完成第一次真实 phase-1 压测：检查 `web/public` 与 `internal/httpapi` 的接缝，记录 contract gap、证据索引与当前 verdict，证明 `repo-bootstrap -> task-harness -> verify artifacts` 不是只停留在脚手架层。
+  - 继续把“复杂验证优先使用独立只读子代理 cross-check”落实到后续真实验证流程中，观察是否能减少当前上下文自证带来的过乐观结论；若子代理不可用，则要求显式标记为 single-context verification。
+  - 继续细化 runtime gate：把 `run-targeted-smoke` 从当前路径驱动粗分流升级为更稳定的风险矩阵，并明确 `L2 / L3` 各自最小必跑验证集。
+  - 把 `promote-to-runtime` 的 L3 人工 review 从布尔开关收口为更可审计的证据形状，避免长期停留在 `--reviewed` 这种过薄接口。
+  - 把 source-side checks 继续扩成 promotion 前置链：决定哪些 fast checks 常驻，哪些测试只在 `L2 / L3` 时触发，避免把完整测试矩阵塞回一个慢脚本。
+  - 决定 `repo-bootstrap` 后续是否还要接“低冲突 partial fill”与“首个 task 自动初始化”两个可选动作，还是继续保持当前薄入口。
+  - 正式决定 OpenSpace 是否直接取代 `~/.super-stack/projects/<slug>/`；若采纳，则把 `codex-record-retrospective` 的职责边界、数据采集链、source-repo direct edit 条件和 runtime promotion 边界写成实施级设计。
+  - 决定是否正式采用 `llmdoc-inspired docs/` 作为 target project 默认 `docs/` 结构，并确认 `ADR -> docs/architecture/decisions/`、`roadmap -> docs/overview/roadmap.md`、执行态 -> `harness/` 的最终口径。
+  - 把 `harness` skill 组目录设计推进到 source repo 实施方案：明确 `.agents/skills/harness/` 下的 4 个 skills、`task-harness` 入口命名、各 skill 自包含 `references/` / `assets/` 的接缝，以及与现有 skills taxonomy 的关系。
+  - 产出一份参考对照结论稿：明确 `GSD` 借给我们的是什么，`gstack` 借给我们的是什么，以及哪些部分不再沿用。
+  - 产出一份不做兼容层的 cutover 方案：一次性移除 `.planning` 默认约定，并同步改 `AGENTS.md`、skills、hooks、managed config、smoke、tests。
+  - 决定是否提供一次性迁移脚本：只迁移有价值的 `STATE/ROADMAP` 信息到新模型；`PROJECT/REQUIREMENTS/codebase map` 若历史价值低，则允许直接废弃。
+  - 产出一份 `.planning` 退场迁移设计：明确哪些职责迁到 `harness` task/state artifact，哪些只在需要时进入 `docs/`，以及 hooks/config/tests 该如何平滑过渡。
+  - 先定义 `super-stack-native harness` 的最小 artifact schema 与 demo runbook；首批覆盖跨 session 重构、复杂验证、浏览器取证三类长任务。
+  - 把 `verify / qa / browse / smoke` 的关键产物逐步统一到同一 evidence pack 与 `final verdict` 口径。
+  - 为长任务补 `resume / checkpoint / doom-loop detection / human-escalation gate` 模板，但暂不引入阻断式 stop hook、默认 `worktree-per-task` 或重型 observability 栈。
+  - 选一个真实项目做 harness phase-1 试点，记录 `恢复耗时`、`人类介入次数`、`一次通过率` 与 `过早完成率`，用真实 evidence 再决定 phase-2 形状。
   - 当前已确认更稳的推进路径是：保持旧 `woniu` 仓库作为问题样本与资产来源，不在其上继续主线开发；先把已提交的 `super-stack` 基线推远端并更新到全局，再新建干净目录按 `discuss -> plan` 重新启动 `woniu`，把旧仓库仅作为参考输入。
   - 当前已从跨项目泛化调整回 `woniu` 个案治理，新增 `artifacts/retrospectives/2026-03-28-woniu-asset-classification.md` 作为第一份资产分级决策稿；下一步应基于该分级继续产出“重构回正方案”，而不是恢复在 `woniu` 当前仓库上直接扩写功能。
   - 本轮已删除 `scripts/install/reset-install-state.sh` 与 `scripts/lib/checks.sh` 两层薄包装；后续继续避免把轻量 helper 重新拆回独立脚本。
@@ -159,5 +264,16 @@
 - decision:
   - 结构收敛已经完成，当前不再继续扩张新的结构层次。
   - 后续所有改动优先保持结构一致性、验证闭环和单一入口约定，其次才扩新能力。
+  - 对复杂结构、迁移、脚手架与 artifact 语义验证，默认优先使用独立只读子代理做交叉确认；仅在受限环境下才接受 single-context verification，且必须显式降级表述。
+  - OpenSpace 当前阶段只采纳 Layer-A 官方薄对接；Layer-B `super-stack` 增强层与 Layer-C source-repo/runtime 治理层暂缓，先基于真实使用体验再决定是否继续投资。
+  - OpenSpace 允许在受控范围内直接修改当前 source repo working tree，但不直接把 `~/.super-stack/runtime` 当主要编辑面；runtime 继续通过 promotion gate 承接变更。
+  - `super-stack` 下一阶段的自动化方向定为“薄 harness”，不是先做“重编排平台”。
+  - `plan` 作为 workflow stage 保留，但 `.planning` 作为默认强制目录进入退场重构范围。
+  - `.planning` 重构的参考基线改为“工程所需最小状态 + gstack 式活文档/外部 artifact 分层”，不再继续沿用 `GSD` 式仓库内 spec-heavy project database。
+  - `.planning` 不做长期兼容层；重构时要么提供一次性迁移脚本，要么明确废弃旧数据。
+  - 目标项目生成结构与 source repo 自身结构解耦：模板可以比 source repo 更接近最终使用形态。
+  - 若 OpenSpace 能稳定承担 host-level memory 与自动采集，则 `~/.super-stack/projects/<slug>/` 允许整体退场，而不是成为新的长期包袱。
+  - 4 个新能力按独立 `harness` skill 组组织，而不是继续塞进现有 skill 分类中。
+  - 在 evidence pack、resume contract 和 retrospective automation 稳定前，不引入默认 `worktree-per-task`、重型 observability stack 或 fully autonomous merge path。
   - 后续路径与安装治理统一采用 `source repo -> runtime repo(~/.super-stack/runtime)`，并固定 `state` / `backup` 子目录边界。
   - 以后出现中途调整产品边界、架构方向或数据库策略时，必须先显式回退到 `plan`，再继续 `build`。

@@ -12,8 +12,8 @@ Use this skill when a change touches existing data, schema evolution, backfill l
 - current schema and migration history
 - deployment and rollback constraints
 - data volume and downtime tolerance
-- `.planning/REQUIREMENTS.md` and `.planning/STATE.md` if they exist
-
+- `docs/reference/requirements.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - make the migration sequence safe and explicit

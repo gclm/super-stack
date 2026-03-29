@@ -77,6 +77,44 @@ class ManagedConfigCheckTests(unittest.TestCase):
         self.assertIn('/tmp/runtime/.codex/hooks/super_stack_state.py', result.stdout)
         self.assertIn('/tmp/runtime/scripts/hooks/readonly_command_guard.py', result.stdout)
 
+    def test_codex_mcp_markers_are_available(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--block", "codex_mcp", "--field", "markers"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("# BEGIN SUPER-STACK CODEX MCP", result.stdout)
+        self.assertIn("# END SUPER-STACK CODEX MCP", result.stdout)
+
+    def test_codex_mcp_contains_include_resolved_openspace_marker(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--block", "codex_mcp", "--field", "contains"],
+            text=True,
+            capture_output=True,
+            check=False,
+            env={
+                "PATH": "/tmp/bin:/usr/bin:/bin",
+                "CHROME_DEVTOOLS_MCP_BIN": "/tmp/bin/chrome-devtools-mcp",
+                "OPENSPACE_MCP_BIN": "/tmp/bin/openspace-mcp",
+            },
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn("[mcp_servers.chrome-devtools-mcp]", result.stdout)
+        self.assertIn("[mcp_servers.openspace]", result.stdout)
+
+    def test_claude_mcp_contains_are_available(self):
+        result = subprocess.run(
+            [sys.executable, str(SCRIPT), "--block", "claude_mcp", "--field", "contains"],
+            text=True,
+            capture_output=True,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertIn('"mcpServers"', result.stdout)
+        self.assertIn('"chrome-devtools-mcp"', result.stdout)
+
     def test_target_file_is_rendered_with_home(self):
         result = subprocess.run(
             [sys.executable, str(SCRIPT), "--block", "codex_agents", "--field", "target_file", "--home", "/tmp/home"],
@@ -105,7 +143,8 @@ class ManagedConfigCheckTests(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0, result.stderr)
         self.assertIn('/tmp/runtime/scripts/hooks/readonly_command_guard.py', result.stdout)
-        self.assertIn('remember to leave STATE.md current', result.stdout)
+        self.assertIn('harness/state.md', result.stdout)
+        self.assertIn('remember to leave harness/state.md current', result.stdout)
 
 
 if __name__ == "__main__":

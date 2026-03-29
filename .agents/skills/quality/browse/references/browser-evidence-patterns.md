@@ -47,16 +47,13 @@ When you suspect network-driven failure:
 - do not dump the full request log first if the page is busy and the relevant endpoint is already known
 - if the filtered log is empty, report that explicitly and retry with a wider filter before concluding the request never fired
 
-Recommended command pattern:
+Recommended evidence pattern:
 
-```bash
-bash scripts/smoke/browser-debug-report.sh \
-  --url "http://localhost:3000" \
-  --selector "#app" \
-  --network-filter "/api/" \
-  --hint "首页白屏，怀疑接口或 hydration 异常" \
-  --output artifacts/browser-debug-homepage.md
-```
+- open the page in the active browser tooling
+- capture a selector-scoped DOM snapshot such as `#app`
+- inspect console output
+- inspect network requests filtered to `/api/`
+- write the findings back to the task artifact or review summary
 
 ## Evidence Priorities
 

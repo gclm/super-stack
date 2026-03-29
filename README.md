@@ -11,7 +11,7 @@
 
 - 用根 [AGENTS.md](AGENTS.md) 提供稳定阶段路由
 - 用 [`.agents/skills/`](.agents/skills) 承载可复用技能
-- 用 [`.planning/`](.planning) 与模板沉淀项目状态
+- 用 [`docs/`](docs) + [`harness/`](harness) 与 [`templates/generated-project/`](templates/generated-project) 沉淀目标项目骨架与状态约定
 - 用 [`.claude/`](.claude) / [`.codex/`](.codex) 做宿主适配
 - 用 [`scripts/`](scripts) 提供安装、检查、回归与测试闭环
 
@@ -19,7 +19,8 @@
 
 - 只维护全局配置底座
 - 不再维护项目级安装分支
-- 浏览器默认主链路是 `agent-browser` + `super-stack-browser`
+- 浏览器默认主链路改为宿主侧 browser MCP / browser plugin；对 Codex 当前优先 `chrome-devtools-mcp`
+- 宿主 MCP 受管配置按 `codex_mcp` / `claude_mcp` 两个 host block 维护；后续新增 MCP server 默认只改 `config/managed-config.json` 里的共享 `server_defs`
 - `~/.super-stack/runtime` 是纯运行仓库，不是重新安装用的完整 source repo 副本
 
 ## 仓库关系
@@ -66,43 +67,20 @@
 ./scripts/install/uninstall-global.sh
 ```
 
-如需单独重装浏览器链路：
+浏览器能力检查：
 
 ```bash
-./scripts/install/install.sh --host all
 ./scripts/check/check-browser-capability.sh
-~/.super-stack/runtime/bin/super-stack-browser-health
 ```
 
-稳定浏览器入口：
+当前约束：
 
-```bash
-~/.super-stack/runtime/bin/super-stack-browser open https://example.com
-```
-
-如果会话卡住或授权状态异常：
-
-```bash
-~/.super-stack/runtime/bin/super-stack-browser-reset
-```
-
-如果你怀疑浏览器残留、headless 进程变多，或 Chrome 内存持续上涨：
-
-```bash
-~/.super-stack/runtime/bin/super-stack-browser-health
-```
-
-默认情况下，`super-stack-browser` 会给 `agent-browser` 注入 15 分钟空闲超时，避免 daemon 和 headless Chrome 长时间残留。如需覆盖：
-
-```bash
-SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stack-browser open https://example.com
-```
-
-如果你想验证浏览器技能的 preflight/postflight/recovery 链路，可以执行：
-
-```bash
-./scripts/smoke/browser-lifecycle.sh
-```
+- `super-stack` 不再安装或维护 `agent-browser` wrapper
+- 浏览器能力由宿主配置决定
+- `config/managed-config.json` 的顶层 `server_defs` 是当前受管 MCP server 真源
+- Codex 当前应优先使用已配置的 `chrome-devtools-mcp`
+- OpenSpace 当前已纳入 `codex_mcp` 的受管 server 列表；当宿主存在 `openspace-mcp` 或设置 `OPENSPACE_MCP_BIN` 时会自动写入 Codex 配置
+- Claude Code 当前应优先使用已配置的 browser MCP 或 browser plugin
 
 ## 推荐验证链路
 
@@ -117,19 +95,19 @@ SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stac
 2. Codex 路由回归
 
 ```bash
-./scripts/smoke/codex-regression-suite.sh
+./scripts/smoke/host/codex-regression-suite.sh
 ```
 
 3. Claude 全局链路回归
 
 ```bash
-./scripts/smoke/claude-global.sh
+./scripts/smoke/host/claude-global.sh
 ```
 
 4. readonly hook 回归
 
 ```bash
-./scripts/smoke/readonly-hook.sh
+./scripts/smoke/hooks/readonly-hook.sh
 ```
 
 这条链路当前覆盖：
@@ -139,12 +117,6 @@ SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stac
 - `Codex` 阶段路由与 supporting skills 是否正常
 - `Claude` hooks、skills、browser 能力探测是否接通
 - readonly hook 是否真的在运行态生效
-
-如果你只想复查浏览器抽取链路，可以再跑：
-
-```bash
-./scripts/smoke/browser-extraction.sh --url "https://example.com/page" --adapter generic-page --output artifacts/browser-smoke.md
-```
 
 ## 工程测试入口
 
@@ -171,12 +143,12 @@ SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stac
 
 当前约定是：
 
-- `unit`: Python hooks 与 browser renderer 的纯逻辑回归
+- `unit`: Python hooks 与轻量静态逻辑回归
 - `integration`: install / check / uninstall roundtrip、hook merge、安装状态恢复
 - `smoke`: 真实 Claude / Codex / 浏览器环境验证
-- `artifacts`: browser smoke 报告等运行产物输出目录，不承载自动化测试代码
+- `artifacts`: 运行产物输出目录，不承载自动化测试代码
 
-详细说明见 [验证策略](docs/validation-strategy.md)。
+详细说明见 [验证策略](docs/guides/workflows/validation-strategy.md)。
 
 注意：
 
@@ -187,14 +159,13 @@ SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stac
 
 当前仓库只认可这一套单一入口结构：
 
-- [`scripts/install/`](scripts/install): 安装、卸载、同步、hook merge、浏览器安装与会话重置
+- [`scripts/install/`](scripts/install): 安装、卸载、同步、hook merge
 - [`scripts/check/`](scripts/check): 全局安装检查、浏览器能力检查、Codex 运行态检查
-- [`scripts/smoke/`](scripts/smoke): Claude / Codex / browser / readonly hook 的真实环境回归
+- [`scripts/smoke/`](scripts/smoke): Claude / Codex / readonly hook 的真实环境回归
 - [`scripts/test/`](scripts/test): 自动化测试统一入口
 - [`scripts/lib/`](scripts/lib): shell 公共库
 - [`scripts/hooks/`](scripts/hooks): 运行态 hook
-- [`scripts/browser/`](scripts/browser): 浏览器提取器与渲染器
-- `artifacts/`: browser smoke 报告等运行产物目录
+- `artifacts/`: 运行产物目录
 
 其中：
 
@@ -207,22 +178,24 @@ SUPER_STACK_BROWSER_IDLE_TIMEOUT_MS=300000 ~/.super-stack/runtime/bin/super-stac
 
 首页只保留“是什么、怎么装、怎么验”。更细的设计与规则统一看这些文档：
 
-- [项目架构设计](docs/project-design.md)
-- [source / runtime 边界设计](docs/source-runtime-boundary.md)
-- [脚本架构](docs/script-architecture.md)
-- [验证策略](docs/validation-strategy.md)
-- [浏览器技术选型记录](docs/browser-technology-options.md)
-- [只读命令 Hook 方案](docs/readonly-command-hook.md)
-- [参考项目调研与吸收映射](docs/reference-projects.md)
-- [演进路线图](docs/evolution-roadmap.md)
+- [文档索引](docs/index.md)
+- [项目架构设计](docs/architecture/project-design.md)
+- [source / runtime 边界设计](docs/architecture/source-runtime-boundary.md)
+- [脚本架构](docs/architecture/script-architecture.md)
+- [验证策略](docs/guides/workflows/validation-strategy.md)
+- [浏览器技术选型记录](docs/architecture/decisions/browser-technology-options.md)
+- [只读命令 Hook 方案](docs/architecture/decisions/readonly-command-hook.md)
+- [参考项目调研与吸收映射](docs/reference/research/reference-projects.md)
+- [演进路线图](docs/overview/evolution-roadmap.md)
 - [Codex 运行时检查](scripts/check/check-codex-runtime.sh)
 
-## 验证模板
+## 验证参考
 
-如果你想在真实项目里复用验证过程，可以直接使用：
+如果你想在真实项目里复用验证过程，可以直接使用这些 `docs/` 参考文档：
 
-- [真实项目验证模板](templates/validation/REAL_PROJECT_VALIDATION.md)
-- [技能回归矩阵](templates/validation/SKILL_REGRESSION_MATRIX.md)
-- [工作流体验验证](templates/validation/WORKFLOW_EXPERIENCE_VALIDATION.md)
-- [浏览器专项回归矩阵](templates/validation/BROWSER_REGRESSION_MATRIX.md)
-- [Hook 风险分级回归矩阵](templates/validation/HOOK_RISK_REGRESSION_MATRIX.md)
+- [验证参考索引](docs/reference/validation/README.md)
+- [真实项目验证模板](docs/reference/validation/real-project-validation.md)
+- [技能回归矩阵](docs/reference/validation/skill-regression-matrix.md)
+- [工作流体验验证](docs/reference/validation/workflow-experience-validation.md)
+- [浏览器专项回归矩阵](docs/reference/validation/browser-regression-matrix.md)
+- [Hook 风险分级回归矩阵](docs/reference/validation/hook-risk-regression-matrix.md)

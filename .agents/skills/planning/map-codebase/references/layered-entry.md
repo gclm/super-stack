@@ -26,7 +26,8 @@ Typical evidence:
 - `README*`
 - top-level manifests
 - `AGENTS.md`
-- `.planning/*`
+- `docs/*`
+- `harness/*`
 - build config
 - directory tree
 - CI / scripts / env config

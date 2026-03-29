@@ -11,8 +11,8 @@ Use this skill when backend code has become tangled and the goal is to improve s
 
 - the entry handlers, services, models, and side-effect boundaries involved
 - current tests and failure-prone flows
-- `.planning/ROADMAP.md` and `.planning/STATE.md` if they exist
-
+- `docs/overview/roadmap.md` and `harness/state.md` if they exist
+- `harness/history.md` if it exists
 ## Goals
 
 - separate transport, domain, persistence, and integration concerns

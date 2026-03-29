@@ -15,7 +15,7 @@ assert_count() {
   local pattern="$2"
   local path="$3"
   local actual
-  actual="$(rg -c --fixed-strings "$pattern" "$path")"
+  actual="$(rg -c --fixed-strings -- "$pattern" "$path")"
   [[ "$actual" == "$expected" ]] || fail "${path} 中 ${pattern} 计数为 ${actual}，预期 ${expected}"
 }
 
@@ -26,13 +26,27 @@ export HOME="${TMP_HOME}"
 mkdir -p "${HOME}/.codex" "${HOME}/.claude"
 printf '#:schema https://developers.openai.com/codex/config-schema.json\n\n' > "${HOME}/.codex/config.toml"
 printf '{}\n' > "${HOME}/.claude/settings.json"
+mkdir -p "${HOME}/bin"
+cat > "${HOME}/bin/chrome-devtools-mcp" <<'EOF'
+#!/usr/bin/env bash
+exit 0
+EOF
+chmod +x "${HOME}/bin/chrome-devtools-mcp"
+cat > "${HOME}/bin/openspace-mcp" <<'EOF'
+#!/usr/bin/env bash
+exit 0
+EOF
+chmod +x "${HOME}/bin/openspace-mcp"
+export PATH="${HOME}/bin:${PATH}"
 mkdir -p "${HOME}/.super-stack/runtime/.codex/hooks" "${HOME}/.super-stack/runtime/scripts/hooks"
 cp "${REPO_ROOT}/.codex/hooks/super_stack_state.py" "${HOME}/.super-stack/runtime/.codex/hooks/super_stack_state.py"
 cp "${REPO_ROOT}/scripts/hooks/readonly_command_guard.py" "${HOME}/.super-stack/runtime/scripts/hooks/readonly_command_guard.py"
 
 python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block codex_agents >/dev/null
 python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block codex_hooks --runtime-root "${HOME}/.super-stack/runtime" --config-file "${HOME}/.codex/config.toml" >/dev/null
+python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block codex_mcp >/dev/null
 python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block claude_hooks --runtime-root "${HOME}/.super-stack/runtime" >/dev/null
+python3 "${REPO_ROOT}/scripts/config/render_managed_config.py" --block claude_mcp >/dev/null
 
 bash "${REPO_ROOT}/scripts/install/install-codex.sh"
 bash "${REPO_ROOT}/scripts/install/install-codex.sh"
@@ -47,6 +61,9 @@ assert_count 1 "# BEGIN SUPER-STACK HOOKS" "${HOME}/.codex/config.toml"
 assert_count 1 "[[hooks.session_start]]" "${HOME}/.codex/config.toml"
 assert_count 1 "[[hooks.pre_tool_use]]" "${HOME}/.codex/config.toml"
 assert_count 1 "[[hooks.stop]]" "${HOME}/.codex/config.toml"
+assert_count 1 "# BEGIN SUPER-STACK CODEX MCP" "${HOME}/.codex/config.toml"
+assert_count 1 "[mcp_servers.chrome-devtools-mcp]" "${HOME}/.codex/config.toml"
+assert_count 1 "[mcp_servers.openspace]" "${HOME}/.codex/config.toml"
 
 python3 - <<'PY' "${HOME}/.claude/settings.json"
 import json
@@ -59,6 +76,9 @@ for name in ("SessionStart", "PreToolUse", "Stop"):
     entries = hooks.get(name)
     if not isinstance(entries, list) or len(entries) != 1:
         raise SystemExit(f"{name} entries invalid: {entries!r}")
+mcp_servers = settings.get("mcpServers", {})
+if sorted(mcp_servers.keys()) != ["chrome-devtools-mcp"]:
+    raise SystemExit(f"mcpServers invalid: {mcp_servers!r}")
 PY
 
 printf '[测试通过] hook merge idempotent\n'

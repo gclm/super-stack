@@ -2,26 +2,21 @@
 
 set -euo pipefail
 
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-# shellcheck source=../lib/common.sh
-source "${SCRIPT_DIR}/../lib/common.sh"
-
 python3 - <<'PY'
 import json
 import os
 from pathlib import Path
+
+try:
+    import tomllib
+except ModuleNotFoundError:  # pragma: no cover
+    import tomli as tomllib
 
 home = Path.home()
 
 candidate_bins = []
 if os.environ.get("SUPER_STACK_BROWSE_BIN"):
     candidate_bins.append(("override", Path(os.environ["SUPER_STACK_BROWSE_BIN"]).expanduser()))
-
-default_candidates = [
-    ("super-stack-browser", home / ".super-stack" / "runtime" / "bin" / "super-stack-browser"),
-]
-
-candidate_bins.extend(default_candidates)
 
 available_local = [
     (name, candidate)
@@ -38,56 +33,70 @@ if available_local:
         print(f"fallbacks={fallbacks}")
     raise SystemExit(0)
 
+browser_tokens = ("browser", "playwright", "chrome", "devtools")
+active_mcp = []
+enabled_plugins = []
+installed_plugins = []
+
+codex_path = home / ".codex" / "config.toml"
+if codex_path.exists():
+    try:
+        codex_data = tomllib.loads(codex_path.read_text(encoding="utf-8"))
+    except Exception:
+        codex_data = {}
+
+    mcp_servers = codex_data.get("mcp_servers", {})
+    if isinstance(mcp_servers, dict):
+        for name, config in mcp_servers.items():
+            if not any(token in name.lower() for token in browser_tokens):
+                continue
+            if isinstance(config, dict) and config.get("enabled", True):
+                active_mcp.append(f"codex:{name}")
+
 settings_path = home / ".claude" / "settings.json"
 installed_path = home / ".claude" / "plugins" / "installed_plugins.json"
 
-enabled = set()
-installed = set()
-mcp_names = set()
-
 if settings_path.exists():
     try:
-        settings = json.loads(settings_path.read_text())
+        settings = json.loads(settings_path.read_text(encoding="utf-8"))
     except Exception:
         settings = {}
 
-    enabled_plugins = settings.get("enabledPlugins", {})
-    if isinstance(enabled_plugins, dict):
-        enabled = {name for name, value in enabled_plugins.items() if value}
+    claude_mcp_servers = settings.get("mcpServers", {})
+    if isinstance(claude_mcp_servers, dict):
+        for name in claude_mcp_servers.keys():
+            if any(token in name.lower() for token in browser_tokens):
+                active_mcp.append(f"claude:{name}")
 
-    mcp_servers = settings.get("mcpServers", {})
-    if isinstance(mcp_servers, dict):
-        mcp_names = set(mcp_servers.keys())
+    enabled = settings.get("enabledPlugins", {})
+    if isinstance(enabled, dict):
+        enabled_plugins = sorted(
+            name for name, value in enabled.items() if value and any(token in name.lower() for token in browser_tokens)
+        )
 
 if installed_path.exists():
     try:
-        installed_data = json.loads(installed_path.read_text())
+        installed_data = json.loads(installed_path.read_text(encoding="utf-8"))
     except Exception:
         installed_data = {}
 
     plugins = installed_data.get("plugins", {})
     if isinstance(plugins, dict):
-        installed = set(plugins.keys())
+        installed_plugins = sorted(
+            name for name in plugins.keys() if any(token in name.lower() for token in browser_tokens)
+        )
 
-active_browser_plugins = sorted(
-    name for name in enabled if any(token in name.lower() for token in ("browser", "playwright", "chrome"))
-)
-installed_browser_plugins = sorted(
-    name for name in installed if any(token in name.lower() for token in ("browser", "playwright", "chrome"))
-)
-active_mcp = sorted(
-    name for name in mcp_names if any(token in name.lower() for token in ("browser", "playwright", "chrome"))
-)
+active_mcp = sorted(set(active_mcp))
 
 if active_mcp:
     print("ACTIVE_MCP")
     print("mcps=" + ",".join(active_mcp))
-elif active_browser_plugins:
+elif enabled_plugins:
     print("ACTIVE_PLUGIN")
-    print("plugins=" + ",".join(active_browser_plugins))
-elif installed_browser_plugins:
+    print("plugins=" + ",".join(enabled_plugins))
+elif installed_plugins:
     print("INSTALLED_ONLY")
-    print("plugins=" + ",".join(installed_browser_plugins))
+    print("plugins=" + ",".join(installed_plugins))
 else:
     print("MISSING")
 PY

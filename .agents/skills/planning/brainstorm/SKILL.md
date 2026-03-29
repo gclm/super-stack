@@ -9,10 +9,11 @@ Use this skill when the user has a feature idea, architecture question, workflow
 
 ## Read First
 
-- `.planning/PROJECT.md` if it exists
-- `.planning/REQUIREMENTS.md` if it exists
-- `.planning/STATE.md` if it exists
-- `.planning/CONVENTIONS.md` if it exists
+- `docs/overview/project-overview.md` if it exists
+- `docs/reference/requirements.md` if it exists
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - relevant local code and docs when the request targets an existing codebase
 - `references/reference-reuse-boundary.md` when the decision involves reusing another project's structure or implementation
 
@@ -79,16 +80,16 @@ Use this structure:
 
 ## Persistence
 
-If `.planning/STATE.md` exists, update current focus to reflect the decision being shaped.
+If `harness/state.md` exists, update current focus to reflect the decision being shaped.
 
-If `.planning/PROJECT.md` or `.planning/REQUIREMENTS.md` exist, add a concise note about:
+If `docs/overview/project-overview.md` or `docs/reference/requirements.md` exist, add a concise note about:
 
 - chosen approach
 - important rejected alternative
 - why the chosen option won
 - the scope mode, such as validation-first or implementation-first
 
-If planning files do not exist yet, provide the recommendation in chat and note that `discuss` or `plan` should capture it next.
+If the repository does not yet have usable `docs/ + harness/` state files, provide the recommendation in chat and note that `discuss` or `plan` should capture it next.
 
 ## Output
 

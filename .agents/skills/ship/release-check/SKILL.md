@@ -9,9 +9,9 @@ Use this skill near the end of delivery when the question is not "did we change 
 
 ## Read First
 
-- `.planning/STATE.md` if it exists
-- `.planning/ROADMAP.md` if it exists
-- `.planning/CONVENTIONS.md` if it exists
+- `harness/state.md` if it exists
+- `docs/overview/roadmap.md` if it exists
+- `docs/reference/conventions.md` if it exists
 - recent verification or QA evidence
 - diff summary or release scope summary
 

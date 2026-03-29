@@ -45,11 +45,11 @@
 ### 当前文档结构
 
 - `README.md`: 首页入口，只保留“是什么、怎么装、怎么验”
-- `docs/project-design.md`: 产品边界与总体设计
-- `docs/script-architecture.md`: 脚本分层与目录约定
-- `docs/validation-strategy.md`: unit / integration / smoke 的职责边界
-- `docs/browser-technology-options.md`: 浏览器链路与正确使用方式
-- `docs/readonly-command-hook.md`: readonly hook 设计与边界
+- `docs/architecture/project-design.md`: 产品边界与总体设计
+- `docs/architecture/script-architecture.md`: 脚本分层与目录约定
+- `docs/guides/workflows/validation-strategy.md`: unit / integration / smoke 的职责边界
+- `docs/architecture/decisions/browser-technology-options.md`: 浏览器链路与正确使用方式
+- `docs/architecture/decisions/readonly-command-hook.md`: readonly hook 设计与边界
 
 ## 已完成收口摘要
 
@@ -85,12 +85,18 @@
 
 ### P1：补强长任务与自动复盘闭环
 
-1. 把自动复盘日常化
-   - 目标：工作日自动回顾前一天的高价值 session，输出 retrospective 和 recommendation。
-2. 为长任务补更明确的恢复上下文约定
-   - 目标：当任务跨 session 时，`STATE.md`、`ROADMAP.md` 与 artifact/ledger 的分工更清晰，减少“只靠聊天记忆恢复”的情况。
-3. 为“过早完成”和“缺少进度产物”建立回写路径
-   - 目标：让这类问题优先回写到 `plan / verify / ship / retrospective references`，而不是只停留在个案里。
+建议按“薄 harness 先行”的顺序推进，不直接照搬重型云端编排。
+
+1. Phase 0：收口目标场景与度量
+   - 目标：先限定首批试点到“跨 session 重构”“复杂验证”“浏览器取证”三类长任务，并统一记录 `恢复耗时`、`人类介入次数`、`一次通过率`、`过早完成率`。
+2. Phase 1：建立 `super-stack-native harness` 最小 artifact contract
+   - 目标：为长任务统一 `task brief / task ledger / progress log / decision log / evidence index / final verdict`，让 Agent 能在短时间内恢复上下文，而不是重新读完整聊天记录。
+3. Phase 2：把 closed-loop verification 接到同一证据包
+   - 目标：让 `verify / qa / browse / smoke` 的关键产物都能回写到统一 evidence pack，并明确“无证据不结案”。
+4. Phase 3：补 marathon runner 策略，而不是先上重编排
+   - 目标：在现有 Codex/Claude 角色基础上补 `resume / checkpoint / doom-loop detection / human-escalation gate`，先解决长跑中断与绕圈问题，再决定是否需要更重的 worktree / scheduler / observability。
+5. Phase 4：把自动复盘日常化
+   - 目标：工作日自动回顾高价值 session，输出 retrospective、recommendation 与 evolution ledger，并保持人工审批后再进入实际 skill/protocol 改动。
 
 ### P2：让测试体系更稳
 
@@ -112,12 +118,13 @@
 
 如果按“投入最小、收益最大”的顺序继续推进，我建议是：
 
-1. 先补 `browser-extraction` 的 generic 场景验证与文档样例
-2. 再补 Claude / Codex smoke 的更多证据型回归
-3. 最后再看是否需要引入更细粒度的 browser 自动化测试
+1. 先定义 `super-stack-native harness` 的最小 artifact contract 和 demo runbook
+2. 再把 `verify / qa / browse / smoke` 接到统一 evidence pack
+3. 然后用一个真实长任务试点 `resume + checkpoint + doom-loop detection`
+4. 最后再决定是否需要更重的 scheduler、worktree orchestration 或 observability 栈
 
 ## 当前判定
 
 - roadmap status: 当前结构已收敛，可以进入“稳定演进”阶段
-- main risk: 不是缺大功能，而是后续新增内容把脚本层次、文档口径和测试边界重新搞乱
-- execution rule: 之后的改动优先保持结构一致性，其次再扩能力
+- main risk: 不是缺大功能，而是若直接复制重型 harness，会在验证、状态边界和宿主差异都未收口前把复杂度提前引入
+- execution rule: 之后的改动优先保持结构一致性，按“薄执行层 -> 证据闭环 -> 自动复盘 -> 重调度”的顺序增强

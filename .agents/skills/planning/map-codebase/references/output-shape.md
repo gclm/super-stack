@@ -4,24 +4,27 @@ Use this reference when `map-codebase` needs the exact output location and file-
 
 ## Output Location
 
-Write findings under `.planning/codebase/` in the target project.
+Write findings under `docs/reference/codebase/` in the target project.
 
-If `.planning/` does not exist, initialize it first from `templates/planning/`.
+If `docs/reference/codebase/` does not exist yet:
+
+- create that directory when the repository already uses the standard `docs/ + harness/` layout
+- otherwise route through `repo-bootstrap` or the repository's own documentation bootstrap path first
 
 Default files:
 
-- `STACK.md`
-- `STRUCTURE.md`
-- `ARCHITECTURE.md`
-- `CONVENTIONS.md`
-- `INTEGRATIONS.md`
-- `TESTING.md`
-- `CONCERNS.md`
-- `SUMMARY.md`
+- `stack.md`
+- `structure.md`
+- `architecture.md`
+- `conventions.md`
+- `integrations.md`
+- `testing.md`
+- `concerns.md`
+- `summary.md`
 
 ## File Expectations
 
-### `STACK.md`
+### `stack.md`
 
 Capture:
 
@@ -31,7 +34,7 @@ Capture:
 - test tools
 - deployment or runtime clues
 
-### `STRUCTURE.md`
+### `structure.md`
 
 Capture:
 
@@ -40,7 +43,7 @@ Capture:
 - where tests live
 - where infra or tooling lives
 
-### `ARCHITECTURE.md`
+### `architecture.md`
 
 Capture:
 
@@ -49,7 +52,7 @@ Capture:
 - persistence boundaries
 - background jobs, workers, or queues
 
-### `CONVENTIONS.md`
+### `conventions.md`
 
 Capture:
 
@@ -59,7 +62,7 @@ Capture:
 - branching or release conventions if visible
 - documentation language and commit conventions if visible
 
-### `INTEGRATIONS.md`
+### `integrations.md`
 
 Capture:
 
@@ -68,7 +71,7 @@ Capture:
 - databases or caches
 - webhooks, messaging, analytics, storage
 
-### `TESTING.md`
+### `testing.md`
 
 Capture:
 
@@ -77,7 +80,7 @@ Capture:
 - common test commands
 - obvious coverage gaps
 
-### `CONCERNS.md`
+### `concerns.md`
 
 Capture:
 
@@ -87,7 +90,7 @@ Capture:
 - missing docs or verification weak spots
 - documented-vs-actual mismatches in entrypoints, directory structure, or test commands
 
-### `SUMMARY.md`
+### `summary.md`
 
 Capture:
 

@@ -12,8 +12,8 @@ Use this skill when the problem is query latency, scan cost, N+1 access, paginat
 - query code and ORM usage
 - explain plans, logs, or observed latency evidence
 - table sizes and expected growth
-- `.planning/STATE.md` if it exists
-
+- `harness/state.md` if it exists
+- `harness/history.md` if it exists
 ## Goals
 
 - optimize based on evidence instead of folklore

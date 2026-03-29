@@ -4,9 +4,10 @@ Use this protocol when workflow defaults matter more than task-specific implemen
 
 ## State Continuity
 
-When work changes direction midstream, update `STATE.md` explicitly instead of leaving the new direction only in conversation context.
-Version `.planning/` by default when it is being used as shared project memory.
-Ignore only machine-local or host-generated artifacts under `.planning/`, not the planning records themselves.
+When work changes direction midstream, update the active state file explicitly — `harness/state.md` for current state, `harness/history.md` for durable records — instead of leaving the new direction only in conversation context.
+Version `docs/` and `harness/` by default when they are being used as shared project memory.
+Ignore only machine-local or host-generated artifacts such as `harness/.runtime/`, not the shared planning or reference records themselves.
+If a repository is still migrating from a legacy state model, keep the active legacy state files versioned until cutover is truly complete.
 
 Recommended state fields when scope or architecture is evolving:
 
@@ -37,21 +38,7 @@ When making commits for a project that adopts super-stack defaults, use Angular 
 Commit cadence defaults:
 
 - prefer one commit per meaningful stage checkpoint rather than one commit after several stages have drifted together
-- good checkpoint examples: `discuss` results written to `.planning/`, a stable `plan`, a bounded `build` that passes its nearest checks, or a verified refactor slice
-- do not wait for the whole project to feel "done" before creating the first recoverable checkpoint on a new or unstable repository
-- when the tree is still intentionally partial, the commit message should say so explicitly instead of pretending the phase is complete
-- if the user is exploring a risky direction, a small checkpoint commit is preferred before the next structural step so rollback stays cheap
-
-Reasoning:
-
-- stage-boundary commits reduce recovery cost when direction changes
-- they make review, reset, cherry-pick, and branch comparisons practical
-- they prevent large pre-commit working trees from becoming the only source of truth
-
-Commit cadence defaults:
-
-- prefer one commit per meaningful stage checkpoint rather than one commit after several stages have drifted together
-- good checkpoint examples: `discuss` results written to `.planning/`, a stable `plan`, a bounded `build` that passes its nearest checks, or a verified refactor slice
+- good checkpoint examples: `discuss` results written to `docs/` or `harness/state.md` + `harness/history.md`, a stable `plan`, a bounded `build` that passes its nearest checks, or a verified refactor slice
 - do not wait for the whole project to feel "done" before creating the first recoverable checkpoint on a new or unstable repository
 - when the tree is still intentionally partial, the commit message should say so explicitly instead of pretending the phase is complete
 - if the user is exploring a risky direction, a small checkpoint commit is preferred before the next structural step so rollback stays cheap
@@ -78,7 +65,8 @@ When a task references a concrete URL and the answer depends on the page's real 
 
 Apply these rules:
 
-- use `super-stack-browser` first when it is available for the current host
+- use the configured browser tooling first when it is available for the current host
+- for Codex in this repo, prefer the configured browser MCP such as `chrome-devtools-mcp` when present
 - do not stop at `curl`, `requests`, mirror pages, or search snippets when original-page browser evidence is available
 - if browser evidence cannot be obtained because of login, verification, network, or host limits, say so explicitly before using a fallback source
 - do not present mirror content, raw HTML extraction, or search summaries as if they came from the original page
@@ -93,7 +81,7 @@ Apply these rules:
 - if the expected deliverable could reasonably be either discussion-only or direct patching, make that choice explicit before `build`
 - treat phrases such as "分析一下", "设计方案", "帮我评估", or "完善一下" as potentially ambiguous about edit authority when they appear together
 - if the user clearly asked for implementation, say so and proceed; otherwise default to a short alignment statement that names the chosen delivery shape
-- when the delivery shape changes midstream, update `STATE.md` and name the backtrack explicitly
+- when the delivery shape changes midstream, update the active state file and name the backtrack explicitly
 
 
 ## Transient Network Defaults
