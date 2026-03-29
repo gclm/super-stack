@@ -11,7 +11,7 @@
   - `codex/`
   - `claude/`
 - runtime：
-  - `~/.super-stack/runtime`（`AGENTS.md`、`claude/`、`codex/`、`protocols/`、`templates/generated-project/`、`.codex/hooks/`、`scripts/hooks/`、`scripts/workflow/`、`scripts/lib/common.sh`）
+  - `~/.super-stack/runtime`（`AGENTS.md`、`claude/`、`codex/`、`protocols/`、`templates/generated-project/`、`.codex/hooks/`、`scripts/hooks/`、`scripts/check/check-browser-capability.sh`、`scripts/check/check-codex-runtime.sh`、`scripts/check/validate-skills.py`、`scripts/workflow/`、`scripts/lib/common.sh`）
 - host memory backend：
   - OpenSpace Layer-A
 

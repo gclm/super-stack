@@ -49,6 +49,12 @@
 - 安装后状态校验
 - 仓库内技能结构与引用约束的轻量静态校验
 
+补充约束：
+
+- `scripts/check/` 继续作为 source repo 的检查层
+- runtime 只受管镜像最小子集：`check-browser-capability.sh`、`check-codex-runtime.sh`、`validate-skills.py`
+- 其余 `scripts/check/*` 保持 source-only
+
 ### 1.3 `scripts/smoke/`
 
 真实环境回归入口：
@@ -89,7 +95,7 @@
 
 - `lib` 只放复用逻辑，不放用户直接执行入口
 - 新脚本应优先复用这里，而不是复制 `ok/warn/check_*` 和路径拼装
-- runtime 只同步 `scripts/lib/common.sh` 这一份 workflow 最小依赖；`install-state.sh` 仍留在 source repo
+- runtime 同步 `scripts/lib/common.sh` 这一份 workflow 最小依赖，以及受管白名单里的 3 个 `scripts/check/*` 文件；`install-state.sh` 仍留在 source repo
 
 ### 1.6 `scripts/hooks/`
 
@@ -177,6 +183,7 @@ browse skill / host browser tooling
 补充 runtime 同步白名单：
 
 - 同步到 runtime：`scripts/hooks/`、`scripts/workflow/`、`scripts/lib/common.sh`
-- 不同步到 runtime：`scripts/install/`、`scripts/check/`、`scripts/smoke/`、`scripts/test/`、`scripts/release/`、`scripts/lib/install-state.sh`
+- 同步到 runtime 的 check 白名单：`scripts/check/check-browser-capability.sh`、`scripts/check/check-codex-runtime.sh`、`scripts/check/validate-skills.py`
+- 不同步到 runtime：`scripts/install/`、`scripts/check/` 中其余 source-only 文件、`scripts/smoke/`、`scripts/test/`、`scripts/release/`、`scripts/lib/install-state.sh`
 
 后续如果再新增根目录 shell 脚本，应默认视为结构回退，除非有非常明确的兼容性理由。

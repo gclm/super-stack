@@ -9,7 +9,7 @@ Use this reference when `browse` needs host selection, fallback order, or sessio
 
 Capability probe:
 
-- `scripts/check/check-browser-capability.sh`
+- `~/.super-stack/runtime/scripts/check/check-browser-capability.sh`
 
 If browser tooling is unavailable, say so clearly and fall back to screenshots, local preview inspection, logs, test output, or code reasoning with explicit limits.
 

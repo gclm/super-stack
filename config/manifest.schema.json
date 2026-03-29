@@ -31,9 +31,13 @@
         "ignore_warnings": {
           "type": "array",
           "items": {"$ref": "#/$defs/ignore_warning_rule"}
+        },
+        "path_semantics": {
+          "type": "array",
+          "items": {"$ref": "#/$defs/path_semantic_rule"}
         }
       },
-      "required": ["ignore_warnings"]
+      "required": ["ignore_warnings", "path_semantics"]
     }
   },
   "$defs": {
@@ -157,6 +161,17 @@
           "minItems": 1,
           "items": {"type": "string", "minLength": 1}
         },
+        "reason": {"type": "string"}
+      }
+    },
+    "path_semantic_rule": {
+      "type": "object",
+      "required": ["repo_path", "runtime_path", "preferred_form"],
+      "additionalProperties": false,
+      "properties": {
+        "repo_path": {"type": "string", "minLength": 1},
+        "runtime_path": {"type": "string", "minLength": 1},
+        "preferred_form": {"type": "string", "enum": ["source", "runtime"]},
         "reason": {"type": "string"}
       }
     }

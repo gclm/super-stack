@@ -7,6 +7,8 @@ description: Create, refactor, or update repository skills so they stay thin, tr
 
 Use this skill when the task is to add a new skill, revise an existing skill, split a bloated skill into references, or tighten how skills fit the repository workflow.
 
+This skill is source-repo maintenance only. Even if a helper script is mirrored into `~/.super-stack/runtime`, keep the edit target and validation authority in the source repository under `skills/`.
+
 ## Read First
 
 - the target `SKILL.md`
@@ -34,6 +36,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
 - avoid auxiliary files such as README, CHANGELOG, or installation notes inside a skill folder
 - when a skill changes repository-wide behavior expectations, update `AGENTS.md` or `harness/state.md` if that context would otherwise drift
 - when a skill changes repository-wide behavior expectations in a durable way, append a concise entry to `harness/history.md`
+- keep skill maintenance anchored to the source repo even when a mirrored runtime helper also exists
 - when host-installed skill copies also exist, treat the repository skill under `skills/` as the source of truth and avoid making the runtime copy the only edited location
 - default user-facing examples, summaries, and prompts to Chinese unless the repository or external interface requires English
 
@@ -53,7 +56,7 @@ Use this skill when the task is to add a new skill, revise an existing skill, sp
    - direct references to any new `references/`
    - no obvious duplication with nearby skills
    - output/report shape matches the intended workflow
-   - run `python3 scripts/check/validate-skills.py` when the repository skill set was changed
+   - run `python3 scripts/check/validate-skills.py` from the source repo when the repository skill set was changed
 6. Update `harness/state.md` when the change materially affects current workflow behavior or maintenance conventions.
 7. Append `harness/history.md` when the change materially affects repository-wide workflow behavior or maintenance conventions beyond the current state snapshot.
 

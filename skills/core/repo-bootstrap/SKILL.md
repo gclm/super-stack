@@ -14,8 +14,8 @@ Use when entering a repository that may not yet have the standard docs-plus-harn
 - `harness/state.md` if it exists
 - `harness/history.md` if it exists
 - `references/bootstrap-decision-rules.md`
-- `scripts/workflow/init-generated-project.sh`
-- `scripts/workflow/init-harness-task.sh` only if the user also wants the first task pack
+- `~/.super-stack/runtime/scripts/workflow/init-generated-project.sh`
+- `~/.super-stack/runtime/scripts/workflow/init-harness-task.sh` only if the user also wants the first task pack
 
 ## Goals
 
@@ -30,10 +30,10 @@ Use when entering a repository that may not yet have the standard docs-plus-harn
 1. Inspect whether the target repo already has its docs entrypoint, harness state file, and related layout.
 2. Use `references/bootstrap-decision-rules.md` to classify the repository state.
 3. If the repository is `ready`, do not rerun bootstrap; report readiness and move to `task-harness` or the requested stage.
-4. If the repository is `missing` and the user wants the standard layout, run `bash scripts/workflow/init-generated-project.sh --root <repo-root>`.
+4. If the repository is `missing` and the user wants the standard layout, run `bash ~/.super-stack/runtime/scripts/workflow/init-generated-project.sh --root <repo-root>`.
 5. If the repository is `partial`, only fill missing scaffold files when the conflict risk is low and the user intent is explicit; otherwise step back to `plan` or migration design instead of forcing the layout.
 6. If the repository has no `docs/` or `harness/` scaffold yet, treat bootstrap as a clean init.
-7. If the user also has a concrete task after bootstrap, either hand off to `task-harness` or create the first task pack with `init-harness-task.sh`.
+7. If the user also has a concrete task after bootstrap, either hand off to `task-harness` or create the first task pack with `bash ~/.super-stack/runtime/scripts/workflow/init-harness-task.sh --task-id <task-id>`.
 
 ## Output
 

@@ -46,7 +46,7 @@ When these conditions hold, do not begin with mirror pages, raw HTML fetching, o
 2. Confirm which browser tooling is actually available on the host.
    - Codex in this repo: prefer the configured browser MCP, currently `chrome-devtools-mcp` when present.
    - Claude Code: prefer configured browser MCP or browser plugin.
-   - If availability is unclear, use `scripts/check/check-browser-capability.sh` as a quick capability probe.
+   - If availability is unclear and the managed runtime is installed, use `~/.super-stack/runtime/scripts/check/check-browser-capability.sh` as a quick capability probe.
 3. Open the relevant page or flow with the active browser tooling.
 4. Reproduce the target interaction.
 5. For page or article analysis, collect the smallest original-page evidence set first:

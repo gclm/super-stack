@@ -93,6 +93,9 @@ class ManifestValidationTests(unittest.TestCase):
 
     def test_manifest_rejects_invalid_skill_validation_rule(self):
         manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        manifest["skill_validation"]["ignore_warnings"] = [
+            {"path_glob": "skills/core/example/SKILL.md", "codes": ["thin_lines"]}
+        ]
         manifest["skill_validation"]["ignore_warnings"][0]["codes"] = "thin_lines"
 
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -107,6 +110,23 @@ class ManifestValidationTests(unittest.TestCase):
 
         self.assertNotEqual(result.returncode, 0)
         self.assertIn("must be array", result.stderr)
+
+    def test_manifest_rejects_invalid_path_semantics_rule(self):
+        manifest = json.loads(MANIFEST.read_text(encoding="utf-8"))
+        manifest["skill_validation"]["path_semantics"][0]["preferred_form"] = "host"
+
+        with tempfile.TemporaryDirectory() as tmpdir:
+            temp_path = Path(tmpdir) / "manifest.json"
+            temp_path.write_text(json.dumps(manifest, ensure_ascii=False, indent=2), encoding="utf-8")
+            result = subprocess.run(
+                [sys.executable, str(SCRIPT), "--manifest", str(temp_path), "--schema", str(SCHEMA)],
+                text=True,
+                capture_output=True,
+                check=False,
+            )
+
+        self.assertNotEqual(result.returncode, 0)
+        self.assertIn("must be one of", result.stderr)
 
 
 if __name__ == "__main__":

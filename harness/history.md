@@ -32,6 +32,51 @@ Next:
 
 ## 2026-03-29
 
+### Runtime Mirrored Check Subset
+- Expanded runtime packaging to mirror three managed `scripts/check/*` files: `check-browser-capability.sh`, `check-codex-runtime.sh`, and `validate-skills.py`.
+- Updated promotion gates, global-install checks, and shell roundtrip coverage so the mirrored check files are asserted explicitly.
+- Tightened skill and architecture wording to distinguish runtime-facing mirrored check paths from source-repo-only skill maintenance semantics.
+
+Reason:
+- Runtime still needs a small check surface for host-side diagnosis, but copying the whole `scripts/check/` tree would blur the source/runtime boundary again.
+- A fixed three-file whitelist keeps runtime usable without making it look like a full source checkout.
+
+Evidence:
+- `bash tests/shell/test_runtime_promotion_gate.sh`
+- `bash tests/shell/test_global_install_roundtrip.sh`
+- `python3 scripts/check/validate-skills.py`
+
+Impact:
+- Managed runtime installs now carry a minimal check subset alongside hooks, workflow scripts, and the shared shell helper.
+- Skill wording now points browser capability probing at the runtime path while keeping skill maintenance anchored to the source repo.
+
+Next:
+- If more runtime-side diagnostics are needed later, add them as explicit whitelist entries instead of syncing the full `scripts/check/` tree.
+
+## 2026-03-30
+
+### Skill Path Semantics Validation
+- Extended `validate-skills.py` so manifest-driven path semantics can distinguish source-repo paths from runtime paths.
+- Added managed rules for mirrored runtime/browser/bootstrap paths and source-only skill-maintenance validation paths.
+- Expanded validation coverage to scan both `SKILL.md` and `references/*.md` for semantic path drift.
+
+Reason:
+- The previous drift came from valid-looking paths that existed in the repo but carried the wrong source/runtime meaning inside skills.
+- Path existence checks alone could not catch a skill pointing to the wrong execution surface.
+
+Evidence:
+- `python3 scripts/check/validate-skills.py`
+- `python3 -m unittest -v tests.python.test_skill_validation_and_evolution tests.python.test_skill_validation_exceptions tests.python.test_manifest_validation`
+
+Impact:
+- Future skill edits now fail fast when runtime-facing instructions regress back to repo-relative paths or when source-only maintenance helpers are rewritten to runtime paths.
+- Skill references inherit the same guardrail as top-level `SKILL.md`, which reduces boundary drift hiding in `references/*.md`.
+
+Next:
+- Add new path semantics rules in `config/manifest.json` whenever more mirrored runtime entrypoints are intentionally exposed to skills.
+
+## 2026-03-29
+
 ### Runtime Script Surface Tightening
 - Trimmed runtime `scripts/` packaging down to the runtime-needed subset, keeping `scripts/hooks/readonly_command_guard.py`, `scripts/workflow/`, and the workflow dependency `scripts/lib/common.sh` while excluding source-side `scripts/install/`, `scripts/smoke/`, `scripts/test/`, `scripts/release/`, and `scripts/lib/install-state.sh`.
 - Updated runtime promotion and global-install checks to assert the smaller script surface explicitly.

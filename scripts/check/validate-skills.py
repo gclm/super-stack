@@ -75,7 +75,7 @@ def discover_skill_dirs(base_path: Path) -> list[Path]:
     return sorted(skill_dirs)
 
 
-def extract_path_candidates(text: str) -> Iterable[str]:
+def extract_path_candidates(text: str, include_home_paths: bool = False) -> Iterable[str]:
     seen: set[str] = set()
     patterns = [
         r"`([^`]+)`",
@@ -88,7 +88,9 @@ def extract_path_candidates(text: str) -> Iterable[str]:
                 candidate = candidate.strip()
                 if not candidate or candidate in seen:
                     continue
-                if candidate.startswith(("http://", "https://", "/Users/", "file://", "~/")):
+                if candidate.startswith(("http://", "https://", "/Users/", "file://")):
+                    continue
+                if candidate.startswith("~/") and not include_home_paths:
                     continue
                 if any(ch.isspace() for ch in candidate):
                     continue
@@ -176,6 +178,91 @@ def load_warning_exceptions(repo_root: Path) -> list[dict[str, object]]:
     return normalized
 
 
+def load_path_semantic_rules(repo_root: Path) -> list[dict[str, str]]:
+    path = repo_root / DEFAULT_MANIFEST
+    if not path.exists():
+        return []
+
+    data = json.loads(path.read_text(encoding="utf-8"))
+    section = data.get("skill_validation", {})
+    if not isinstance(section, dict):
+        raise SystemExit("manifest.json 的 skill_validation 必须是对象")
+    rules = section.get("path_semantics", [])
+    if not isinstance(rules, list):
+        raise SystemExit("manifest.json 的 skill_validation.path_semantics 必须是数组")
+
+    normalized: list[dict[str, str]] = []
+    for rule in rules:
+        if not isinstance(rule, dict):
+            raise SystemExit("manifest.json 的 skill_validation.path_semantics 规则必须是对象")
+
+        repo_path = rule.get("repo_path")
+        runtime_path = rule.get("runtime_path")
+        preferred_form = rule.get("preferred_form")
+        reason = rule.get("reason", "")
+
+        if not isinstance(repo_path, str) or not repo_path:
+            raise SystemExit("manifest.json 中的 repo_path 必须是非空字符串")
+        if not isinstance(runtime_path, str) or not runtime_path:
+            raise SystemExit("manifest.json 中的 runtime_path 必须是非空字符串")
+        if preferred_form not in {"source", "runtime"}:
+            raise SystemExit("manifest.json 中的 preferred_form 必须是 source 或 runtime")
+        if reason and not isinstance(reason, str):
+            raise SystemExit("manifest.json 中的 reason 必须是字符串")
+
+        normalized.append(
+            {
+                "repo_path": repo_path,
+                "runtime_path": runtime_path,
+                "preferred_form": preferred_form,
+                "reason": reason,
+            }
+        )
+
+    return normalized
+
+
+def collect_semantic_scan_files(skill_dir: Path) -> list[Path]:
+    files = [skill_dir / "SKILL.md"]
+    refs_dir = skill_dir / "references"
+    if refs_dir.is_dir():
+        files.extend(sorted(path for path in refs_dir.rglob("*.md") if path.is_file()))
+    return files
+
+
+def validate_path_semantics(repo_root: Path, skill_dir: Path, rules: list[dict[str, str]]) -> list[str]:
+    errors: list[str] = []
+    seen: set[tuple[str, str]] = set()
+
+    for doc_path in collect_semantic_scan_files(skill_dir):
+        text = doc_path.read_text(encoding="utf-8")
+        candidates = set(extract_path_candidates(text, include_home_paths=True))
+        rel_doc = str(doc_path.relative_to(repo_root)).replace(os.sep, "/")
+        for rule in rules:
+            if rule["preferred_form"] == "runtime":
+                wrong_ref = rule["repo_path"]
+                preferred_ref = rule["runtime_path"]
+                preferred_label = "runtime"
+            else:
+                wrong_ref = rule["runtime_path"]
+                preferred_ref = rule["repo_path"]
+                preferred_label = "source"
+
+            if wrong_ref not in candidates:
+                continue
+
+            key = (rel_doc, wrong_ref)
+            if key in seen:
+                continue
+            seen.add(key)
+            reason_suffix = f"（{rule['reason']}）" if rule["reason"] else ""
+            errors.append(
+                f"路径语义不匹配：`{rel_doc}` 中的 `{wrong_ref}` 应改为 {preferred_label} 路径 `{preferred_ref}`{reason_suffix}"
+            )
+
+    return errors
+
+
 def split_warnings(
     rel_skill: Path,
     warnings: list[tuple[str, str]],
@@ -201,7 +288,11 @@ def split_warnings(
     return active, ignored
 
 
-def validate_skill(repo_root: Path, skill_dir: Path) -> tuple[list[str], list[tuple[str, str]]]:
+def validate_skill(
+    repo_root: Path,
+    skill_dir: Path,
+    path_semantic_rules: list[dict[str, str]],
+) -> tuple[list[str], list[tuple[str, str]]]:
     errors: list[str] = []
     warnings: list[tuple[str, str]] = []
     skill_file = skill_dir / "SKILL.md"
@@ -246,6 +337,8 @@ def validate_skill(repo_root: Path, skill_dir: Path) -> tuple[list[str], list[tu
     if scripts_dir.exists() and not scripts_dir.is_dir():
         errors.append("`scripts` 存在但不是目录")
 
+    errors.extend(validate_path_semantics(repo_root, skill_dir, path_semantic_rules))
+
     return errors, warnings
 
 
@@ -266,6 +359,7 @@ def main() -> int:
         return 0
 
     exception_rules = load_warning_exceptions(repo_root)
+    path_semantic_rules = load_path_semantic_rules(repo_root)
     total_errors = 0
     total_warnings = 0
     total_ignored = 0
@@ -273,7 +367,7 @@ def main() -> int:
 
     for skill_dir in skill_dirs:
         rel = skill_dir.relative_to(repo_root)
-        errors, warnings = validate_skill(repo_root, skill_dir)
+        errors, warnings = validate_skill(repo_root, skill_dir, path_semantic_rules)
         active_warnings, ignored_warnings = split_warnings(rel, warnings, exception_rules)
         status = "PASS"
         if errors:

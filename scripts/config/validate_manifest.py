@@ -261,6 +261,21 @@ def validate_skill_validation(section: Any) -> None:
         if "reason" in rule:
             expect_optional_string(rule.get("reason"), f"{rule_path}.reason")
 
+    path_semantics = section.get("path_semantics", [])
+    if not isinstance(path_semantics, list):
+        raise ManifestError(f"{path}.path_semantics must be a list")
+    for index, rule in enumerate(path_semantics):
+        rule_path = f"{path}.path_semantics[{index}]"
+        if not isinstance(rule, dict):
+            raise ManifestError(f"{rule_path} must be an object")
+        expect_string(rule.get("repo_path"), f"{rule_path}.repo_path")
+        expect_string(rule.get("runtime_path"), f"{rule_path}.runtime_path")
+        preferred_form = expect_string(rule.get("preferred_form"), f"{rule_path}.preferred_form")
+        if preferred_form not in {"source", "runtime"}:
+            raise ManifestError(f"{rule_path}.preferred_form must be one of ['source', 'runtime']")
+        if "reason" in rule:
+            expect_optional_string(rule.get("reason"), f"{rule_path}.reason")
+
 
 def validate_manifest(data: dict[str, Any], schema: dict[str, Any]) -> None:
     validate_against_schema(data, schema, schema, "manifest")

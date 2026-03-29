@@ -21,7 +21,7 @@
 - 不再维护项目级安装分支
 - 浏览器默认主链路改为宿主侧 browser MCP / browser plugin；对 Codex 当前优先 `chrome-devtools-mcp`
 - 宿主 MCP 受管配置按 `codex_mcp` / `claude_mcp` 两个 host block 维护；后续新增 MCP server 默认只改 `config/manifest.json` 里的共享 `mcp.servers`；受管块与 skill 校验例外也统一放在同一份 manifest
-- `~/.super-stack/runtime` 是纯运行仓库：承载共享 core、host adapter 与运行态 `hooks + workflow + workflow 所需最小 lib` 资产，但不是重新安装用的完整 source repo 副本
+- `~/.super-stack/runtime` 是纯运行仓库：承载共享 core、host adapter 与运行态 `hooks + workflow + 受管 check 子集 + workflow 所需最小 lib` 资产，但不是重新安装用的完整 source repo 副本
 
 ## 仓库关系
 
@@ -41,7 +41,7 @@
 安装约束：
 
 - 安装、重装、卸载都应从当前 source repo 执行
-- `~/.super-stack/runtime` 只承载运行所需共享 core、host adapter 与最小 `hooks + workflow + workflow 所需最小 lib` 资产，不承载完整安装源材料
+- `~/.super-stack/runtime` 只承载运行所需共享 core、host adapter 与最小 `hooks + workflow + 受管 check 子集 + workflow 所需最小 lib` 资产，不承载完整安装源材料
 
 当前 runtime 白名单可理解为：
 
@@ -49,13 +49,14 @@
 - host adapter：`codex/`、`claude/`
 - 共享规范与模板：`protocols/`、`templates/generated-project/`
 - 运行态 hook：`.codex/hooks/`、`scripts/hooks/`
+- 受管 check 子集：`scripts/check/check-browser-capability.sh`、`scripts/check/check-codex-runtime.sh`、`scripts/check/validate-skills.py`
 - workflow 入口：`scripts/workflow/`
 - workflow 最小依赖：`scripts/lib/common.sh`
 
 明确不进入 runtime 的 source 侧目录包括：
 
 - `scripts/install/`
-- `scripts/check/`
+- `scripts/check/` 中除 `check-browser-capability.sh`、`check-codex-runtime.sh`、`validate-skills.py` 之外的 source-only 检查脚本
 - `scripts/smoke/`
 - `scripts/test/`
 - `scripts/release/`
@@ -179,7 +180,7 @@
 当前仓库只认可这一套单一入口结构：
 
 - [`scripts/install/`](scripts/install): 安装、卸载、同步、hook merge
-- [`scripts/check/`](scripts/check): 全局安装检查、浏览器能力检查、Codex 运行态检查
+- [`scripts/check/`](scripts/check): 全局安装检查、浏览器能力检查、Codex 运行态检查，以及受管镜像到 runtime 的少量诊断/维护脚本
 - [`scripts/smoke/`](scripts/smoke): Claude / Codex / readonly hook 的真实环境回归
 - [`scripts/test/`](scripts/test): 自动化测试统一入口
 - [`scripts/lib/`](scripts/lib): shell 公共库

@@ -211,6 +211,38 @@
     }
   },
   "skill_validation": {
-    "ignore_warnings": []
+    "ignore_warnings": [],
+    "path_semantics": [
+      {
+        "repo_path": "scripts/check/check-browser-capability.sh",
+        "runtime_path": "~/.super-stack/runtime/scripts/check/check-browser-capability.sh",
+        "preferred_form": "runtime",
+        "reason": "browser capability probe is mirrored into runtime and skills should use the managed runtime path when referring to host-side probing."
+      },
+      {
+        "repo_path": "scripts/check/check-codex-runtime.sh",
+        "runtime_path": "~/.super-stack/runtime/scripts/check/check-codex-runtime.sh",
+        "preferred_form": "runtime",
+        "reason": "Codex runtime diagnosis is part of the managed runtime check subset."
+      },
+      {
+        "repo_path": "scripts/check/validate-skills.py",
+        "runtime_path": "~/.super-stack/runtime/scripts/check/validate-skills.py",
+        "preferred_form": "source",
+        "reason": "skill maintenance still validates repository truth from the source repo even though the helper is mirrored for runtime diagnostics."
+      },
+      {
+        "repo_path": "scripts/workflow/init-generated-project.sh",
+        "runtime_path": "~/.super-stack/runtime/scripts/workflow/init-generated-project.sh",
+        "preferred_form": "runtime",
+        "reason": "bootstrap skills should point at the managed runtime workflow entrypoint rather than assume a source checkout path."
+      },
+      {
+        "repo_path": "scripts/workflow/init-harness-task.sh",
+        "runtime_path": "~/.super-stack/runtime/scripts/workflow/init-harness-task.sh",
+        "preferred_form": "runtime",
+        "reason": "task pack bootstrap should use the managed runtime workflow entrypoint when surfaced in skills."
+      }
+    ]
   }
 }

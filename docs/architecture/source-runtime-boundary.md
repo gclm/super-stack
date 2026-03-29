@@ -37,6 +37,9 @@
 - `templates/generated-project/`
 - `.codex/hooks/`
 - `scripts/hooks/`
+- `scripts/check/check-browser-capability.sh`
+- `scripts/check/check-codex-runtime.sh`
+- `scripts/check/validate-skills.py`
 - `scripts/workflow/`
 - `scripts/lib/common.sh`
 
@@ -60,7 +63,7 @@
 以及 source 侧运维脚本与安装状态辅助文件：
 
 - `scripts/install/`
-- `scripts/check/`
+- `scripts/check/` 中除 `check-browser-capability.sh`、`check-codex-runtime.sh`、`validate-skills.py` 之外的 source-only 检查脚本
 - `scripts/smoke/`
 - `scripts/test/`
 - `scripts/release/`
@@ -109,6 +112,7 @@
 约束改为：
 
 - source repo 维护浏览器 workflow、skills、检查脚本与文档
+- runtime 会镜像 `check-browser-capability.sh` 作为宿主侧 capability probe
 - 宿主自己提供 browser MCP 或 browser plugin
 - Codex 当前优先使用已配置的 `chrome-devtools-mcp`
 - `~/.super-stack/runtime` 不再承担浏览器 CLI wrapper 分发职责
