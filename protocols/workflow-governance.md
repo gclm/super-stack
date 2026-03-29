@@ -16,6 +16,20 @@ Recommended state fields when scope or architecture is evolving:
 - `verification status`
 - `temporary unblock decisions`
 
+
+## State Hygiene
+
+Use these defaults to prevent `harness/state.md` from accumulating long-lived history:
+
+- Keep `harness/state.md` focused on current execution only: status, active focus, active constraints, active decisions, next actions.
+- When a stable decision, policy shift, release verdict, or governance change lands, append it to `harness/history.md` in the same change-set.
+- Trigger a state-to-history cleanup when either condition is met:
+  - `harness/state.md` exceeds about 60 lines, or
+  - top-level `- ` bullets exceed about 12 items.
+- Prefer event-driven cleanup (stage boundary / commit boundary) over calendar-only cleanup.
+- If `state.md` changed but `history.md` did not, run a quick check: did this change introduce durable context that future turns need? If yes, add a history entry before shipping.
+
+
 ## Documentation And Commit Defaults
 
 Use these defaults unless the target project explicitly overrides them:

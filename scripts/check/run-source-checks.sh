@@ -14,6 +14,9 @@ python3 "${SCRIPT_DIR}/validate-skills.py"
 log "执行 runtime skill 一致性校验"
 python3 "${SCRIPT_DIR}/check-skill-runtime-parity.py" --enforce-codex-system-only
 
+log "执行 harness 状态治理检查"
+bash "${SCRIPT_DIR}/check-harness-state.sh"
+
 log "执行关键 Python 单元测试"
 python3 -m unittest \
   tests.python.test_managed_config_checks \

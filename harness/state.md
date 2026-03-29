@@ -2,15 +2,13 @@
 
 - status: cutover_complete
 - active phase: maintenance
-- current focus: 活跃文档收口已完成；`docs/ + harness/` 单真源生效。当前重点转向 source checks 一致性验证与 routine 演进。
+- current focus: 运行时技能边界已收敛（`~/.codex/skills` 仅 `.system`）；当前重点是持续用 source checks 抑制 skills 与 harness 状态漂移。
 - active constraints:
   - OpenSpace 目前停在 Layer-A，不继续扩展到自动 source edit 或 runtime promotion。
 - active decisions:
-  - `docs/` 承担长期知识与设计说明。
-  - `harness/state.md` 只承担当前执行态摘要；历史变更与已落地决策记入 `harness/history.md`。
-  - `config/manifest.json` 是配置真源。
-  - Codex 运行时技能策略：全局 super-stack 技能统一从 `~/.agents/skills` 提供，`~/.codex/skills` 仅保留宿主 `.system` 技能。
-  - source checks 已纳入 runtime 技能一致性校验：默认检查 `~/.agents/skills` 与仓库 source-of-truth 的缺失/漂移，并检查 `~/.codex/skills` 是否仅保留 `.system`。
+  - `docs/` 承担长期知识与设计说明，`harness/state.md` 仅保留当前执行态。
+  - 稳定策略与流程变更必须在同一变更集追加到 `harness/history.md`。
+  - `run-source-checks.sh` 已纳入 runtime parity 与 harness 状态治理检查。
 - next actions:
-  - 持续用 source checks 验证 generated-project 与 source repo 结构一致。
-  - 补一轮 `map-codebase` 演练，验证 `ContextWeaver` 可用时的检索路径与 `minimal` 产出契约。
+  - 持续观测 `check-harness-state.sh` 的阈值是否需要按项目规模微调。
+  - 如安装策略变化，确保 `install-*`、`check-*`、`history` 同步更新。

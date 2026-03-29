@@ -115,3 +115,53 @@ Impact:
 
 Next:
 - Phase 5 items can proceed without legacy sync overhead.
+
+## 2026-03-29
+
+### Codex Runtime Skill Boundary And Parity Gate
+- Enforced Codex runtime skill boundary: `~/.codex/skills` now keeps only host/system-local `.system` entries; super-stack global skills are sourced from `~/.agents/skills`.
+- Added runtime parity checker: `scripts/check/check-skill-runtime-parity.py` to compare repo source-of-truth (`.agents/skills`) with `~/.agents/skills` using normalized paths and content hash checks.
+- Wired parity checker into source checks via `scripts/check/run-source-checks.sh` with `--enforce-codex-system-only`.
+- Updated `scripts/install/install-codex.sh` to stop copying OpenSpace skills into `~/.codex/skills`.
+- Removed GitHub-hosted minimal CI workflow (`.github/workflows/ci.yml`) per current project policy.
+
+Reason:
+- Runtime skill ownership between `~/.agents/skills` and `~/.codex/skills` needed a strict, durable boundary to prevent drift and duplicate/conflicting copies.
+- Release-time confidence should come from local/source checks aligned with real runtime constraints instead of low-fidelity hosted CI.
+
+Evidence:
+- Manual cleanup completed: non-`.system` entries removed from `~/.codex/skills`.
+- `python3 scripts/check/check-skill-runtime-parity.py --enforce-codex-system-only` returned `PASS`.
+- `bash scripts/check/run-source-checks.sh` completed with skill validation + parity check + unit tests + shell syntax checks all passing.
+- Commit recorded: `01480c3 chore: enforce runtime skill parity and remove github ci`.
+
+Impact:
+- Codex runtime can no longer silently consume stale repo skills from `~/.codex/skills`.
+- Release path now fails fast when `~/.agents/skills` drifts from source-of-truth or when Codex local skills violate `.system`-only policy.
+- Repository no longer depends on GitHub CI for the minimal regression layer.
+
+Next:
+- If installation policy changes again, update parity checker and install scripts in the same change-set to keep policy and enforcement synchronized.
+
+## 2026-03-29
+
+### Harness State Hygiene Guardrails
+- Added `scripts/check/check-harness-state.sh` to enforce lightweight `harness/state.md` hygiene.
+- Wired harness governance check into `scripts/check/run-source-checks.sh`.
+- Added `State Hygiene` section to `protocols/workflow-governance.md` with event-driven archive defaults and soft thresholds.
+- Refreshed `harness/state.md` to keep only current execution context, moving durable context to history.
+
+Reason:
+- Avoid `state.md` growth turning into long-lived dependency context that increases routing drift and decision noise.
+- Ensure state/history discipline is enforced by checks, not only manual habit.
+
+Evidence:
+- `bash scripts/check/run-source-checks.sh` passed with harness governance check active.
+- Current `harness/state.md` line and bullet counts are below configured thresholds.
+
+Impact:
+- Stage-boundary and release-boundary changes are less likely to leave durable decisions only in volatile state.
+- Future turns get cleaner current-state context with lower prompt bloat risk.
+
+Next:
+- If team cadence changes, tune `HARNESS_STATE_MAX_LINES` and `HARNESS_STATE_MAX_BULLETS` defaults with one recorded history entry.
