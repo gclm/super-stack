@@ -89,6 +89,7 @@
 
 - `lib` 只放复用逻辑，不放用户直接执行入口
 - 新脚本应优先复用这里，而不是复制 `ok/warn/check_*` 和路径拼装
+- runtime 只同步 `scripts/lib/common.sh` 这一份 workflow 最小依赖；`install-state.sh` 仍留在 source repo
 
 ### 1.6 `scripts/hooks/`
 
@@ -172,5 +173,10 @@ browse skill / host browser tooling
 ## 5. 当前结论
 
 这次整理后，`scripts/` 已经从“平铺入口堆积”切换为“按职责分层的单一入口结构”。
+
+补充 runtime 同步白名单：
+
+- 同步到 runtime：`scripts/hooks/`、`scripts/workflow/`、`scripts/lib/common.sh`
+- 不同步到 runtime：`scripts/install/`、`scripts/check/`、`scripts/smoke/`、`scripts/test/`、`scripts/release/`、`scripts/lib/install-state.sh`
 
 后续如果再新增根目录 shell 脚本，应默认视为结构回退，除非有非常明确的兼容性理由。

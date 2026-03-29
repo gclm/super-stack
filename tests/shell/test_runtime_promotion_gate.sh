@@ -33,7 +33,14 @@ promote_output="$(bash "${REPO_ROOT}/scripts/release/promote-to-runtime.sh" docs
 printf '%s\n' "${promote_output}" | rg -q 'promotion 完成：level=L1' || fail "promotion 输出缺少完成标记"
 
 assert_file "${HOME}/.super-stack/runtime/AGENTS.md"
+assert_file "${HOME}/.super-stack/runtime/scripts/hooks/readonly_command_guard.py"
+assert_file "${HOME}/.super-stack/runtime/scripts/lib/common.sh"
 assert_file "${HOME}/.super-stack/runtime/scripts/workflow/init-generated-project.sh"
 assert_file "${HOME}/.super-stack/runtime/templates/generated-project/docs/index.md"
+[[ ! -d "${HOME}/.super-stack/runtime/scripts/install" ]] || fail "runtime 不应包含 scripts/install"
+[[ ! -d "${HOME}/.super-stack/runtime/scripts/smoke" ]] || fail "runtime 不应包含 scripts/smoke"
+[[ ! -d "${HOME}/.super-stack/runtime/scripts/test" ]] || fail "runtime 不应包含 scripts/test"
+[[ ! -d "${HOME}/.super-stack/runtime/scripts/release" ]] || fail "runtime 不应包含 scripts/release"
+[[ ! -f "${HOME}/.super-stack/runtime/scripts/lib/install-state.sh" ]] || fail "runtime 不应包含 scripts/lib/install-state.sh"
 
 printf '[测试通过] runtime promotion gate\n'

@@ -19,6 +19,9 @@ BACKUP_ROOT="${SUPER_STACK_BACKUP_ROOT}"
 SOURCE_REPO_FILE="$(source_repo_path_file)"
 
 RUNTIME_AGENTS="${RUNTIME_ROOT}/AGENTS.md"
+RUNTIME_CODEX_AGENTS="${RUNTIME_ROOT}/codex/AGENTS.md"
+RUNTIME_CODEX_CONFIG="${RUNTIME_ROOT}/codex/config.toml"
+RUNTIME_CLAUDE_FILE="${RUNTIME_ROOT}/claude/CLAUDE.md"
 CODEX_AGENTS_FILE="${CODEX_HOME}/AGENTS.md"
 CODEX_CONFIG_FILE="${CODEX_HOME}/config.toml"
 USER_SKILLS_DIR="${USER_AGENTS_HOME}/skills"
@@ -26,11 +29,14 @@ CLAUDE_FILE="${CLAUDE_HOME}/CLAUDE.md"
 CLAUDE_SKILLS_DIR="${CLAUDE_HOME}/skills"
 CLAUDE_SETTINGS_FILE="${CLAUDE_HOME}/settings.json"
 REPO_AGENTS_FILE="${REPO_ROOT}/AGENTS.md"
+REPO_CODEX_AGENTS_FILE="${REPO_ROOT}/codex/AGENTS.md"
+REPO_CODEX_CONFIG_FILE="${REPO_ROOT}/codex/config.toml"
+REPO_CLAUDE_FILE="${REPO_ROOT}/claude/CLAUDE.md"
 
 WARNINGS=0
 EXPECTED_SKILL_COUNT=""
-EXPECTED_CODEX_AGENTS=""
-EXPECTED_CLAUDE_ROUTER=""
+EXPECTED_CODEX_BOOTSTRAP=""
+EXPECTED_CLAUDE_BOOTSTRAP=""
 
 check_exact_content() {
   local path="$1"
@@ -177,8 +183,8 @@ check_managed_commands() {
 
 init_expected_values() {
   EXPECTED_SKILL_COUNT="$(count_expected_skill_names)"
-  EXPECTED_CODEX_AGENTS="$(render_global_router_text "global workflow source" "Codex" "Global super-stack skills are installed to \`${USER_SKILLS_DIR}\`.")"
-  EXPECTED_CLAUDE_ROUTER="$(render_global_router_text "shared global workflow source" "Claude" "Global Claude-facing skills are mirrored into \`${CLAUDE_SKILLS_DIR}\`.")"
+  EXPECTED_CODEX_BOOTSTRAP="$(render_host_bootstrap_text "Codex adapter" "${RUNTIME_ROOT}/codex/AGENTS.md" "Global skills: \`${USER_SKILLS_DIR}\`")"
+  EXPECTED_CLAUDE_BOOTSTRAP="$(render_host_bootstrap_text "Claude adapter" "${RUNTIME_ROOT}/claude/CLAUDE.md" "Global skills: \`${CLAUDE_SKILLS_DIR}\`")"
 }
 
 print_header() {
@@ -205,10 +211,19 @@ check_runtime_section() {
   check_file "$SOURCE_REPO_FILE" "源仓路径记录文件"
   check_file "$RUNTIME_AGENTS" "共享运行仓库 AGENTS"
   check_same_content "$RUNTIME_AGENTS" "$REPO_AGENTS_FILE" "共享运行仓库 AGENTS 与仓库一致"
+  check_file "$RUNTIME_CODEX_AGENTS" "运行仓库 Codex adapter"
+  check_same_content "$RUNTIME_CODEX_AGENTS" "$REPO_CODEX_AGENTS_FILE" "运行仓库 Codex adapter 与仓库一致"
+  check_file "$RUNTIME_CODEX_CONFIG" "运行仓库 Codex config"
+  check_same_content "$RUNTIME_CODEX_CONFIG" "$REPO_CODEX_CONFIG_FILE" "运行仓库 Codex config 与仓库一致"
+  check_file "$RUNTIME_CLAUDE_FILE" "运行仓库 Claude adapter"
+  check_same_content "$RUNTIME_CLAUDE_FILE" "$REPO_CLAUDE_FILE" "运行仓库 Claude adapter 与仓库一致"
   check_dir "$STATE_ROOT" "安装状态目录"
   check_file "$STATE_MANIFEST" "安装状态清单"
   check_dir "$BACKUP_ROOT" "统一备份根目录"
   check_file "${RUNTIME_ROOT}/.codex/hooks/super_stack_state.py" "运行仓库 Codex hook 脚本"
+  check_file "${RUNTIME_ROOT}/scripts/hooks/readonly_command_guard.py" "运行仓库 readonly hook 脚本"
+  check_file "${RUNTIME_ROOT}/scripts/lib/common.sh" "运行仓库 workflow 公共库"
+  check_file "${RUNTIME_ROOT}/scripts/workflow/init-generated-project.sh" "运行仓库 workflow 初始化脚本"
   check_not_exists "${RUNTIME_ROOT}/.git" "运行仓库不包含 Git 元数据"
   check_not_exists "${RUNTIME_ROOT}/.github" "运行仓库不包含 GitHub 配置"
   check_not_exists "${RUNTIME_ROOT}/.idea" "运行仓库不包含 IDE 配置"
@@ -217,8 +232,13 @@ check_runtime_section() {
   check_not_exists "${RUNTIME_ROOT}/docs" "运行仓库不包含 source docs"
   check_not_exists "${RUNTIME_ROOT}/tests" "运行仓库不包含 source tests"
   check_not_exists "${RUNTIME_ROOT}/.agents" "运行仓库不包含 source skills 真源"
-  check_not_exists "${RUNTIME_ROOT}/.claude" "运行仓库不包含 Claude source adapter"
-  check_not_exists "${RUNTIME_ROOT}/.codex/agents" "运行仓库不包含 Codex source agents"
+  check_not_exists "${RUNTIME_ROOT}/.claude" "运行仓库不包含隐藏 Claude runtime 目录"
+  check_not_exists "${RUNTIME_ROOT}/.codex/agents" "运行仓库不包含隐藏 Codex agents 目录"
+  check_not_exists "${RUNTIME_ROOT}/scripts/install" "运行仓库不包含 source install 脚本"
+  check_not_exists "${RUNTIME_ROOT}/scripts/smoke" "运行仓库不包含 source smoke 脚本"
+  check_not_exists "${RUNTIME_ROOT}/scripts/test" "运行仓库不包含 source test 脚本"
+  check_not_exists "${RUNTIME_ROOT}/scripts/release" "运行仓库不包含 source release 脚本"
+  check_not_exists "${RUNTIME_ROOT}/scripts/lib/install-state.sh" "运行仓库不包含 source install-state 库"
   printf '\n'
 }
 
@@ -227,7 +247,7 @@ check_codex_section() {
   check_file "$CODEX_AGENTS_FILE" "Codex 全局 AGENTS"
   check_file "$CODEX_CONFIG_FILE" "Codex 配置文件"
   check_dir "$USER_SKILLS_DIR" "用户 skills 目录"
-  check_exact_content "$CODEX_AGENTS_FILE" "$EXPECTED_CODEX_AGENTS" "Codex 全局路由内容符合预期"
+  check_exact_content "$CODEX_AGENTS_FILE" "$EXPECTED_CODEX_BOOTSTRAP" "Codex bootstrap 内容符合预期"
   check_managed_block_presence "codex_agents" "Codex agents"
   check_managed_contains "codex_agents" "Codex agents"
   check_managed_registered_entries "codex_agents" "Codex agent"
@@ -246,7 +266,7 @@ check_claude_section() {
   check_file "$CLAUDE_FILE" "Claude 全局 CLAUDE.md"
   check_dir "$CLAUDE_SKILLS_DIR" "Claude 全局 skills 目录"
   check_file "$CLAUDE_SETTINGS_FILE" "Claude settings"
-  check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_ROUTER" "Claude 全局路由内容符合预期"
+  check_exact_content "$CLAUDE_FILE" "$EXPECTED_CLAUDE_BOOTSTRAP" "Claude bootstrap 内容符合预期"
   check_managed_block_presence "claude_hooks" "Claude hooks"
   check_managed_commands "claude_hooks" "Claude hook"
   check_managed_contains "claude_mcp" "Claude MCP"
@@ -283,8 +303,8 @@ check_browser_section() {
 check_policy_section() {
   printf '== 策略 ==\n'
   printf '当前记录的 source repo: %s\n' "$(cat "$SOURCE_REPO_FILE" 2>/dev/null || true)"
-  check_contains "$CODEX_AGENTS_FILE" "single global workflow source managed by super-stack" "Codex 已使用仅全局路由"
-  check_contains "$CLAUDE_FILE" "single global workflow source managed by super-stack" "Claude 已使用仅全局路由"
+  check_contains "$CODEX_AGENTS_FILE" "${RUNTIME_ROOT}/codex/AGENTS.md" "Codex bootstrap 已指向 runtime adapter"
+  check_contains "$CLAUDE_FILE" "${RUNTIME_ROOT}/claude/CLAUDE.md" "Claude bootstrap 已指向 runtime adapter"
   printf '\n'
 }
 

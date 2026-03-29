@@ -139,7 +139,7 @@ record_target_state "$RUNTIME_ROOT" "runtime_super-stack"
 copy_runtime_tree "$RUNTIME_ROOT"
 mirror_repo_skills "$SKILLS_DEST"
 
-write_global_router_file "${CLAUDE_HOME}/CLAUDE.md" "shared global workflow source" "Claude" "Global Claude-facing skills are mirrored into \`${SKILLS_DEST}\`."
+write_host_bootstrap_file "${CLAUDE_HOME}/CLAUDE.md" "Claude adapter" "${RUNTIME_ROOT}/claude/CLAUDE.md" "Global skills: \`${SKILLS_DEST}\`"
 
 prepare_claude_settings_file "${CLAUDE_HOME}/settings.json"
 merge_claude_hooks "${CLAUDE_HOME}/settings.json"
@@ -147,7 +147,7 @@ merge_claude_mcp "${CLAUDE_HOME}/settings.json"
 
 log "已将纯运行仓库资产复制到 ${RUNTIME_ROOT}"
 log "已将 Claude 全局 skills 镜像到 ${SKILLS_DEST}"
-log "已更新 ${CLAUDE_HOME}/CLAUDE.md 中的全局路由"
+log "已更新 ${CLAUDE_HOME}/CLAUDE.md bootstrap"
 log "已将 Claude hooks 合并到 ${CLAUDE_HOME}/settings.json"
 log "已按可用性处理 Claude MCP 配置"
 log "Claude 已启用仅全局模式。"

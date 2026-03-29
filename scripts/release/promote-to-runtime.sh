@@ -51,8 +51,12 @@ check_runtime_tree() {
   local required_paths=(
     "AGENTS.md"
     "README.md"
+    "claude"
+    "codex"
     "protocols"
-    "scripts"
+    "scripts/hooks"
+    "scripts/lib/common.sh"
+    "scripts/workflow"
     "templates"
     ".codex/hooks"
   )

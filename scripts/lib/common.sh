@@ -99,8 +99,12 @@ copy_runtime_tree() {
   if [[ -d "${REPO_ROOT}/bin" ]]; then
     copy_path_into_dir "${REPO_ROOT}/bin" "$dest_root" "bin"
   fi
+  copy_path_into_dir "${REPO_ROOT}/claude" "$dest_root" "claude"
+  copy_path_into_dir "${REPO_ROOT}/codex" "$dest_root" "codex"
   copy_path_into_dir "${REPO_ROOT}/protocols" "$dest_root" "protocols"
-  copy_path_into_dir "${REPO_ROOT}/scripts" "$dest_root" "scripts"
+  copy_path_into_dir "${REPO_ROOT}/scripts/hooks" "$dest_root" "scripts/hooks"
+  copy_path_into_dir "${REPO_ROOT}/scripts/lib/common.sh" "$dest_root" "scripts/lib/common.sh"
+  copy_path_into_dir "${REPO_ROOT}/scripts/workflow" "$dest_root" "scripts/workflow"
   copy_path_into_dir "${REPO_ROOT}/templates" "$dest_root" "templates"
   copy_path_into_dir "${REPO_ROOT}/codex/hooks" "$dest_root" ".codex/hooks"
 }
@@ -200,40 +204,38 @@ mirror_repo_skills() {
   done < <(iterate_managed_skill_dirs)
 }
 
-write_global_router_file() {
+write_host_bootstrap_file() {
   local dest_file="$1"
-  local source_phrase="$2"
-  local host_title="$3"
+  local adapter_title="$2"
+  local adapter_path="$3"
   local skills_line="$4"
 
   ensure_dir "$(dirname "$dest_file")"
 
   cat > "$dest_file" <<EOF
-# Super Stack Global Router
+# Super Stack Bootstrap
 
-Use \`${SUPER_STACK_RUNTIME_ROOT}/AGENTS.md\` as the ${source_phrase}.
+Shared router: \`${SUPER_STACK_RUNTIME_ROOT}/AGENTS.md\`
+${adapter_title}: \`${adapter_path}\`
+${skills_line}
 
-- This is the default global workflow router for ${host_title}.
-- This repository is the single global workflow source managed by super-stack.
-- ${skills_line}
-- Treat global super-stack as the canonical system configuration.
+Managed by super-stack; bootstrap only.
 EOF
 }
 
-render_global_router_text() {
-  local source_phrase="$1"
-  local host_title="$2"
+render_host_bootstrap_text() {
+  local adapter_title="$1"
+  local adapter_path="$2"
   local skills_line="$3"
 
   cat <<EOF
-# Super Stack Global Router
+# Super Stack Bootstrap
 
-Use \`${SUPER_STACK_RUNTIME_ROOT}/AGENTS.md\` as the ${source_phrase}.
+Shared router: \`${SUPER_STACK_RUNTIME_ROOT}/AGENTS.md\`
+${adapter_title}: \`${adapter_path}\`
+${skills_line}
 
-- This is the default global workflow router for ${host_title}.
-- This repository is the single global workflow source managed by super-stack.
-- ${skills_line}
-- Treat global super-stack as the canonical system configuration.
+Managed by super-stack; bootstrap only.
 EOF
 }
 

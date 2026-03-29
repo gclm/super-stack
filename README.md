@@ -21,7 +21,7 @@
 - 不再维护项目级安装分支
 - 浏览器默认主链路改为宿主侧 browser MCP / browser plugin；对 Codex 当前优先 `chrome-devtools-mcp`
 - 宿主 MCP 受管配置按 `codex_mcp` / `claude_mcp` 两个 host block 维护；后续新增 MCP server 默认只改 `config/manifest.json` 里的共享 `mcp.servers`；受管块与 skill 校验例外也统一放在同一份 manifest
-- `~/.super-stack/runtime` 是纯运行仓库，不是重新安装用的完整 source repo 副本
+- `~/.super-stack/runtime` 是纯运行仓库：承载共享 core、host adapter 与运行态 `hooks + workflow + workflow 所需最小 lib` 资产，但不是重新安装用的完整 source repo 副本
 
 ## 仓库关系
 
@@ -41,7 +41,26 @@
 安装约束：
 
 - 安装、重装、卸载都应从当前 source repo 执行
-- `~/.super-stack/runtime` 只承载运行所需最小资产，不承载完整安装源材料
+- `~/.super-stack/runtime` 只承载运行所需共享 core、host adapter 与最小 `hooks + workflow + workflow 所需最小 lib` 资产，不承载完整安装源材料
+
+当前 runtime 白名单可理解为：
+
+- 根路由与共享说明：`AGENTS.md`、`README.md`
+- host adapter：`codex/`、`claude/`
+- 共享规范与模板：`protocols/`、`templates/generated-project/`
+- 运行态 hook：`.codex/hooks/`、`scripts/hooks/`
+- workflow 入口：`scripts/workflow/`
+- workflow 最小依赖：`scripts/lib/common.sh`
+
+明确不进入 runtime 的 source 侧目录包括：
+
+- `scripts/install/`
+- `scripts/check/`
+- `scripts/smoke/`
+- `scripts/test/`
+- `scripts/release/`
+- `scripts/lib/install-state.sh`
+- `docs/`、`harness/`、`tests/`
 
 只安装 `Codex`：
 

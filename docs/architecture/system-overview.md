@@ -6,12 +6,12 @@
   - `skills/`
   - `protocols/`
   - `templates/generated-project/`
-  - `scripts/install|check|smoke|generate|runtime`
+  - `scripts/install|check|smoke|test|workflow|hooks|lib`
 - host adapters：
   - `codex/`
   - `claude/`
 - runtime：
-  - `~/.super-stack/runtime`
+  - `~/.super-stack/runtime`（`AGENTS.md`、`claude/`、`codex/`、`protocols/`、`templates/generated-project/`、`.codex/hooks/`、`scripts/hooks/`、`scripts/workflow/`、`scripts/lib/common.sh`）
 - host memory backend：
   - OpenSpace Layer-A
 

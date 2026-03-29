@@ -27,6 +27,19 @@
 - 运行所需的最小资产集合
 - 宿主入口实际引用的 `AGENTS.md`、hooks、脚本与受管配置片段
 
+当前 runtime 白名单：
+
+- `AGENTS.md`
+- `README.md`
+- `claude/`
+- `codex/`
+- `protocols/`
+- `templates/generated-project/`
+- `.codex/hooks/`
+- `scripts/hooks/`
+- `scripts/workflow/`
+- `scripts/lib/common.sh`
+
 这里要明确一点：
 
 - `runtime` 是纯运行仓库
@@ -43,6 +56,15 @@
 - `tests`
 - `.agents`
 - `.claude`
+
+以及 source 侧运维脚本与安装状态辅助文件：
+
+- `scripts/install/`
+- `scripts/check/`
+- `scripts/smoke/`
+- `scripts/test/`
+- `scripts/release/`
+- `scripts/lib/install-state.sh`
 
 ### 1.3 state
 

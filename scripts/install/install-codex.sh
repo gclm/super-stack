@@ -61,7 +61,7 @@ for agent_file in "${REPO_ROOT}"/codex/agents/*.toml; do
   cp "$agent_file" "${AGENTS_DEST}/$(basename "$agent_file")"
 done
 
-write_global_router_file "${CODEX_HOME}/AGENTS.md" "global workflow source" "Codex" "Global super-stack skills are installed to \`${USER_SKILLS_DEST}\`."
+write_host_bootstrap_file "${CODEX_HOME}/AGENTS.md" "Codex adapter" "${RUNTIME_ROOT}/codex/AGENTS.md" "Global skills: \`${USER_SKILLS_DEST}\`"
 
 write_if_missing "${REPO_ROOT}/codex/config.toml" "${CODEX_HOME}/config.toml"
 merge_managed_block "codex_agents" "${CODEX_HOME}/config.toml" "# BEGIN SUPER-STACK AGENTS" "# END SUPER-STACK AGENTS"
@@ -72,7 +72,7 @@ log "已将纯运行仓库资产复制到 ${RUNTIME_ROOT}"
 log "已将 Codex 全局资产复制到 ${CODEX_HOME}"
 log "已将 skills 安装到 ${USER_SKILLS_DEST}"
 log "已保留 Codex 本地 skills 目录（仅宿主/system 技能）: ${CODEX_SKILLS_DEST}"
-log "已更新 ${CODEX_HOME}/AGENTS.md 中的全局路由"
+log "已更新 ${CODEX_HOME}/AGENTS.md bootstrap"
 log "已将 Codex agents 配置合并到 ${CODEX_HOME}/config.toml"
 log "已将 Codex hooks 合并到 ${CODEX_HOME}/config.toml"
 log "已按可用性处理 Codex MCP 受管块"

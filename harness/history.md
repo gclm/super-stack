@@ -32,6 +32,53 @@ Next:
 
 ## 2026-03-29
 
+### Runtime Script Surface Tightening
+- Trimmed runtime `scripts/` packaging down to the runtime-needed subset, keeping `scripts/hooks/readonly_command_guard.py`, `scripts/workflow/`, and the workflow dependency `scripts/lib/common.sh` while excluding source-side `scripts/install/`, `scripts/smoke/`, `scripts/test/`, `scripts/release/`, and `scripts/lib/install-state.sh`.
+- Updated runtime promotion and global-install checks to assert the smaller script surface explicitly.
+- Extended shell tests so both promotion and install roundtrip fail if source-only script directories leak into runtime.
+
+Reason:
+- `install`, `smoke`, `test`, and `release` are source-repo operator workflows, not runtime assets.
+- Keeping them in runtime blurred the source/runtime boundary and made runtime look closer to a source checkout than intended.
+
+Evidence:
+- `bash tests/shell/test_runtime_promotion_gate.sh`
+- `bash tests/shell/test_global_install_roundtrip.sh`
+- `bash scripts/check/run-source-checks.sh`
+- `bash scripts/check/check-global-install.sh`
+
+Impact:
+- Runtime now keeps host adapter docs plus runtime-relevant hook/workflow scripts and the minimum shared shell helper they need, without carrying source-side operational script trees.
+- Future drift where source-only script directories leak back into runtime is covered by tests and install checks.
+
+Next:
+- Continue trimming any other runtime artifacts that are only useful for source maintenance rather than host execution.
+
+## 2026-03-29
+
+### Runtime Host Adapter Mirror And Bootstrap Simplification
+- Updated runtime packaging so `~/.super-stack/runtime` now mirrors visible `codex/` and `claude/` host adapter directories in addition to the shared root router and compatibility path `/.codex/hooks`.
+- Simplified home entry files `~/.codex/AGENTS.md` and `~/.claude/CLAUDE.md` into short bootstrap files that point to runtime `AGENTS.md` plus the matching host adapter document.
+- Tightened install checks and roundtrip coverage so runtime mirror shape and bootstrap targets are verified together.
+
+Reason:
+- Source repo already split shared workflow and host-specific adapter files, but runtime previously only carried the shared root router, which made home entry files feel disconnected from source structure.
+- Short bootstrap files are easier to distinguish from the real shared router and host adapter bodies.
+
+Evidence:
+- `bash tests/shell/test_global_install_roundtrip.sh`
+- `bash scripts/check/check-global-install.sh`
+- `bash scripts/check/run-source-checks.sh`
+
+Impact:
+- Runtime now mirrors the source repo’s host-adapter layout more faithfully without becoming a full source checkout.
+- Home entry files are easier to read and debug: bootstrap in home, shared router plus adapter in runtime.
+
+Next:
+- Watch for any downstream tooling that still assumes runtime only contains the shared root router and hidden `/.codex/hooks`.
+
+## 2026-03-29
+
 ### Source Path Visibility Migration
 - Renamed source-repository directories from hidden host-style paths to visible names: `.agents/skills` -> `skills/`, `.codex/` -> `codex/`, `.claude/` -> `claude/`.
 - Updated install, check, smoke, test, skill, and architecture/documentation references to use visible source paths while keeping runtime/home paths unchanged (`~/.agents/skills`, `~/.codex`, `~/.claude`, and runtime `/.codex/hooks`).
