@@ -6,8 +6,8 @@ from pathlib import Path
 
 
 REPO_ROOT = Path(__file__).resolve().parents[2]
-INIT_PROJECT_SCRIPT = REPO_ROOT / "scripts" / "generate" / "init-generated-project.sh"
-INIT_SCRIPT = REPO_ROOT / "scripts" / "generate" / "init-harness-task.sh"
+INIT_PROJECT_SCRIPT = REPO_ROOT / "scripts" / "workflow" / "init-generated-project.sh"
+INIT_SCRIPT = REPO_ROOT / "scripts" / "workflow" / "init-harness-task.sh"
 CLASSIFY_SCRIPT = REPO_ROOT / "scripts" / "check" / "classify-change-risk.sh"
 TEMPLATE_ROOT = REPO_ROOT / "templates" / "generated-project"
 

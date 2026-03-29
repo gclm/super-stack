@@ -174,6 +174,61 @@
 
 不再保留根目录旧 shell 入口作为第二套官方方式。
 
+## Git Flow + Worktree 协作建议
+
+为避免“主线维护 / 实验改动 / 紧急修复”互相污染，建议使用 `git worktree` + Git Flow 分轨：
+
+- `feature/*`：实验改动或常规开发（默认基于 `develop`）
+- `release/*`：主线维护/发布收口（默认基于 `develop`）
+- `hotfix/*`：紧急修复（默认基于 `main`）
+
+推荐脚本：
+
+```bash
+# 查看帮助
+./scripts/workflow/worktree-manager.sh help
+
+# 实验改动
+./scripts/workflow/worktree-manager.sh create --track feature --name prompt-router
+
+# 主线维护/发布收口
+./scripts/workflow/worktree-manager.sh create --track release --name 2026-04-stabilize
+
+# 紧急修复
+./scripts/workflow/worktree-manager.sh create --track hotfix --name codex-hook-crash
+
+# 例行自检（包含 staged 污染检查）
+./scripts/workflow/worktree-manager.sh doctor
+```
+
+如果你的主分支不是 `main` 或集成分支不是 `develop`，可通过环境变量覆盖：
+
+```bash
+GITFLOW_MAIN_BRANCH=master GITFLOW_DEVELOP_BRANCH=develop ./scripts/workflow/worktree-manager.sh doctor
+```
+
+## 外部 Skills 引用
+
+当前仓库通过 `git submodule` 引入外部 skills 源，以复用上游专业技能并保持可追踪更新：
+
+- `external-skills/openspace`（上游：`HKUDS/OpenSpace`，主要使用 `openspace/host_skills`）
+- `external-skills/contextweaver`（上游：`GowayLee/ContextWeaver`，主要使用 `skills`）
+- `external-skills/obsidian-skills`（上游：`kepano/obsidian-skills`）
+
+首次克隆后请执行：
+
+```bash
+git submodule update --init --recursive
+```
+
+仓库提供定时 GitHub Actions 自动更新 submodule 并自动提 PR：
+
+- workflow: `.github/workflows/update-external-skills.yml`
+
+详细机制与手动更新命令见：
+
+- [外部 skills 引用机制](docs/reference/external-skills.md)
+
 ## 文档导航
 
 首页只保留“是什么、怎么装、怎么验”。更细的设计与规则统一看这些文档：
@@ -187,7 +242,7 @@
 - [只读命令 Hook 方案](docs/architecture/decisions/readonly-command-hook.md)
 - [参考项目调研与吸收映射](docs/reference/research/reference-projects.md)
 - [演进路线图](docs/overview/evolution-roadmap.md)
-- [Codex 运行时检查](scripts/check/check-codex-runtime.sh)
+- [Codex 运行时检查](scripts/check/check-codex-runtime.sh)（手动诊断用途，不作为发布 gate）
 
 ## 验证参考
 

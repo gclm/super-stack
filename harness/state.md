@@ -2,7 +2,7 @@
 
 - status: cutover_complete
 - active phase: maintenance
-- current focus: 运行时技能边界已收敛（`~/.codex/skills` 仅 `.system`）；当前重点是持续用 source checks 抑制 skills 与 harness 状态漂移。
+- current focus: 运行时技能边界已收敛（`~/.codex/skills` 仅 `.system`）；当前重点是 `scripts/release + scripts/workflow` 目录重构落地与 source checks 持续防漂移。
 - active constraints:
   - OpenSpace 目前停在 Layer-A，不继续扩展到自动 source edit 或 runtime promotion。
 - active decisions:

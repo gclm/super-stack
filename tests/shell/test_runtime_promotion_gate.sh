@@ -29,11 +29,11 @@ l2="$(bash "${REPO_ROOT}/scripts/check/classify-change-risk.sh" --format level t
 l3="$(bash "${REPO_ROOT}/scripts/check/classify-change-risk.sh" --format level scripts/install/install.sh)"
 [[ "${l3}" == "L3" ]] || fail "install 改动应被分级为 L3，实际为：${l3}"
 
-promote_output="$(bash "${REPO_ROOT}/scripts/runtime/promote-to-runtime.sh" docs/architecture/decisions/harness-skill-design.md)"
+promote_output="$(bash "${REPO_ROOT}/scripts/release/promote-to-runtime.sh" docs/architecture/decisions/harness-skill-design.md)"
 printf '%s\n' "${promote_output}" | rg -q 'promotion 完成：level=L1' || fail "promotion 输出缺少完成标记"
 
 assert_file "${HOME}/.super-stack/runtime/AGENTS.md"
-assert_file "${HOME}/.super-stack/runtime/scripts/generate/init-generated-project.sh"
+assert_file "${HOME}/.super-stack/runtime/scripts/workflow/init-generated-project.sh"
 assert_file "${HOME}/.super-stack/runtime/templates/generated-project/docs/index.md"
 
 printf '[测试通过] runtime promotion gate\n'

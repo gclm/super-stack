@@ -91,7 +91,7 @@ for path in "${INPUT_PATHS[@]}"; do
     || [[ "${path}" == scripts/config/* ]] \
     || [[ "${path}" == scripts/hooks/* ]] \
     || [[ "${path}" == scripts/lib/* ]] \
-    || [[ "${path}" == scripts/runtime/* ]] \
+    || [[ "${path}" == scripts/release/* ]] \
     || [[ "${path}" == scripts/smoke/* ]]; then
     needs_integration=1
     break
@@ -99,7 +99,7 @@ for path in "${INPUT_PATHS[@]}"; do
 
   if [[ "${path}" == .agents/skills/* ]] \
     || [[ "${path}" == templates/* ]] \
-    || [[ "${path}" == scripts/generate/* ]] \
+    || [[ "${path}" == scripts/workflow/* ]] \
     || [[ "${path}" == tests/* ]]; then
     needs_unit=1
   fi

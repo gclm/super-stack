@@ -9,7 +9,7 @@ source "${SCRIPT_DIR}/../lib/common.sh"
 usage() {
   cat <<'EOF'
 用法：
-  scripts/runtime/promote-to-runtime.sh [--level <L1|L2|L3>] [--reviewed] [--dry-run] [--path <path> ...] [path...]
+  scripts/release/promote-to-runtime.sh [--level <L1|L2|L3>] [--reviewed] [--dry-run] [--path <path> ...] [path...]
 
 说明：
   - 默认对当前 git 工作区改动执行分级与 promotion

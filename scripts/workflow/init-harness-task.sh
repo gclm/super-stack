@@ -9,7 +9,7 @@ source "${SCRIPT_DIR}/../lib/common.sh"
 usage() {
   cat <<'USAGE'
 用法：
-  scripts/generate/init-harness-task.sh --task-id <task-id> [--root <path>]
+  scripts/workflow/init-harness-task.sh --task-id <task-id> [--root <path>]
 
 说明：
   - 默认在当前目录初始化 `harness/tasks/<task-id>/`

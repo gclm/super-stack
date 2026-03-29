@@ -9,7 +9,7 @@ source "${SCRIPT_DIR}/../lib/common.sh"
 usage() {
   cat <<'EOF'
 用法：
-  scripts/generate/init-generated-project.sh [--root <path>]
+  scripts/workflow/init-generated-project.sh [--root <path>]
 
 说明：
   - 默认在当前目录初始化 target project 的 `docs/ + harness/`

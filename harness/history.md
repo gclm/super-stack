@@ -165,3 +165,32 @@ Impact:
 
 Next:
 - If team cadence changes, tune `HARNESS_STATE_MAX_LINES` and `HARNESS_STATE_MAX_BULLETS` defaults with one recorded history entry.
+
+## 2026-03-29
+
+### Script Layout Refactor: release + workflow
+- Moved promotion orchestrator from `scripts/runtime/promote-to-runtime.sh` to `scripts/release/promote-to-runtime.sh`.
+- Consolidated developer-facing workflow scripts into `scripts/workflow/`:
+  - `init-generated-project.sh`
+  - `init-harness-task.sh`
+  - `worktree-manager.sh`
+- Removed legacy directories `scripts/runtime/`, `scripts/generate/`, and `scripts/dev/` (no compatibility wrappers retained by request).
+- Updated risk classification and targeted smoke path rules to recognize `scripts/release/*` and `scripts/workflow/*`.
+- Updated README and rollout guidance docs to reflect the new script topology and Git Flow worktree usage.
+
+Reason:
+- Previous structure mixed release orchestration with runtime naming, and split workflow tools across unrelated folders.
+- New layout improves discoverability and matches responsibilities: `release` for promotion, `workflow` for developer orchestration.
+
+Evidence:
+- `tests/shell/test_runtime_promotion_gate.sh` passes with new release/workflow paths.
+- `python3 -m unittest tests.python.test_harness_scaffold -v` passes after path updates.
+- Repository-wide grep shows no remaining references to removed script directories in docs/tests/scripts.
+
+Impact:
+- Script entrypoints are now responsibility-aligned and easier to reason about.
+- Direct path migration requires consumers to use new paths immediately.
+
+Next:
+- Keep future workflow bootstrap/worktree tools under `scripts/workflow/`.
+- Keep release gate orchestration under `scripts/release/`.

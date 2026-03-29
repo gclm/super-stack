@@ -278,7 +278,10 @@ ok() {
 
 warn() {
   printf '[警告] %s\n' "$*"
-  WARNINGS=$((WARNINGS + 1))
+  # Some callers only need logging and do not define WARNINGS under set -u.
+  if [[ -n "${WARNINGS+x}" ]]; then
+    WARNINGS=$((WARNINGS + 1))
+  fi
 }
 
 check_file() {

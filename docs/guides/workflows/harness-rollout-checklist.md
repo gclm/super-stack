@@ -91,7 +91,7 @@ templates/generated-project/
 推荐新增：
 
 ```text
-scripts/generate/
+scripts/workflow/
   init-generated-project.sh
   init-harness-task.sh
   migrate-planning-to-harness.sh
@@ -100,7 +100,7 @@ scripts/generate/
 如果脚本需要 Python：
 
 ```text
-scripts/generate/
+scripts/workflow/
   init_harness_task.py
   migrate_planning_to_harness.py
 ```
@@ -184,11 +184,11 @@ scripts/check/
 scripts/smoke/
   run-targeted-smoke.sh
 
-scripts/runtime/
+scripts/release/
   promote-to-runtime.sh
 ```
 
-如果不想新开 `scripts/runtime/`，也可以继续放在 `scripts/install/` 或 `scripts/check/`，但要保证语义清楚。
+当前建议使用 `scripts/release/` 承载 promotion orchestrator；`scripts/workflow/` 承载开发流程脚本（如初始化与 worktree 管理）。
 
 ### 5.3 phase-1 的最小实现
 
@@ -350,7 +350,7 @@ phase-1 结束时，至少应满足：
 
 1. 建 `templates/generated-project/docs/` 和 `templates/generated-project/harness/`
 2. 建 `.agents/skills/harness/` 骨架，并把入口 skill 命名为 `task-harness`
-3. 建 `scripts/generate/init-harness-task.*`
+3. 建 `scripts/workflow/init-harness-task.*`
 4. 建 source-side check 聚合入口
 5. 建 runtime promotion wrapper 的空骨架
 

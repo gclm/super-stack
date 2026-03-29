@@ -58,7 +58,7 @@ classify_path() {
     || [[ "${path}" == scripts/hooks/* ]] \
     || [[ "${path}" == scripts/config/* ]] \
     || [[ "${path}" == scripts/lib/* ]] \
-    || [[ "${path}" == scripts/runtime/* ]]; then
+    || [[ "${path}" == scripts/release/* ]]; then
     printf 'L3|host-or-runtime-surface\n'
     return 0
   fi
@@ -75,7 +75,7 @@ classify_path() {
   if [[ "${path}" =~ ^\.agents/skills/.+/SKILL\.md$ ]] \
     || [[ "${path}" =~ ^\.agents/skills/.+/(assets|scripts|agents)/ ]] \
     || [[ "${path}" == templates/* ]] \
-    || [[ "${path}" == scripts/generate/* ]] \
+    || [[ "${path}" == scripts/workflow/* ]] \
     || [[ "${path}" == scripts/smoke/* ]] \
     || [[ "${path}" == tests/* ]]; then
     printf 'L2|workflow-or-template-surface\n'
