@@ -18,6 +18,7 @@ class Match:
     strength: str
     reason: str
     snippet: str
+    signal: str
 
 
 @dataclass(frozen=True)
@@ -131,6 +132,57 @@ def find_exact_path_match(strings: Iterable[str], targets: list[PathTarget]) -> 
     return None
 
 
+def normalize_snippet(text: str) -> str:
+    return short(text)
+
+
+def build_match(
+    *,
+    source: str,
+    file: str,
+    session_id: str | None,
+    strength: str,
+    reason: str,
+    snippet: str,
+    signal: str,
+) -> Match:
+    return Match(
+        source=source,
+        file=file,
+        session_id=session_id,
+        strength=strength,
+        reason=reason,
+        snippet=normalize_snippet(snippet),
+        signal=signal,
+    )
+
+
+SIGNAL_WEIGHTS = {
+    "session_meta_cwd": 120,
+    "exact_path": 80,
+    "history_exact_path": 70,
+    "session_index_exact_path": 60,
+    "term_match": 6,
+}
+
+
+def match_weight(match: Match) -> int:
+    return SIGNAL_WEIGHTS.get(match.signal, 1)
+
+
+def unique_sample_key(match: Match) -> tuple[str, str | None, str, str]:
+    return (match.source, match.session_id, match.signal, match.snippet)
+
+
+def session_sort_key(item: tuple[str, list[Match]]) -> tuple[int, int, int, int, str]:
+    session_id, items = item
+    score = sum(match_weight(match) for match in items)
+    strong = sum(1 for match in items if match.strength == "strong")
+    unique_signals = len({(match.signal, match.file) for match in items})
+    unique_sources = len({match.source for match in items})
+    return (-score, -strong, -unique_signals, -unique_sources, session_id)
+
+
 def scan_session_like_file(path: Path, targets: list[PathTarget], terms: list[str], source: str) -> list[Match]:
     matches: list[Match] = []
     rows = load_jsonl(path)
@@ -146,13 +198,14 @@ def scan_session_like_file(path: Path, targets: list[PathTarget], terms: list[st
                 if cwd_target.label != "primary":
                     reason = f"{cwd_target.label} path session_meta.cwd exact match"
                 matches.append(
-                    Match(
+                    build_match(
                         source=source,
                         file=str(path),
                         session_id=session_id,
                         strength="strong",
                         reason=reason,
-                        snippet=short(json.dumps(payload, ensure_ascii=False)),
+                        snippet=json.dumps(payload, ensure_ascii=False),
+                        signal="session_meta_cwd",
                     )
                 )
                 continue
@@ -163,26 +216,28 @@ def scan_session_like_file(path: Path, targets: list[PathTarget], terms: list[st
             if exact_target.label != "primary":
                 reason = f"exact {exact_target.label} path mention"
             matches.append(
-                Match(
+                build_match(
                     source=source,
                     file=str(path),
                     session_id=session_id,
                     strength="strong",
                     reason=reason,
-                    snippet=short(next(s for s in strings if exact_target.path in s)),
+                    snippet=next(s for s in strings if exact_target.path in s),
+                    signal="exact_path",
                 )
             )
             continue
         term = contains_term(strings, terms)
         if term:
             matches.append(
-                Match(
+                build_match(
                     source=source,
                     file=str(path),
                     session_id=session_id,
                     strength="weak",
                     reason=f"related term match: {term}",
-                    snippet=short(next(s for s in strings if term in s.lower())),
+                    snippet=next(s for s in strings if term in s.lower()),
+                    signal="term_match",
                 )
             )
     return matches
@@ -200,13 +255,14 @@ def scan_history(path: Path, targets: list[PathTarget], terms: list[str]) -> lis
             if exact_target.label != "primary":
                 reason = f"exact {exact_target.label} path mention"
             matches.append(
-                Match(
+                build_match(
                     source="history",
                     file=str(path),
                     session_id=session_id,
                     strength="strong",
                     reason=reason,
-                    snippet=short(text),
+                    snippet=text,
+                    signal="history_exact_path",
                 )
             )
             continue
@@ -214,13 +270,14 @@ def scan_history(path: Path, targets: list[PathTarget], terms: list[str]) -> lis
         term = next((term for term in terms if term in lowered), None)
         if term:
             matches.append(
-                Match(
+                build_match(
                     source="history",
                     file=str(path),
                     session_id=session_id,
                     strength="weak",
                     reason=f"related term match: {term}",
-                    snippet=short(text),
+                    snippet=text,
+                    signal="term_match",
                 )
             )
     return matches
@@ -237,26 +294,28 @@ def scan_session_index(path: Path, targets: list[PathTarget], terms: list[str]) 
             if exact_target.label != "primary":
                 reason = f"exact {exact_target.label} path mention"
             matches.append(
-                Match(
+                build_match(
                     source="session_index",
                     file=str(path),
                     session_id=row.get("id"),
                     strength="medium",
                     reason=reason,
-                    snippet=short(json.dumps(row, ensure_ascii=False)),
+                    snippet=json.dumps(row, ensure_ascii=False),
+                    signal="session_index_exact_path",
                 )
             )
             continue
         term = contains_term(strings, terms)
         if term:
             matches.append(
-                Match(
+                build_match(
                     source="session_index",
                     file=str(path),
                     session_id=row.get("id"),
                     strength="weak",
                     reason=f"related term match: {term}",
-                    snippet=short(json.dumps(row, ensure_ascii=False)),
+                    snippet=json.dumps(row, ensure_ascii=False),
+                    signal="term_match",
                 )
             )
     return matches
@@ -327,7 +386,12 @@ def build_report(project_path: Path, alias_paths: list[Path], codex_home: Path, 
         evidence_gaps.append("未找到 `session_meta.cwd` 的精确匹配，当前还不能完全确认是哪一条 session 对应目标项目。")
 
     sample_matches = []
-    for match in matches[:max_samples]:
+    seen_samples: set[tuple[str, str | None, str, str]] = set()
+    for match in matches:
+        key = unique_sample_key(match)
+        if key in seen_samples:
+            continue
+        seen_samples.add(key)
         sample_matches.append(
             {
                 "source": match.source,
@@ -335,19 +399,15 @@ def build_report(project_path: Path, alias_paths: list[Path], codex_home: Path, 
                 "session_id": match.session_id,
                 "strength": match.strength,
                 "reason": match.reason,
+                "signal": match.signal,
                 "snippet": match.snippet,
             }
         )
+        if len(sample_matches) >= max_samples:
+            break
 
     session_summaries = []
-    ranked_sessions = sorted(
-        sessions.items(),
-        key=lambda item: (
-            -sum(1 for match in item[1] if match.strength == "strong"),
-            -len(item[1]),
-            item[0],
-        ),
-    )
+    ranked_sessions = sorted(sessions.items(), key=session_sort_key)
 
     for session_id, items in ranked_sessions[:max_samples]:
         session_summaries.append(
@@ -355,6 +415,8 @@ def build_report(project_path: Path, alias_paths: list[Path], codex_home: Path, 
                 "session_id": session_id,
                 "match_count": len(items),
                 "strong_matches": sum(1 for item in items if item.strength == "strong"),
+                "score": sum(match_weight(item) for item in items),
+                "signals": dict(Counter(item.signal for item in items)),
                 "sources": sorted({item.source for item in items}),
             }
         )
@@ -404,7 +466,7 @@ def render_markdown(report: dict[str, object]) -> str:
     if report["candidate_sessions"]:
         for item in report["candidate_sessions"]:
             lines.append(
-                f"- `{item['session_id']}`: 命中 {item['match_count']} 条，强命中 {item['strong_matches']} 条，来源 {', '.join(item['sources'])}"
+                f"- `{item['session_id']}`: score {item['score']}，命中 {item['match_count']} 条，强命中 {item['strong_matches']} 条，信号 {item['signals']}，来源 {', '.join(item['sources'])}"
             )
     else:
         lines.append("- 暂无候选 session。")
