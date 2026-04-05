@@ -1,0 +1,50 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Codex Learning Observation",
+  "type": "object",
+  "required": [
+    "schema_version",
+    "timestamp",
+    "project_id",
+    "project_name",
+    "session_id",
+    "slice_id",
+    "event_type",
+    "summary",
+    "evidence_refs"
+  ],
+  "properties": {
+    "schema_version": {"type": "string"},
+    "timestamp": {"type": "string"},
+    "project_id": {"type": "string"},
+    "project_name": {"type": "string"},
+    "session_id": {"type": "string"},
+    "slice_id": {"type": "string"},
+    "event_type": {
+      "type": "string",
+      "enum": [
+        "tool_start",
+        "tool_complete",
+        "user_correction",
+        "verify_success",
+        "verify_gap",
+        "stage_transition",
+        "backtrack",
+        "task_outcome",
+        "message"
+      ]
+    },
+    "stage": {"type": ["string", "null"]},
+    "tool": {"type": ["string", "null"]},
+    "summary": {"type": "string"},
+    "evidence_refs": {
+      "type": "array",
+      "items": {"type": "string"}
+    },
+    "metadata": {
+      "type": "object",
+      "additionalProperties": true
+    }
+  },
+  "additionalProperties": true
+}
